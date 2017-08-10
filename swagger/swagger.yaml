@@ -1,0 +1,152 @@
+consumes:
+- application/json
+- application/xml
+- application/gob
+- application/x-gob
+definitions:
+  error:
+    description: Error response media type (default view)
+    example:
+      code: invalid_value
+      detail: Value of ID must be an integer
+      id: 3F1FKVRR
+      meta:
+        timestamp: 1.458609e+09
+      status: "400"
+    properties:
+      code:
+        description: an application-specific error code, expressed as a string value.
+        example: invalid_value
+        type: string
+      detail:
+        description: a human-readable explanation specific to this occurrence of the
+          problem.
+        example: Value of ID must be an integer
+        type: string
+      id:
+        description: a unique identifier for this particular occurrence of the problem.
+        example: 3F1FKVRR
+        type: string
+      meta:
+        additionalProperties: true
+        description: a meta object containing non-standard meta-information about
+          the error.
+        example:
+          timestamp: 1.458609e+09
+        type: object
+      status:
+        description: the HTTP status code applicable to this problem, expressed as
+          a string value.
+        example: "400"
+        type: string
+    title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+    type: object
+  userProfile:
+    description: userProfile media type (default view)
+    example:
+      createdOn: 4.694125e+18
+      email: savion.pacocha@lueilwitzmante.org
+      fullName: Saepe blanditiis dolor at.
+      userId: Autem alias.
+    properties:
+      createdOn:
+        description: User profile created timestamp
+        example: 4.694125e+18
+        format: int64
+        type: integer
+      email:
+        description: Email of user
+        example: savion.pacocha@lueilwitzmante.org
+        format: email
+        type: string
+      fullName:
+        description: Full name of the user
+        example: Saepe blanditiis dolor at.
+        type: string
+      userId:
+        description: Unique user ID
+        example: Autem alias.
+        type: string
+    required:
+    - userId
+    - createdOn
+    title: 'Mediatype identifier: application/jormungandr.user-profile+json; view=default'
+    type: object
+host: localhost:8080
+info:
+  description: API for managing UserProfile data.
+  title: User Profile Microservice
+  version: "1.0"
+paths:
+  /swagger-ui/{filepath}:
+    get:
+      operationId: swagger#/swagger-ui/*filepath
+      parameters:
+      - description: Relative file path
+        in: path
+        name: filepath
+        required: true
+        type: string
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+        "404":
+          description: File not found
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      summary: Download swagger-ui/dist
+  /swagger.json:
+    get:
+      operationId: swagger#/swagger.json
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+      schemes:
+      - http
+      summary: Download swagger/swagger.json
+  /user-profile/{userId}:
+    get:
+      description: Get a UserProfile by UserID
+      operationId: userProfile#GetUserProfile
+      parameters:
+      - description: The user ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.error
+      - application/jormungandr.user-profile+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userProfile'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      summary: GetUserProfile userProfile
+      tags:
+      - userProfile
+produces:
+- application/json
+- application/xml
+- application/gob
+- application/x-gob
+responses:
+  OK:
+    description: OK
+    schema:
+      $ref: '#/definitions/userProfile'
+schemes:
+- http
+swagger: "2.0"
