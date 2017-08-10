@@ -122,6 +122,7 @@ paths:
         type: string
       produces:
       - application/vnd.goa.error
+      - application/vnd.goa.error
       - application/jormungandr.user-profile+json
       responses:
         "200":
@@ -130,6 +131,10 @@ paths:
             $ref: '#/definitions/userProfile'
         "404":
           description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/error'
       schemes:

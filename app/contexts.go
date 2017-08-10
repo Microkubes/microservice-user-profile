@@ -52,3 +52,9 @@ func (ctx *GetUserProfileUserProfileContext) NotFound(r error) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
 	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
 }
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *GetUserProfileUserProfileContext) InternalServerError(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}
