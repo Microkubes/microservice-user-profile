@@ -105,7 +105,7 @@ make build
 
 # Running the microservice
 
-To run the user-microservice you'll need to set up some ENV variables:
+To run the user-profile microservice you'll need to set up some ENV variables:
 
  * **SERVICE_CONFIG_FILE** - Location of the configuration JSON file (default: config.json)
  * **API_GATEWAY_URL** - Kong API url (default: http://localhost:8001)
