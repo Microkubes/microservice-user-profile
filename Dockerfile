@@ -9,7 +9,8 @@ RUN chmod 700 /root/.ssh/id_rsa && \
     git config --global url."ssh://git@github.com:".insteadOf "https://github.com"
 
 RUN go get -u github.com/goadesign/goa/... && \
-    go get -u gopkg.in/mgo.v2
+    go get -u gopkg.in/mgo.v2 && \
+    go get -u golang.org/x/crypto/bcrypt
 
 RUN go get -u github.com/JormungandrK/microservice-tools; exit 0
 
