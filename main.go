@@ -8,6 +8,7 @@ import (
 
 	"github.com/JormungandrK/microservice-tools/gateway"
 	"github.com/JormungandrK/microservice-user-profile/app"
+	"github.com/JormungandrK/microservice-user-profile/db"
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
 )
@@ -26,11 +27,14 @@ func main() {
 	service.Use(middleware.ErrorHandler(service, true))
 	service.Use(middleware.Recover())
 
+	// Temporary
+	database := db.New()
+
 	// Mount "swagger" controller
 	c := NewSwaggerController(service)
 	app.MountSwaggerController(service, c)
 	// Mount "userProfile" controller
-	c2 := NewUserProfileController(service)
+	c2 := NewUserProfileController(service, database)
 	app.MountUserProfileController(service, c2)
 
 	// Start service
