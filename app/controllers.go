@@ -58,6 +58,7 @@ func MountSwaggerController(service *goa.Service, ctrl SwaggerController) {
 // UserProfileController is the controller interface for the UserProfile actions.
 type UserProfileController interface {
 	goa.Muxer
+	GetMyProfile(*GetMyProfileUserProfileContext) error
 	GetUserProfile(*GetUserProfileUserProfileContext) error
 }
 
@@ -65,6 +66,21 @@ type UserProfileController interface {
 func MountUserProfileController(service *goa.Service, ctrl UserProfileController) {
 	initService(service)
 	var h goa.Handler
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewGetMyProfileUserProfileContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.GetMyProfile(rctx)
+	}
+	service.Mux.Handle("GET", "/user-profile/profile", ctrl.MuxHandler("GetMyProfile", h, nil))
+	service.LogInfo("mount", "ctrl", "UserProfile", "action", "GetMyProfile", "route", "GET /user-profile/profile")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request

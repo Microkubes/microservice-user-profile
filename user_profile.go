@@ -37,3 +37,20 @@ func (c *UserProfileController) GetUserProfile(ctx *app.GetUserProfileUserProfil
 
 	return ctx.OK(res)
 }
+
+func (c *UserProfileController) GetMyProfile(ctx *app.GetMyProfileUserProfileContext) error {
+	// Build the resource using the generated data structure.
+	res := &app.UserProfile{}
+
+	// Return one user profile by id.
+	if err := c.Repository.GetUserProfile(ctx.UserID, res); err != nil {
+		return ctx.InternalServerError(err)
+	}
+	if res.CreatedOn == 0 {
+		return ctx.NotFound(goa.ErrNotFound("User Profile not found"))
+	}
+
+	res.UserID = ctx.UserID
+
+	return ctx.OK(res)	
+}

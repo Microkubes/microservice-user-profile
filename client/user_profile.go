@@ -17,6 +17,38 @@ import (
 	"net/url"
 )
 
+// GetMyProfileUserProfilePath computes a request path to the GetMyProfile action of userProfile.
+func GetMyProfileUserProfilePath() string {
+
+	return fmt.Sprintf("/user-profile/profile")
+}
+
+// Get a UserProfile by UserID
+func (c *Client) GetMyProfileUserProfile(ctx context.Context, path string, userID string) (*http.Response, error) {
+	req, err := c.NewGetMyProfileUserProfileRequest(ctx, path, userID)
+	if err != nil {
+		return nil, err
+	}
+	return c.Client.Do(ctx, req)
+}
+
+// NewGetMyProfileUserProfileRequest create the request corresponding to the GetMyProfile action endpoint of the userProfile resource.
+func (c *Client) NewGetMyProfileUserProfileRequest(ctx context.Context, path string, userID string) (*http.Request, error) {
+	scheme := c.Scheme
+	if scheme == "" {
+		scheme = "http"
+	}
+	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	values := u.Query()
+	values.Set("userId", userID)
+	u.RawQuery = values.Encode()
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	return req, nil
+}
+
 // GetUserProfileUserProfilePath computes a request path to the GetUserProfile action of userProfile.
 func GetUserProfileUserProfilePath(userID string) string {
 	param0 := userID
