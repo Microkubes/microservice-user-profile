@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/JormungandrK/microservice-user-profile/app"
 	"github.com/JormungandrK/microservice-user-profile/db"
 	"github.com/goadesign/goa"
@@ -17,8 +15,11 @@ type UserProfileController struct {
 }
 
 // NewUserProfileController creates a userProfile controller.
-func NewUserProfileController(service *goa.Service) *UserProfileController {
-	return &UserProfileController{Controller: service.NewController("UserProfileController")}
+func NewUserProfileController(service *goa.Service, Repository db.UserProfileRepository) *UserProfileController {
+	return &UserProfileController{
+		Controller: service.NewController("UserProfileController"),
+		Repository: Repository,
+	}
 }
 
 // GetUserProfile runs the GetUserProfile action.
@@ -39,12 +40,12 @@ func (c *UserProfileController) GetUserProfile(ctx *app.GetUserProfileUserProfil
 		return ctx.NotFound(goa.ErrNotFound("Invalid User Id"))
 	}
 
-	// Return one user by id.
+	// Return one user profile by id.
 	if err := c.Repository.GetUserProfile(userID, res); err != nil {
-		return ctx.InternalServerError(err)
+		return ctx.InternalServerError(goa.ErrInternal(err))
 	}
-	if res == nil {
-		return ctx.NotFound(fmt.Errorf("User Profile not found"))
+	if res.CreatedOn == 0 {
+		return ctx.NotFound(goa.ErrNotFound("User Profile not found"))
 	}
 
 	res.UserID = ctx.UserID
