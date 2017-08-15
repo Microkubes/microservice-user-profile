@@ -27,14 +27,23 @@ func main() {
 	service.Use(middleware.ErrorHandler(service, true))
 	service.Use(middleware.Recover())
 
-	// Temporary
-	database := db.New()
+	// Load MongoDB ENV variables
+	host, username, password, database := loadMongnoSettings()
+	// Create new session to MongoDB
+	session := db.NewSession(host, username, password, database)
+
+	// At the end close session
+	defer session.Close()
+
+	// Create users collection and indexes
+	indexes := []string{"fullname", "email"}
+	userProfileCollection := db.PrepareDB(session, database, "user-profiles", indexes)
 
 	// Mount "swagger" controller
 	c := NewSwaggerController(service)
 	app.MountSwaggerController(service, c)
 	// Mount "userProfile" controller
-	c2 := NewUserProfileController(service, database)
+	c2 := NewUserProfileController(service, &db.MongoCollection{Collection: userProfileCollection})
 	app.MountUserProfileController(service, c2)
 
 	// Start service
@@ -42,6 +51,28 @@ func main() {
 		service.LogError("startup", "err", err)
 	}
 
+}
+
+func loadMongnoSettings() (string, string, string, string) {
+	host := os.Getenv("MONGO_URL")
+	username := os.Getenv("MS_USERNAME")
+	password := os.Getenv("MS_PASSWORD")
+	database := os.Getenv("MS_DBNAME")
+
+	if host == "" {
+		host = "127.0.0.1:27017"
+	}
+	if username == "" {
+		username = "restapi"
+	}
+	if password == "" {
+		password = "restapi"
+	}
+	if database == "" {
+		database = "user-profile"
+	}
+
+	return host, username, password, database
 }
 
 func loadGatewaySettings() (string, string) {
