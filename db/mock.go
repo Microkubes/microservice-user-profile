@@ -5,8 +5,7 @@ import (
 	"sync"
 
 	"github.com/JormungandrK/microservice-user-profile/app"
-
-	"gopkg.in/mgo.v2/bson"
+	"github.com/goadesign/goa"
 )
 
 // DB emulates a database driver using in-memory data structures.
@@ -29,19 +28,17 @@ func New() *DB {
 }
 
 // GetUserProfile mock implementation
-func (db *DB) GetUserProfile(objectID bson.ObjectId, mediaType *app.UserProfile) error {
+func (db *DB) GetUserProfile(objectID string, mediaType *app.UserProfile) error {
 	db.Lock()
 	defer db.Unlock()
 
-	id := objectID.Hex()
-
-	if id == "6975c461f9f8eb02aae053f3" {
+	if objectID == "6975c461f9f8eb02aae053f3" {
 		err := errors.New("Internal error")
-		return err
+		return goa.ErrInternal(err)
 	}
 
-	if user, ok := db.users[id]; ok {
-		mediaType.UserID = id
+	if user, ok := db.users[objectID]; ok {
+		mediaType.UserID = objectID
 		mediaType.Email = user.Email
 		mediaType.FullName = user.FullName
 		mediaType.CreatedOn = 1502722729
