@@ -42,6 +42,10 @@ func (c *UserProfileController) GetMyProfile(ctx *app.GetMyProfileUserProfileCon
 	// Build the resource using the generated data structure.
 	res := &app.UserProfile{}
 
+	if len(ctx.UserID) == 0 {
+		return ctx.InternalServerError(goa.ErrInternal("User ID not set"))
+	}
+
 	// Return one user profile by id.
 	if err := c.Repository.GetUserProfile(ctx.UserID, res); err != nil {
 		return ctx.InternalServerError(err)

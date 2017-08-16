@@ -79,8 +79,8 @@ func MountUserProfileController(service *goa.Service, ctrl UserProfileController
 		}
 		return ctrl.GetMyProfile(rctx)
 	}
-	service.Mux.Handle("GET", "/user-profile/profile", ctrl.MuxHandler("GetMyProfile", h, nil))
-	service.LogInfo("mount", "ctrl", "UserProfile", "action", "GetMyProfile", "route", "GET /user-profile/profile")
+	service.Mux.Handle("GET", "/user-profile/me", ctrl.MuxHandler("GetMyProfile", h, nil))
+	service.LogInfo("mount", "ctrl", "UserProfile", "action", "GetMyProfile", "route", "GET /user-profile/me")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request

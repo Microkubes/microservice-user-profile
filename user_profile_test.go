@@ -54,3 +54,39 @@ func TestGetUserProfileUserProfileInternalServerError(t *testing.T) {
 	// The test helper takes care of validating the status code for us
 	test.GetUserProfileUserProfileInternalServerError(t, context.Background(), service, ctrl, internalErrorObjectID)
 }
+
+func TestGetMyProfileUserProfileOK(t *testing.T) {
+	// Call generated test helper, this checks that the returned media type is of the
+	// correct type (i.e. uses view "default") and validates the media type.
+	// Also, it ckecks the returned status code
+	_, user := test.GetMyProfileUserProfileOK(t, context.Background(), service, ctrl, hexObjectID)
+
+	if user == nil {
+		t.Fatal("Nil user")
+	}
+
+	if user.UserID != hexObjectID {
+		t.Errorf("Invalid user ID, expected %s, got %s", hexObjectID, user.UserID)
+	}
+
+	userEmail := *user.Email
+	if userEmail != expectedUserEmail {
+		t.Errorf("Invalid user Email, expected %s, got %s", expectedUserEmail, userEmail)
+	}
+
+	userFullName := *user.FullName
+	if userFullName != expectedUserFullName {
+		t.Errorf("Invalid user Full Name, expected %s, got %s", expectedUserFullName, userFullName)
+	}
+
+}
+
+func TestGetMyProfileUserProfileNotFound(t *testing.T) {
+	// The test helper takes care of validating the status code for us
+	test.GetMyProfileUserProfileNotFound(t, context.Background(), service, ctrl, fakeHexObjectID)	
+}
+
+func TestGetMyProfileUserProfileInternalServerError(t *testing.T) {
+	// The test helper takes care of validating the status code for us
+	test.GetMyProfileUserProfileInternalServerError(t, context.Background(), service, ctrl, internalErrorObjectID)	
+}

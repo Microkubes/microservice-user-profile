@@ -30,7 +30,7 @@ var _ = Resource("userProfile", func() {
 
 	Action("GetMyProfile", func() {
 		Description("Get a UserProfile by UserID")
-		Routing(GET("/profile"))
+		Routing(GET("/me"))
         Params(func() {
             Param("userId", String, "User ID")
             Required("userId")

@@ -59,7 +59,7 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	}
 	tmp1 := new(GetMyProfileUserProfileCommand)
 	sub = &cobra.Command{
-		Use:   `user-profile ["/user-profile/profile"]`,
+		Use:   `user-profile ["/user-profile/me"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp1.Run(c, args) },
 	}
@@ -300,7 +300,7 @@ func (cmd *GetMyProfileUserProfileCommand) Run(c *client.Client, args []string) 
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = "/user-profile/profile"
+		path = "/user-profile/me"
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)

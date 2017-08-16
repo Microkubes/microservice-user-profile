@@ -54,7 +54,7 @@ func GetMyProfileUserProfileInternalServerError(t goatest.TInterface, ctx contex
 		query["userId"] = sliceVal
 	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/user-profile/profile"),
+		Path:     fmt.Sprintf("/user-profile/me"),
 		RawQuery: query.Encode(),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -128,7 +128,7 @@ func GetMyProfileUserProfileNotFound(t goatest.TInterface, ctx context.Context, 
 		query["userId"] = sliceVal
 	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/user-profile/profile"),
+		Path:     fmt.Sprintf("/user-profile/me"),
 		RawQuery: query.Encode(),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -202,7 +202,7 @@ func GetMyProfileUserProfileOK(t goatest.TInterface, ctx context.Context, servic
 		query["userId"] = sliceVal
 	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/user-profile/profile"),
+		Path:     fmt.Sprintf("/user-profile/me"),
 		RawQuery: query.Encode(),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)

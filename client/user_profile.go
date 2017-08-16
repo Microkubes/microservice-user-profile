@@ -20,7 +20,7 @@ import (
 // GetMyProfileUserProfilePath computes a request path to the GetMyProfile action of userProfile.
 func GetMyProfileUserProfilePath() string {
 
-	return fmt.Sprintf("/user-profile/profile")
+	return fmt.Sprintf("/user-profile/me")
 }
 
 // Get a UserProfile by UserID

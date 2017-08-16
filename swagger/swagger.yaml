@@ -142,7 +142,7 @@ paths:
       summary: GetUserProfile userProfile
       tags:
       - userProfile
-  /user-profile/profile:
+  /user-profile/me:
     get:
       description: Get a UserProfile by UserID
       operationId: userProfile#GetMyProfile
