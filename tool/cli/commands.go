@@ -29,6 +29,11 @@ import (
 )
 
 type (
+	// GetMyProfileUserProfileCommand is the command line data structure for the GetMyProfile action of userProfile
+	GetMyProfileUserProfileCommand struct {
+		PrettyPrint bool
+	}
+
 	// GetUserProfileUserProfileCommand is the command line data structure for the GetUserProfile action of userProfile
 	GetUserProfileUserProfileCommand struct {
 		// The user ID
@@ -47,17 +52,31 @@ type (
 func RegisterCommands(app *cobra.Command, c *client.Client) {
 	var command, sub *cobra.Command
 	command = &cobra.Command{
-		Use:   "get-user-profile",
+		Use:   "get-my-profile",
 		Short: `Get a UserProfile by UserID`,
 	}
-	tmp1 := new(GetUserProfileUserProfileCommand)
+	tmp1 := new(GetMyProfileUserProfileCommand)
 	sub = &cobra.Command{
-		Use:   `user-profile ["/user-profile/USERID"]`,
+		Use:   `user-profile ["/user-profile/me"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp1.Run(c, args) },
 	}
 	tmp1.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp1.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "get-user-profile",
+		Short: `Get a UserProfile by UserID`,
+	}
+	tmp2 := new(GetUserProfileUserProfileCommand)
+	sub = &cobra.Command{
+		Use:   `user-profile ["/user-profile/USERID"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp2.Run(c, args) },
+	}
+	tmp2.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp2.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 
@@ -271,6 +290,30 @@ found:
 	}
 
 	return nil
+}
+
+// Run makes the HTTP request corresponding to the GetMyProfileUserProfileCommand command.
+func (cmd *GetMyProfileUserProfileCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = "/user-profile/me"
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.GetMyProfileUserProfile(ctx, path)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *GetMyProfileUserProfileCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 }
 
 // Run makes the HTTP request corresponding to the GetUserProfileUserProfileCommand command.

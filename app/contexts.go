@@ -16,6 +16,43 @@ import (
 	"net/http"
 )
 
+// GetMyProfileUserProfileContext provides the userProfile GetMyProfile action context.
+type GetMyProfileUserProfileContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+}
+
+// NewGetMyProfileUserProfileContext parses the incoming request URL and body, performs validations and creates the
+// context used by the userProfile controller GetMyProfile action.
+func NewGetMyProfileUserProfileContext(ctx context.Context, r *http.Request, service *goa.Service) (*GetMyProfileUserProfileContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := GetMyProfileUserProfileContext{Context: ctx, ResponseData: resp, RequestData: req}
+	return &rctx, err
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *GetMyProfileUserProfileContext) OK(r *UserProfile) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/jormungandr.user-profile+json")
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// NotFound sends a HTTP response with status code 404.
+func (ctx *GetMyProfileUserProfileContext) NotFound(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
+}
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *GetMyProfileUserProfileContext) InternalServerError(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}
+
 // GetUserProfileUserProfileContext provides the userProfile GetUserProfile action context.
 type GetUserProfileUserProfileContext struct {
 	context.Context

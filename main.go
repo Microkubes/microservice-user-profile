@@ -69,7 +69,7 @@ func loadMongnoSettings() (string, string, string, string) {
 		password = "restapi"
 	}
 	if database == "" {
-		database = "user-profile"
+		database = "user-profiles"
 	}
 
 	return host, username, password, database

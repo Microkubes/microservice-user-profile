@@ -28,6 +28,13 @@ var _ = Resource("userProfile", func() {
 		Response(InternalServerError, ErrorMedia)
 	})
 
+	Action("GetMyProfile", func() {
+		Description("Get a UserProfile by UserID")
+		Routing(GET("/me"))
+		Response(OK)
+		Response(NotFound, ErrorMedia)
+		Response(InternalServerError, ErrorMedia)
+	})
 })
 
 // UserProfileMedia is the default media type for user-profile service
@@ -49,7 +56,6 @@ var UserProfileMedia = MediaType("application/jormungandr.user-profile+json", fu
 		Attribute("email")
 		Attribute("createdOn")
 	})
-
 })
 
 // UserProfilePayload is the payload specification

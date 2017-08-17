@@ -67,7 +67,7 @@ go test -v
 Create users database with default username and password.
 See: [Set up MongoDB](https://github.com/JormungandrK/jormungandr-infrastructure#mongodb--v346-)
 ```
-export MS_DBNAME=users
+export MS_DBNAME=user-profiles
 ./mongo/run.sh
 ```
 Then install mgo package:

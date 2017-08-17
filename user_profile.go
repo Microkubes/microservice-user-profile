@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/JormungandrK/microservice-security/auth"
 	"github.com/JormungandrK/microservice-user-profile/app"
 	"github.com/JormungandrK/microservice-user-profile/db"
 	"github.com/goadesign/goa"
@@ -34,6 +35,33 @@ func (c *UserProfileController) GetUserProfile(ctx *app.GetUserProfileUserProfil
 	}
 
 	res.UserID = ctx.UserID
+
+	return ctx.OK(res)
+}
+
+func (c *UserProfileController) GetMyProfile(ctx *app.GetMyProfileUserProfileContext) error {
+	var authObj *auth.Auth
+
+	hasAuth := auth.HasAuth(ctx)
+
+	if hasAuth {
+		authObj = auth.GetAuth(ctx.Context)
+	} else {
+		return ctx.InternalServerError(goa.ErrInternal("Auth has not been set"))
+	}
+
+	userID := authObj.UserID
+	res := &app.UserProfile{}
+
+	// Return one user profile by id.
+	if err := c.Repository.GetUserProfile(userID, res); err != nil {
+		return ctx.InternalServerError(err)
+	}
+	if res.CreatedOn == 0 {
+		return ctx.NotFound(goa.ErrNotFound("User Profile not found"))
+	}
+
+	res.UserID = userID
 
 	return ctx.OK(res)
 }

@@ -4,11 +4,10 @@ import (
 	"github.com/JormungandrK/microservice-user-profile/app"
 	"github.com/goadesign/goa"
 
-	"time"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"time"
 )
-
 
 // UserProfileRepository defaines the interface for accessing the user profile data
 type UserProfileRepository interface {
