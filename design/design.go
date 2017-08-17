@@ -35,6 +35,16 @@ var _ = Resource("userProfile", func() {
 		Response(NotFound, ErrorMedia)
 		Response(InternalServerError, ErrorMedia)
 	})
+
+	Action("UpdateUserProfile", func() {
+		Description("Update user profile")
+		Routing(PUT("/{userId}/profile"))
+		Response(InternalServerError, ErrorMedia)
+		Response(NotFound, ErrorMedia)
+		Response(Created)
+		Response(OK)
+
+	})
 })
 
 // UserProfileMedia is the default media type for user-profile service

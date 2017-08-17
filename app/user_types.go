@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/JormungandrK/microservice-user-profile/design
-// --out=$(GOPATH)/src/github.com/JormungandrK/microservice-user-profile
+// --out=$(GOPATH)src/github.com/JormungandrK/microservice-user-profile
 // --version=v1.2.0-dirty
 
 package app
@@ -28,7 +28,7 @@ type userProfilePayload struct {
 func (ut *userProfilePayload) Validate() (err error) {
 	if ut.Email != nil {
 		if err2 := goa.ValidateFormat(goa.FormatEmail, *ut.Email); err2 != nil {
-			err = goa.MergeErrors(err, goa.InvalidFormatError(`response.email`, *ut.Email, goa.FormatEmail, err2))
+			err = goa.MergeErrors(err, goa.InvalidFormatError(`request.email`, *ut.Email, goa.FormatEmail, err2))
 		}
 	}
 	return
@@ -63,7 +63,7 @@ type UserProfilePayload struct {
 func (ut *UserProfilePayload) Validate() (err error) {
 	if ut.Email != nil {
 		if err2 := goa.ValidateFormat(goa.FormatEmail, *ut.Email); err2 != nil {
-			err = goa.MergeErrors(err, goa.InvalidFormatError(`response.email`, *ut.Email, goa.FormatEmail, err2))
+			err = goa.MergeErrors(err, goa.InvalidFormatError(`type.email`, *ut.Email, goa.FormatEmail, err2))
 		}
 	}
 	return

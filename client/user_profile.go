@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/JormungandrK/microservice-user-profile/design
-// --out=$(GOPATH)/src/github.com/JormungandrK/microservice-user-profile
+// --out=$(GOPATH)src/github.com/JormungandrK/microservice-user-profile
 // --version=v1.2.0-dirty
 
 package client
@@ -70,6 +70,35 @@ func (c *Client) NewGetUserProfileUserProfileRequest(ctx context.Context, path s
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	return req, nil
+}
+
+// UpdateUserProfileUserProfilePath computes a request path to the UpdateUserProfile action of userProfile.
+func UpdateUserProfileUserProfilePath() string {
+
+	return fmt.Sprintf("/user-profile/{userId}/profile")
+}
+
+// Update user profile
+func (c *Client) UpdateUserProfileUserProfile(ctx context.Context, path string) (*http.Response, error) {
+	req, err := c.NewUpdateUserProfileUserProfileRequest(ctx, path)
+	if err != nil {
+		return nil, err
+	}
+	return c.Client.Do(ctx, req)
+}
+
+// NewUpdateUserProfileUserProfileRequest create the request corresponding to the UpdateUserProfile action endpoint of the userProfile resource.
+func (c *Client) NewUpdateUserProfileUserProfileRequest(ctx context.Context, path string) (*http.Request, error) {
+	scheme := c.Scheme
+	if scheme == "" {
+		scheme = "http"
+	}
+	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	req, err := http.NewRequest("PUT", u.String(), nil)
 	if err != nil {
 		return nil, err
 	}

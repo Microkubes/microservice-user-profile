@@ -13,11 +13,10 @@ import (
 type UserProfileRepository interface {
 	// GetUserProfile looks up a UserProfile by the user ID.
 	GetUserProfile(userID string, mediaType *app.UserProfile) error
-
 	// UpdateUserProfile updates the UserProfile data for a particular user by its user ID.
 	// If the profile already exists, it updates the data. If not profile entry exists, a new one is created.
 	// Returns the updated or newly created user profile.
-	// UpdateUserProfile(profile app.UserProfilePayload) (*app.UserProfile, error)
+	UpdateUserProfile(profile app.UserProfilePayload) (*app.UserProfile, error)
 }
 
 // MongoCollection wraps a mgo.Collection to embed methods in models.
@@ -89,4 +88,29 @@ func (c *MongoCollection) GetUserProfile(userID string, mediaType *app.UserProfi
 	}
 
 	return nil
+}
+
+func (c *MongoCollection) UpdateUserProfile(profile app.UserProfilePayload) (*app.UserProfile, error) {
+	var p = UserProfilePayload{
+		ID: 	  profile.UserID,
+		Username: profile.Username,
+		FullName: profile.FullName,
+		Password: profile.Password,
+	}
+
+	upsertdata := bson.M{"$set": p}
+
+	info , err2 := c.UpsertId(p.ID, upsertdata)
+	fmt.Println("UpsertId -> ", info, err2)
+
+	result := UserProfilePayload{}
+
+	err = c.FindId(p.ID).One(&result)
+
+	if err != nil {
+			fmt.Println("FindId Error: ", err)
+			return
+	}
+
+	fmt.Println(result)                                                                                                                                                                                             	
 }

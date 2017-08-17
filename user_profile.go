@@ -5,13 +5,22 @@ import (
 	"github.com/JormungandrK/microservice-user-profile/app"
 	"github.com/JormungandrK/microservice-user-profile/db"
 	"github.com/goadesign/goa"
-)
 
+	"fmt"
+	"gopkg.in/mgo.v2/bson"
+)
+//   "gopkg.in/mgo.v2"
 // UserProfileController implements the userProfile resource.
 type UserProfileController struct {
 	*goa.Controller
 	Repository db.UserProfileRepository
 }
+
+// Collection is an interface to access to the collection struct.
+type Collection interface {
+        UpsertId(id interface{}, update interface{}) (info *ChangeInfo, err error)
+}
+
 
 // NewUserProfileController creates a userProfile controller.
 func NewUserProfileController(service *goa.Service, Repository db.UserProfileRepository) *UserProfileController {
@@ -37,6 +46,12 @@ func (c *UserProfileController) GetUserProfile(ctx *app.GetUserProfileUserProfil
 	res.UserID = ctx.UserID
 
 	return ctx.OK(res)
+}
+
+func (c *UserProfileController) UpdateUserProfile(ctx *app.UpdateUserProfileUserProfileContext) error {
+	// treba da se povika od repository so payload
+	// handle error
+
 }
 
 func (c *UserProfileController) GetMyProfile(ctx *app.GetMyProfileUserProfileContext) error {

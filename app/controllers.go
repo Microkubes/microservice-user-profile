@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/JormungandrK/microservice-user-profile/design
-// --out=$(GOPATH)/src/github.com/JormungandrK/microservice-user-profile
+// --out=$(GOPATH)src/github.com/JormungandrK/microservice-user-profile
 // --version=v1.2.0-dirty
 
 package app
@@ -60,6 +60,7 @@ type UserProfileController interface {
 	goa.Muxer
 	GetMyProfile(*GetMyProfileUserProfileContext) error
 	GetUserProfile(*GetUserProfileUserProfileContext) error
+	UpdateUserProfile(*UpdateUserProfileUserProfileContext) error
 }
 
 // MountUserProfileController "mounts" a UserProfile resource controller on the given service.
@@ -96,4 +97,19 @@ func MountUserProfileController(service *goa.Service, ctrl UserProfileController
 	}
 	service.Mux.Handle("GET", "/user-profile/:userId", ctrl.MuxHandler("GetUserProfile", h, nil))
 	service.LogInfo("mount", "ctrl", "UserProfile", "action", "GetUserProfile", "route", "GET /user-profile/:userId")
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewUpdateUserProfileUserProfileContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.UpdateUserProfile(rctx)
+	}
+	service.Mux.Handle("PUT", "/user-profile/{userId}/profile", ctrl.MuxHandler("UpdateUserProfile", h, nil))
+	service.LogInfo("mount", "ctrl", "UserProfile", "action", "UpdateUserProfile", "route", "PUT /user-profile/{userId}/profile")
 }
