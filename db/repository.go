@@ -7,6 +7,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"time"
+	"fmt"
 )
 
 // UserProfileRepository defaines the interface for accessing the user profile data
@@ -23,6 +24,13 @@ type UserProfileRepository interface {
 type MongoCollection struct {
 	*mgo.Collection
 }
+
+type UserProfPayLoad struct {
+  ID string
+  Email  string
+  FullName string
+}
+
 
 // NewSession returns a new Mongo Session.
 func NewSession(Host string, Username string, Password string, Database string) *mgo.Session {
@@ -91,11 +99,10 @@ func (c *MongoCollection) GetUserProfile(userID string, mediaType *app.UserProfi
 }
 
 func (c *MongoCollection) UpdateUserProfile(profile app.UserProfilePayload) (*app.UserProfile, error) {
-	var p = UserProfilePayload{
-		ID: 	  profile.UserID,
-		Username: profile.Username,
-		FullName: profile.FullName,
-		Password: profile.Password,
+	var p = UserProfPayLoad{
+		ID: 	 	profile.UserID,
+		Email: 		profile.Email,
+		FullName: 	profile.FullName,
 	}
 
 	upsertdata := bson.M{"$set": p}
@@ -103,7 +110,7 @@ func (c *MongoCollection) UpdateUserProfile(profile app.UserProfilePayload) (*ap
 	info , err2 := c.UpsertId(p.ID, upsertdata)
 	fmt.Println("UpsertId -> ", info, err2)
 
-	result := UserProfilePayload{}
+	result := UserProfPayLoad{}
 
 	err = c.FindId(p.ID).One(&result)
 
@@ -112,5 +119,6 @@ func (c *MongoCollection) UpdateUserProfile(profile app.UserProfilePayload) (*ap
 			return
 	}
 
-	fmt.Println(result)                                                                                                                                                                                             	
+	fmt.Println(result) 
+	return nil                                                                                                                                                                                            	
 }
