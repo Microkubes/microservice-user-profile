@@ -31,8 +31,6 @@ import (
 type (
 	// GetMyProfileUserProfileCommand is the command line data structure for the GetMyProfile action of userProfile
 	GetMyProfileUserProfileCommand struct {
-		// User ID
-		UserID      string
 		PrettyPrint bool
 	}
 
@@ -304,7 +302,7 @@ func (cmd *GetMyProfileUserProfileCommand) Run(c *client.Client, args []string) 
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.GetMyProfileUserProfile(ctx, path, cmd.UserID)
+	resp, err := c.GetMyProfileUserProfile(ctx, path)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -316,8 +314,6 @@ func (cmd *GetMyProfileUserProfileCommand) Run(c *client.Client, args []string) 
 
 // RegisterFlags registers the command flags with the command line.
 func (cmd *GetMyProfileUserProfileCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
-	var userID string
-	cc.Flags().StringVar(&cmd.UserID, "userId", userID, `User ID`)
 }
 
 // Run makes the HTTP request corresponding to the GetUserProfileUserProfileCommand command.

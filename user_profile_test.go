@@ -10,14 +10,14 @@ import (
 )
 
 var (
-	service         		= goa.New("user-profile-test")
-	database        		= db.New()
-	ctrl            		= NewUserProfileController(service, database)
-	hexObjectID     		= "5975c461f9f8eb02aae053f3"
-	internalErrorObjectID   = "6975c461f9f8eb02aae053f3"
-	fakeHexObjectID 		= "fakeobjectidab02aae053f3"
-	expectedUserEmail       = "frieda@oberbrunnerkirlin.name"
-	expectedUserFullName 	= "Alexandra Anderson"
+	service               = goa.New("user-profile-test")
+	database              = db.New()
+	ctrl                  = NewUserProfileController(service, database)
+	hexObjectID           = "5975c461f9f8eb02aae053f3"
+	internalErrorObjectID = "6975c461f9f8eb02aae053f3"
+	fakeHexObjectID       = "fakeobjectidab02aae053f3"
+	expectedUserEmail     = "frieda@oberbrunnerkirlin.name"
+	expectedUserFullName  = "Alexandra Anderson"
 )
 
 func TestGetUserProfileUserProfileOK(t *testing.T) {
@@ -83,10 +83,10 @@ func TestGetMyProfileUserProfileOK(t *testing.T) {
 
 func TestGetMyProfileUserProfileNotFound(t *testing.T) {
 	// The test helper takes care of validating the status code for us
-	test.GetMyProfileUserProfileNotFound(t, context.Background(), service, ctrl, fakeHexObjectID)	
+	test.GetMyProfileUserProfileNotFound(t, context.Background(), service, ctrl, fakeHexObjectID)
 }
 
 func TestGetMyProfileUserProfileInternalServerError(t *testing.T) {
 	// The test helper takes care of validating the status code for us
-	test.GetMyProfileUserProfileInternalServerError(t, context.Background(), service, ctrl, internalErrorObjectID)	
+	test.GetMyProfileUserProfileInternalServerError(t, context.Background(), service, ctrl, internalErrorObjectID)
 }

@@ -21,7 +21,6 @@ type GetMyProfileUserProfileContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
-	UserID string
 }
 
 // NewGetMyProfileUserProfileContext parses the incoming request URL and body, performs validations and creates the
@@ -33,13 +32,6 @@ func NewGetMyProfileUserProfileContext(ctx context.Context, r *http.Request, ser
 	req := goa.ContextRequest(ctx)
 	req.Request = r
 	rctx := GetMyProfileUserProfileContext{Context: ctx, ResponseData: resp, RequestData: req}
-	paramUserID := req.Params["userId"]
-	if len(paramUserID) == 0 {
-		err = goa.MergeErrors(err, goa.MissingParamError("userId"))
-	} else {
-		rawUserID := paramUserID[0]
-		rctx.UserID = rawUserID
-	}
 	return &rctx, err
 }
 

@@ -14,6 +14,7 @@ before_install:
   - go get github.com/AlekSi/gocov-xml
   - go get gopkg.in/h2non/gock.v1
   - go get github.com/JormungandrK/microservice-tools
+  - go get -u github.com/JormungandrK/microservice-security
   - go get github.com/goadesign/goa/...
   - go get gopkg.in/mgo.v2
 

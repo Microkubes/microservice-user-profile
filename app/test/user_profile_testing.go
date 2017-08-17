@@ -28,7 +28,7 @@ import (
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func GetMyProfileUserProfileInternalServerError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserProfileController, userID string) (http.ResponseWriter, error) {
+func GetMyProfileUserProfileInternalServerError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserProfileController) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -48,24 +48,14 @@ func GetMyProfileUserProfileInternalServerError(t goatest.TInterface, ctx contex
 
 	// Setup request context
 	rw := httptest.NewRecorder()
-	query := url.Values{}
-	{
-		sliceVal := []string{userID}
-		query["userId"] = sliceVal
-	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/user-profile/me"),
-		RawQuery: query.Encode(),
+		Path: fmt.Sprintf("/user-profile/me"),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	{
-		sliceVal := []string{userID}
-		prms["userId"] = sliceVal
-	}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -102,7 +92,7 @@ func GetMyProfileUserProfileInternalServerError(t goatest.TInterface, ctx contex
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func GetMyProfileUserProfileNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserProfileController, userID string) (http.ResponseWriter, error) {
+func GetMyProfileUserProfileNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserProfileController) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -122,24 +112,14 @@ func GetMyProfileUserProfileNotFound(t goatest.TInterface, ctx context.Context, 
 
 	// Setup request context
 	rw := httptest.NewRecorder()
-	query := url.Values{}
-	{
-		sliceVal := []string{userID}
-		query["userId"] = sliceVal
-	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/user-profile/me"),
-		RawQuery: query.Encode(),
+		Path: fmt.Sprintf("/user-profile/me"),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	{
-		sliceVal := []string{userID}
-		prms["userId"] = sliceVal
-	}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -176,7 +156,7 @@ func GetMyProfileUserProfileNotFound(t goatest.TInterface, ctx context.Context, 
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func GetMyProfileUserProfileOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserProfileController, userID string) (http.ResponseWriter, *app.UserProfile) {
+func GetMyProfileUserProfileOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserProfileController) (http.ResponseWriter, *app.UserProfile) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -196,24 +176,14 @@ func GetMyProfileUserProfileOK(t goatest.TInterface, ctx context.Context, servic
 
 	// Setup request context
 	rw := httptest.NewRecorder()
-	query := url.Values{}
-	{
-		sliceVal := []string{userID}
-		query["userId"] = sliceVal
-	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/user-profile/me"),
-		RawQuery: query.Encode(),
+		Path: fmt.Sprintf("/user-profile/me"),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	{
-		sliceVal := []string{userID}
-		prms["userId"] = sliceVal
-	}
 	if ctx == nil {
 		ctx = context.Background()
 	}

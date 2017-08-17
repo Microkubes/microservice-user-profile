@@ -31,10 +31,6 @@ var _ = Resource("userProfile", func() {
 	Action("GetMyProfile", func() {
 		Description("Get a UserProfile by UserID")
 		Routing(GET("/me"))
-        Params(func() {
-            Param("userId", String, "User ID")
-            Required("userId")
-        })		
 		Response(OK)
 		Response(NotFound, ErrorMedia)
 		Response(InternalServerError, ErrorMedia)

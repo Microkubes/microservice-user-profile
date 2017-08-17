@@ -24,8 +24,8 @@ func GetMyProfileUserProfilePath() string {
 }
 
 // Get a UserProfile by UserID
-func (c *Client) GetMyProfileUserProfile(ctx context.Context, path string, userID string) (*http.Response, error) {
-	req, err := c.NewGetMyProfileUserProfileRequest(ctx, path, userID)
+func (c *Client) GetMyProfileUserProfile(ctx context.Context, path string) (*http.Response, error) {
+	req, err := c.NewGetMyProfileUserProfileRequest(ctx, path)
 	if err != nil {
 		return nil, err
 	}
@@ -33,15 +33,12 @@ func (c *Client) GetMyProfileUserProfile(ctx context.Context, path string, userI
 }
 
 // NewGetMyProfileUserProfileRequest create the request corresponding to the GetMyProfile action endpoint of the userProfile resource.
-func (c *Client) NewGetMyProfileUserProfileRequest(ctx context.Context, path string, userID string) (*http.Request, error) {
+func (c *Client) NewGetMyProfileUserProfileRequest(ctx context.Context, path string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
-	values := u.Query()
-	values.Set("userId", userID)
-	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, err
