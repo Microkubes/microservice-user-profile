@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/JormungandrK/microservice-security/auth"
 	"github.com/JormungandrK/microservice-user-profile/app/test"
 	"github.com/JormungandrK/microservice-user-profile/db"
 	"github.com/goadesign/goa"
@@ -59,7 +60,11 @@ func TestGetMyProfileUserProfileOK(t *testing.T) {
 	// Call generated test helper, this checks that the returned media type is of the
 	// correct type (i.e. uses view "default") and validates the media type.
 	// Also, it ckecks the returned status code
-	_, user := test.GetMyProfileUserProfileOK(t, context.Background(), service, ctrl, hexObjectID)
+	ctx := context.Background()
+	authObj := &auth.Auth{UserID: "5975c461f9f8eb02aae053f3"}
+	ctx = auth.SetAuth(ctx, authObj)
+
+	_, user := test.GetMyProfileUserProfileOK(t, ctx, service, ctrl)
 
 	if user == nil {
 		t.Fatal("Nil user")
@@ -83,10 +88,18 @@ func TestGetMyProfileUserProfileOK(t *testing.T) {
 
 func TestGetMyProfileUserProfileNotFound(t *testing.T) {
 	// The test helper takes care of validating the status code for us
-	test.GetMyProfileUserProfileNotFound(t, context.Background(), service, ctrl, fakeHexObjectID)
+	ctx := context.Background()
+	authObj := &auth.Auth{UserID: "fakeobjectidab02aae053f3"}
+	ctx = auth.SetAuth(ctx, authObj)
+
+	test.GetMyProfileUserProfileNotFound(t, ctx, service, ctrl)
 }
 
 func TestGetMyProfileUserProfileInternalServerError(t *testing.T) {
 	// The test helper takes care of validating the status code for us
-	test.GetMyProfileUserProfileInternalServerError(t, context.Background(), service, ctrl, internalErrorObjectID)
+	ctx := context.Background()
+	authObj := &auth.Auth{UserID: "6975c461f9f8eb02aae053f3"}
+	ctx = auth.SetAuth(ctx, authObj)
+
+	test.GetMyProfileUserProfileInternalServerError(t, ctx, service, ctrl)
 }
