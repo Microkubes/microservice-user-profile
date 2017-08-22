@@ -99,26 +99,32 @@ func (c *MongoCollection) GetUserProfile(userID string, mediaType *app.UserProfi
 }
 
 func (c *MongoCollection) UpdateUserProfile(profile app.UserProfilePayload) (*app.UserProfile, error) {
+	userid   := *profile.UserID
+	email    := *profile.Email
+	fullname := *profile.FullName
+
 	var p = UserProfPayLoad{
-		ID: 	 	profile.UserID,
-		Email: 		profile.Email,
-		FullName: 	profile.FullName,
+		ID: 	 	userid,
+		Email: 		email,
+		FullName: 	fullname,
 	}
 
 	upsertdata := bson.M{"$set": p}
 
-	info , err2 := c.UpsertId(p.ID, upsertdata)
+	info, err2 := c.UpsertId(p.ID, upsertdata)
 	fmt.Println("UpsertId -> ", info, err2)
 
 	result := UserProfPayLoad{}
 
-	err = c.FindId(p.ID).One(&result)
+	err := c.FindId(p.ID).One(&result)
 
 	if err != nil {
 			fmt.Println("FindId Error: ", err)
-			return
 	}
 
+	res := &app.UserProfile{}
+
 	fmt.Println(result) 
-	return nil                                                                                                                                                                                            	
+	return res, err        
+	                                                                                                                                                                              	
 }
