@@ -60,12 +60,14 @@ func (db *DB) UpdateUserProfile(profile app.UserProfilePayload) (*app.UserProfil
             Email:    profile.Email,
             FullName: profile.FullName,
             UserID:   profile.UserID,
+			CreateOn: profile.CreateOn,
         }
     }else{
         db.users[*profile.UserID] = &app.UserProfilePayload{
             Email:    profile.Email,
             FullName: profile.FullName,
             UserID:   profile.UserID,
+			CreateOn: profile.CreateOn,
         }
     }
 
