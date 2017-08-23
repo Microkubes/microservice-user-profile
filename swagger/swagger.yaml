@@ -7,22 +7,28 @@ definitions:
   UserProfilePayload:
     description: UserProfile data
     example:
-      email: alvah_rutherford@zulauf.com
-      fullName: Vero maxime.
-      userId: Explicabo et cum sed.
+      createOn: 3.1143458e+18
+      email: alvah@keeling.net
+      fullName: Maxime itaque explicabo et cum.
+      userId: Est necessitatibus possimus autem.
     properties:
+      createOn:
+        description: Timestamp when was the profile created
+        example: 3.1143458e+18
+        format: int64
+        type: integer
       email:
         description: Email of user
-        example: alvah_rutherford@zulauf.com
+        example: alvah@keeling.net
         format: email
         type: string
       fullName:
         description: Full name of the user
-        example: Vero maxime.
+        example: Maxime itaque explicabo et cum.
         type: string
       userId:
         description: Unique user id
-        example: Explicabo et cum sed.
+        example: Est necessitatibus possimus autem.
         type: string
     title: UserProfilePayload
     type: object
@@ -176,6 +182,7 @@ paths:
         schema:
           $ref: '#/definitions/UserProfilePayload'
       produces:
+      - application/jormungandr.user-profile+json
       - application/vnd.goa.error
       - application/vnd.goa.error
       - application/jormungandr.user-profile+json
@@ -186,6 +193,8 @@ paths:
             $ref: '#/definitions/userProfile'
         "201":
           description: Created
+          schema:
+            $ref: '#/definitions/userProfile'
         "404":
           description: Not Found
           schema:
@@ -231,8 +240,6 @@ produces:
 - application/gob
 - application/x-gob
 responses:
-  Created:
-    description: Created
   OK:
     description: OK
     schema:

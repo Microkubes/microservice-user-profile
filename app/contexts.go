@@ -123,9 +123,9 @@ func (ctx *UpdateUserProfileUserProfileContext) OK(r *UserProfile) error {
 }
 
 // Created sends a HTTP response with status code 201.
-func (ctx *UpdateUserProfileUserProfileContext) Created() error {
-	ctx.ResponseData.WriteHeader(201)
-	return nil
+func (ctx *UpdateUserProfileUserProfileContext) Created(r *UserProfile) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/jormungandr.user-profile+json")
+	return ctx.ResponseData.Service.Send(ctx.Context, 201, r)
 }
 
 // NotFound sends a HTTP response with status code 404.

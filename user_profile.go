@@ -53,12 +53,13 @@ func (c *UserProfileController) GetUserProfile(ctx *app.GetUserProfileUserProfil
 
 func (c *UserProfileController) UpdateUserProfile(ctx *app.UpdateUserProfileUserProfileContext) error {
 	payload := *ctx.Payload
-	_, err := c.Repository.UpdateUserProfile(payload)
-	if err != nil {
-		return err
-	}
-	return nil
+	res, err := c.Repository.UpdateUserProfile(payload)
 
+	if err != nil {
+		return ctx.InternalServerError(err)
+	}
+	
+	return ctx.Created(res)
 }
 
 func (c *UserProfileController) GetMyProfile(ctx *app.GetMyProfileUserProfileContext) error {

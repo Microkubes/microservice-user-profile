@@ -42,7 +42,7 @@ var _ = Resource("userProfile", func() {
 		Payload(UserProfilePayload)
 		Response(InternalServerError, ErrorMedia)
 		Response(NotFound, ErrorMedia)
-		Response(Created)
+		Response(Created, UserProfileMedia)
 		Response(OK)
 
 	})
@@ -77,6 +77,7 @@ var UserProfilePayload = Type("UserProfilePayload", func() {
 	Description("UserProfile data")
 	Attribute("userId", String, "Unique user id")
 	Attribute("fullName", String, "Full name of the user")
+	Attribute("createOn", Integer, "Timestamp when was the profile created")
 	Attribute("email", String, "Email of user", func() {
 		Format("email")
 	})

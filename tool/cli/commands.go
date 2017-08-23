@@ -99,9 +99,10 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 Payload example:
 
 {
-   "email": "alvah_rutherford@zulauf.com",
-   "fullName": "Vero maxime.",
-   "userId": "Explicabo et cum sed."
+   "createOn": 3114345668361207195,
+   "email": "alvah@keeling.net",
+   "fullName": "Maxime itaque explicabo et cum.",
+   "userId": "Est necessitatibus possimus autem."
 }`,
 		RunE: func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
 	}

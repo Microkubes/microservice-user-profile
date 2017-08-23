@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/JormungandrK/microservice-security/auth"
+	"github.com/JormungandrK/microservice-user-profile/app"
 	"github.com/JormungandrK/microservice-user-profile/app/test"
 	"github.com/JormungandrK/microservice-user-profile/db"
 	"github.com/goadesign/goa"
@@ -20,6 +21,7 @@ var (
 	expectedUserEmail     = "frieda@oberbrunnerkirlin.name"
 	expectedUserFullName  = "Alexandra Anderson"
 )
+
 
 func TestGetUserProfileUserProfileOK(t *testing.T) {
 	// Call generated test helper, this checks that the returned media type is of the
@@ -103,4 +105,44 @@ func TestGetMyProfileUserProfileInternalServerError(t *testing.T) {
 
 	test.GetMyProfileUserProfileInternalServerError(t, ctx, service, ctrl)
 }
-``
+
+func TestUpdateUserProfileUserProfileInternalServerError(t *testing.T){
+	ctx := context.Background()
+
+	userProfilePayload := &app.UserProfilePayload{
+			UserID: 	&internalErrorObjectID,
+			FullName:   &expectedUserFullName,
+			Email:     	&expectedUserEmail,
+	}
+	_, users := test.UpdateUserProfileUserProfileInternalServerError(t, ctx, service, ctrl, userProfilePayload)
+	if users == nil {
+			t.Fatal("Expected the update user data.")
+	}
+}
+
+func TestUpdateUserProfileUserProfileNotFound(t *testing.T){
+	ctx := context.Background()
+	userProfilePayload := &app.UserProfilePayload{
+			UserID: 	&fakeHexObjectID,
+			FullName:   &expectedUserFullName,
+			Email:      &expectedUserEmail,
+	}
+	_, users := test.UpdateUserProfileUserProfileNotFound(t, ctx, service, ctrl, userProfilePayload)
+	if users == nil {
+			t.Fatal("Expected the update user data.")
+	}
+}
+
+func TestUpdateUserProfileUserProfileOK(t *testing.T){
+	ctx := context.Background()
+
+	userProfilePayload := &app.UserProfilePayload{
+			UserID: 	&hexObjectID,
+			FullName:   &expectedUserFullName,
+			Email:      &expectedUserEmail,
+	}
+	_, users := test.UpdateUserProfileUserProfileNotFound(t, ctx, service, ctrl, userProfilePayload)
+	if users == nil {
+			t.Fatal("Expected the update user data.")
+	}
+}

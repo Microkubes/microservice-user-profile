@@ -7,7 +7,6 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"time"
-	"fmt"
 )
 
 // UserProfileRepository defaines the interface for accessing the user profile data
@@ -24,13 +23,6 @@ type UserProfileRepository interface {
 type MongoCollection struct {
 	*mgo.Collection
 }
-
-type UserProfPayLoad struct {
-  ID string
-  Email  string
-  FullName string
-}
-
 
 // NewSession returns a new Mongo Session.
 func NewSession(Host string, Username string, Password string, Database string) *mgo.Session {
@@ -99,31 +91,28 @@ func (c *MongoCollection) GetUserProfile(userID string, mediaType *app.UserProfi
 }
 
 func (c *MongoCollection) UpdateUserProfile(profile app.UserProfilePayload) (*app.UserProfile, error) {
-	userid   := *profile.UserID
-	email    := *profile.Email
-	fullname := *profile.FullName
 
-	var p = UserProfPayLoad{
-		ID: 	 	userid,
-		Email: 		email,
-		FullName: 	fullname,
+	created := int(time.Now().Unix())
+	p := &app.UserProfilePayload{
+		UserID: 	profile.UserID,
+		Email: 		profile.Email,
+		FullName: 	profile.FullName,
+		CreateOn:   &created,
 	}
-
 	upsertdata := bson.M{"$set": p}
 
-	info, err2 := c.UpsertId(p.ID, upsertdata)
-	fmt.Println("UpsertId -> ", info, err2)
-
-	result := UserProfPayLoad{}
-
-	err := c.FindId(p.ID).One(&result)
+	_, err := c.UpsertId(p.UserID, upsertdata)
 
 	if err != nil {
-			fmt.Println("FindId Error: ", err)
+		return nil, goa.ErrInternal("Internal Server Error")
+	}
+	
+	res := &app.UserProfile{
+		UserID:     *profile.UserID,
+		FullName:   profile.FullName,
+		Email:      profile.Email,
+		CreatedOn:   created,
 	}
 
-	res := &app.UserProfile{}
-
-	fmt.Println(result) 
-	return res, err                                                                                                                                                                                 	
+	return res, nil
 }

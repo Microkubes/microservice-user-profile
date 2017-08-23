@@ -46,3 +46,29 @@ func (db *DB) GetUserProfile(objectID string, mediaType *app.UserProfile) error 
 
 	return nil
 }
+
+func (db *DB) UpdateUserProfile(profile app.UserProfilePayload) (*app.UserProfile, error){
+    if _, ok := db.users[*profile.UserID]; ok {
+        db.users[*profile.UserID] =  &app.UserProfilePayload{
+            Email:    profile.Email,
+            FullName: profile.FullName,
+            UserID:   profile.UserID,
+        }
+    }else{
+        db.users[*profile.UserID] = &app.UserProfilePayload{
+            Email:    profile.Email,
+            FullName: profile.FullName,
+            UserID:   profile.UserID,
+        }
+    }
+
+	res := &app.UserProfile{
+		UserID:     *profile.UserID,
+		FullName:   profile.FullName,
+		Email:      profile.Email,
+	}
+
+    // return db.users[*profile.UserID], nil
+
+	return res, nil
+}

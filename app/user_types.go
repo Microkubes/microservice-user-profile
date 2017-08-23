@@ -16,6 +16,8 @@ import (
 
 // UserProfile data
 type userProfilePayload struct {
+	// Timestamp when was the profile created
+	CreateOn *int `form:"createOn,omitempty" json:"createOn,omitempty" xml:"createOn,omitempty"`
 	// Email of user
 	Email *string `form:"email,omitempty" json:"email,omitempty" xml:"email,omitempty"`
 	// Full name of the user
@@ -37,6 +39,9 @@ func (ut *userProfilePayload) Validate() (err error) {
 // Publicize creates UserProfilePayload from userProfilePayload
 func (ut *userProfilePayload) Publicize() *UserProfilePayload {
 	var pub UserProfilePayload
+	if ut.CreateOn != nil {
+		pub.CreateOn = ut.CreateOn
+	}
 	if ut.Email != nil {
 		pub.Email = ut.Email
 	}
@@ -51,6 +56,8 @@ func (ut *userProfilePayload) Publicize() *UserProfilePayload {
 
 // UserProfile data
 type UserProfilePayload struct {
+	// Timestamp when was the profile created
+	CreateOn *int `form:"createOn,omitempty" json:"createOn,omitempty" xml:"createOn,omitempty"`
 	// Email of user
 	Email *string `form:"email,omitempty" json:"email,omitempty" xml:"email,omitempty"`
 	// Full name of the user
