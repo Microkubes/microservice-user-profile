@@ -52,8 +52,11 @@ func (c *UserProfileController) GetUserProfile(ctx *app.GetUserProfileUserProfil
 }
 
 func (c *UserProfileController) UpdateUserProfile(ctx *app.UpdateUserProfileUserProfileContext) error {
-	// treba da se povika od repository so payload
-	// handle error2
+	payload := *ctx.Payload
+	_, err := c.Repository.UpdateUserProfile(payload)
+	if err != nil {
+		return err
+	}
 	return nil
 
 }

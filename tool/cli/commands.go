@@ -43,6 +43,8 @@ type (
 
 	// UpdateUserProfileUserProfileCommand is the command line data structure for the UpdateUserProfile action of userProfile
 	UpdateUserProfileUserProfileCommand struct {
+		Payload     string
+		ContentType string
 		PrettyPrint bool
 	}
 
@@ -92,7 +94,16 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	sub = &cobra.Command{
 		Use:   `user-profile ["/user-profile/{userId}/profile"]`,
 		Short: ``,
-		RunE:  func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
+		Long: `
+
+Payload example:
+
+{
+   "email": "alvah_rutherford@zulauf.com",
+   "fullName": "Vero maxime.",
+   "userId": "Explicabo et cum sed."
+}`,
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
 	}
 	tmp3.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp3.PrettyPrint, "pp", false, "Pretty print response body")
@@ -369,9 +380,16 @@ func (cmd *UpdateUserProfileUserProfileCommand) Run(c *client.Client, args []str
 	} else {
 		path = "/user-profile/{userId}/profile"
 	}
+	var payload client.UserProfilePayload
+	if cmd.Payload != "" {
+		err := json.Unmarshal([]byte(cmd.Payload), &payload)
+		if err != nil {
+			return fmt.Errorf("failed to deserialize payload: %s", err)
+		}
+	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.UpdateUserProfileUserProfile(ctx, path)
+	resp, err := c.UpdateUserProfileUserProfile(ctx, path, &payload, cmd.ContentType)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -383,4 +401,6 @@ func (cmd *UpdateUserProfileUserProfileCommand) Run(c *client.Client, args []str
 
 // RegisterFlags registers the command flags with the command line.
 func (cmd *UpdateUserProfileUserProfileCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
+	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
 }

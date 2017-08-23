@@ -4,6 +4,28 @@ consumes:
 - application/gob
 - application/x-gob
 definitions:
+  UserProfilePayload:
+    description: UserProfile data
+    example:
+      email: alvah_rutherford@zulauf.com
+      fullName: Vero maxime.
+      userId: Explicabo et cum sed.
+    properties:
+      email:
+        description: Email of user
+        example: alvah_rutherford@zulauf.com
+        format: email
+        type: string
+      fullName:
+        description: Full name of the user
+        example: Vero maxime.
+        type: string
+      userId:
+        description: Unique user id
+        example: Explicabo et cum sed.
+        type: string
+    title: UserProfilePayload
+    type: object
   error:
     description: Error response media type (default view)
     example:
@@ -146,6 +168,13 @@ paths:
     put:
       description: Update user profile
       operationId: userProfile#UpdateUserProfile
+      parameters:
+      - description: UserProfile data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/UserProfilePayload'
       produces:
       - application/vnd.goa.error
       - application/vnd.goa.error

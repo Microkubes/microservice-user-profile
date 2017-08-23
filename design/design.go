@@ -39,6 +39,7 @@ var _ = Resource("userProfile", func() {
 	Action("UpdateUserProfile", func() {
 		Description("Update user profile")
 		Routing(PUT("/{userId}/profile"))
+		Payload(UserProfilePayload)
 		Response(InternalServerError, ErrorMedia)
 		Response(NotFound, ErrorMedia)
 		Response(Created)
@@ -46,6 +47,9 @@ var _ = Resource("userProfile", func() {
 
 	})
 })
+
+
+
 
 // UserProfileMedia is the default media type for user-profile service
 var UserProfileMedia = MediaType("application/jormungandr.user-profile+json", func() {

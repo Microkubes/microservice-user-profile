@@ -125,6 +125,5 @@ func (c *MongoCollection) UpdateUserProfile(profile app.UserProfilePayload) (*ap
 	res := &app.UserProfile{}
 
 	fmt.Println(result) 
-	return res, err        
-	                                                                                                                                                                              	
+	return res, err                                                                                                                                                                                 	
 }

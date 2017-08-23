@@ -103,3 +103,4 @@ func TestGetMyProfileUserProfileInternalServerError(t *testing.T) {
 
 	test.GetMyProfileUserProfileInternalServerError(t, ctx, service, ctrl)
 }
+``

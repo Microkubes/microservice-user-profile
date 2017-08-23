@@ -11,6 +11,7 @@
 package client
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"net/http"
@@ -83,8 +84,8 @@ func UpdateUserProfileUserProfilePath() string {
 }
 
 // Update user profile
-func (c *Client) UpdateUserProfileUserProfile(ctx context.Context, path string) (*http.Response, error) {
-	req, err := c.NewUpdateUserProfileUserProfileRequest(ctx, path)
+func (c *Client) UpdateUserProfileUserProfile(ctx context.Context, path string, payload *UserProfilePayload, contentType string) (*http.Response, error) {
+	req, err := c.NewUpdateUserProfileUserProfileRequest(ctx, path, payload, contentType)
 	if err != nil {
 		return nil, err
 	}
@@ -92,15 +93,29 @@ func (c *Client) UpdateUserProfileUserProfile(ctx context.Context, path string) 
 }
 
 // NewUpdateUserProfileUserProfileRequest create the request corresponding to the UpdateUserProfile action endpoint of the userProfile resource.
-func (c *Client) NewUpdateUserProfileUserProfileRequest(ctx context.Context, path string) (*http.Request, error) {
+func (c *Client) NewUpdateUserProfileUserProfileRequest(ctx context.Context, path string, payload *UserProfilePayload, contentType string) (*http.Request, error) {
+	var body bytes.Buffer
+	if contentType == "" {
+		contentType = "*/*" // Use default encoder
+	}
+	err := c.Encoder.Encode(payload, &body, contentType)
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode body: %s", err)
+	}
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
-	req, err := http.NewRequest("PUT", u.String(), nil)
+	req, err := http.NewRequest("PUT", u.String(), &body)
 	if err != nil {
 		return nil, err
+	}
+	header := req.Header
+	if contentType == "*/*" {
+		header.Set("Content-Type", "application/json")
+	} else {
+		header.Set("Content-Type", contentType)
 	}
 	return req, nil
 }

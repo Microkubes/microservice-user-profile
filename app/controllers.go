@@ -108,8 +108,29 @@ func MountUserProfileController(service *goa.Service, ctrl UserProfileController
 		if err != nil {
 			return err
 		}
+		// Build the payload
+		if rawPayload := goa.ContextRequest(ctx).Payload; rawPayload != nil {
+			rctx.Payload = rawPayload.(*UserProfilePayload)
+		} else {
+			return goa.MissingPayloadError()
+		}
 		return ctrl.UpdateUserProfile(rctx)
 	}
-	service.Mux.Handle("PUT", "/user-profile/{userId}/profile", ctrl.MuxHandler("UpdateUserProfile", h, nil))
+	service.Mux.Handle("PUT", "/user-profile/{userId}/profile", ctrl.MuxHandler("UpdateUserProfile", h, unmarshalUpdateUserProfileUserProfilePayload))
 	service.LogInfo("mount", "ctrl", "UserProfile", "action", "UpdateUserProfile", "route", "PUT /user-profile/{userId}/profile")
+}
+
+// unmarshalUpdateUserProfileUserProfilePayload unmarshals the request body into the context request data Payload field.
+func unmarshalUpdateUserProfileUserProfilePayload(ctx context.Context, service *goa.Service, req *http.Request) error {
+	payload := &userProfilePayload{}
+	if err := service.DecodeRequest(req, payload); err != nil {
+		return err
+	}
+	if err := payload.Validate(); err != nil {
+		// Initialize payload with private data structure so it can be logged
+		goa.ContextRequest(ctx).Payload = payload
+		return err
+	}
+	goa.ContextRequest(ctx).Payload = payload.Publicize()
+	return nil
 }
