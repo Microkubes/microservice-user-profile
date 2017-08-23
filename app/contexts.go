@@ -122,18 +122,6 @@ func (ctx *UpdateUserProfileUserProfileContext) OK(r *UserProfile) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
 
-// Created sends a HTTP response with status code 201.
-func (ctx *UpdateUserProfileUserProfileContext) Created(r *UserProfile) error {
-	ctx.ResponseData.Header().Set("Content-Type", "application/jormungandr.user-profile+json")
-	return ctx.ResponseData.Service.Send(ctx.Context, 201, r)
-}
-
-// NotFound sends a HTTP response with status code 404.
-func (ctx *UpdateUserProfileUserProfileContext) NotFound(r error) error {
-	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
-	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
-}
-
 // InternalServerError sends a HTTP response with status code 500.
 func (ctx *UpdateUserProfileUserProfileContext) InternalServerError(r error) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")

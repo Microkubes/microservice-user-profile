@@ -116,22 +116,10 @@ func TestUpdateUserProfileUserProfileInternalServerError(t *testing.T){
 	}
 	_, users := test.UpdateUserProfileUserProfileInternalServerError(t, ctx, service, ctrl, userProfilePayload)
 	if users == nil {
-			t.Fatal("Expected the update user data.")
+			t.Fatal()
 	}
 }
 
-func TestUpdateUserProfileUserProfileNotFound(t *testing.T){
-	ctx := context.Background()
-	userProfilePayload := &app.UserProfilePayload{
-			UserID: 	&fakeHexObjectID,
-			FullName:   &expectedUserFullName,
-			Email:      &expectedUserEmail,
-	}
-	_, users := test.UpdateUserProfileUserProfileNotFound(t, ctx, service, ctrl, userProfilePayload)
-	if users == nil {
-			t.Fatal("Expected the update user data.")
-	}
-}
 
 func TestUpdateUserProfileUserProfileOK(t *testing.T){
 	ctx := context.Background()
@@ -141,8 +129,8 @@ func TestUpdateUserProfileUserProfileOK(t *testing.T){
 			FullName:   &expectedUserFullName,
 			Email:      &expectedUserEmail,
 	}
-	_, users := test.UpdateUserProfileUserProfileNotFound(t, ctx, service, ctrl, userProfilePayload)
+	_, users := test.UpdateUserProfileUserProfileOK(t, ctx, service, ctrl, userProfilePayload)
 	if users == nil {
-			t.Fatal("Expected the update user data.")
+			t.Fatal()
 	}
 }

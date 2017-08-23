@@ -182,8 +182,6 @@ paths:
         schema:
           $ref: '#/definitions/UserProfilePayload'
       produces:
-      - application/jormungandr.user-profile+json
-      - application/vnd.goa.error
       - application/vnd.goa.error
       - application/jormungandr.user-profile+json
       responses:
@@ -191,14 +189,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/userProfile'
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/userProfile'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/error'
         "500":
           description: Internal Server Error
           schema:

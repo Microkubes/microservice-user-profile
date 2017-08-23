@@ -41,10 +41,7 @@ var _ = Resource("userProfile", func() {
 		Routing(PUT("/{userId}/profile"))
 		Payload(UserProfilePayload)
 		Response(InternalServerError, ErrorMedia)
-		Response(NotFound, ErrorMedia)
-		Response(Created, UserProfileMedia)
-		Response(OK)
-
+		Response(OK, UserProfileMedia)
 	})
 })
 

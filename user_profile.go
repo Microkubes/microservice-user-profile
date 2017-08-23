@@ -58,8 +58,8 @@ func (c *UserProfileController) UpdateUserProfile(ctx *app.UpdateUserProfileUser
 	if err != nil {
 		return ctx.InternalServerError(err)
 	}
-	
-	return ctx.Created(res)
+
+	return ctx.OK(res)
 }
 
 func (c *UserProfileController) GetMyProfile(ctx *app.GetMyProfileUserProfileContext) error {

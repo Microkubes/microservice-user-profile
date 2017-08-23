@@ -48,6 +48,13 @@ func (db *DB) GetUserProfile(objectID string, mediaType *app.UserProfile) error 
 }
 
 func (db *DB) UpdateUserProfile(profile app.UserProfilePayload) (*app.UserProfile, error){
+
+	if *profile.UserID == "6975c461f9f8eb02aae053f3" {
+		err := errors.New("Internal error")
+		return nil, goa.ErrInternal(err)
+	}
+
+
     if _, ok := db.users[*profile.UserID]; ok {
         db.users[*profile.UserID] =  &app.UserProfilePayload{
             Email:    profile.Email,
