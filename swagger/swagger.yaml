@@ -4,6 +4,26 @@ consumes:
 - application/gob
 - application/x-gob
 definitions:
+  UserProfilePayload:
+    description: UserProfile data
+    example:
+      email: alvah_rutherford@zulauf.com
+      fullName: Vero maxime.
+    properties:
+      email:
+        description: Email of user
+        example: alvah_rutherford@zulauf.com
+        format: email
+        type: string
+      fullName:
+        description: Full name of the user
+        example: Vero maxime.
+        type: string
+    required:
+    - fullName
+    - email
+    title: UserProfilePayload
+    type: object
   error:
     description: Error response media type (default view)
     example:
@@ -140,6 +160,39 @@ paths:
       schemes:
       - http
       summary: GetUserProfile userProfile
+      tags:
+      - userProfile
+  /user-profile/{userId}/profile:
+    put:
+      description: Update user profile
+      operationId: userProfile#UpdateUserProfile
+      parameters:
+      - description: User ID
+        in: query
+        name: userId
+        required: false
+        type: string
+      - description: UserProfile data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/UserProfilePayload'
+      produces:
+      - application/vnd.goa.error
+      - application/jormungandr.user-profile+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userProfile'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      summary: UpdateUserProfile userProfile
       tags:
       - userProfile
   /user-profile/me:

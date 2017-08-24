@@ -95,3 +95,41 @@ func (ctx *GetUserProfileUserProfileContext) InternalServerError(r error) error 
 	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
 	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
 }
+
+// UpdateUserProfileUserProfileContext provides the userProfile UpdateUserProfile action context.
+type UpdateUserProfileUserProfileContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	UserID  *string
+	Payload *UserProfilePayload
+}
+
+// NewUpdateUserProfileUserProfileContext parses the incoming request URL and body, performs validations and creates the
+// context used by the userProfile controller UpdateUserProfile action.
+func NewUpdateUserProfileUserProfileContext(ctx context.Context, r *http.Request, service *goa.Service) (*UpdateUserProfileUserProfileContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := UpdateUserProfileUserProfileContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramUserID := req.Params["userId"]
+	if len(paramUserID) > 0 {
+		rawUserID := paramUserID[0]
+		rctx.UserID = &rawUserID
+	}
+	return &rctx, err
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *UpdateUserProfileUserProfileContext) OK(r *UserProfile) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/jormungandr.user-profile+json")
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *UpdateUserProfileUserProfileContext) InternalServerError(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}

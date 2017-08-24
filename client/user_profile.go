@@ -11,6 +11,7 @@
 package client
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"net/http"
@@ -72,6 +73,54 @@ func (c *Client) NewGetUserProfileUserProfileRequest(ctx context.Context, path s
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, err
+	}
+	return req, nil
+}
+
+// UpdateUserProfileUserProfilePath computes a request path to the UpdateUserProfile action of userProfile.
+func UpdateUserProfileUserProfilePath() string {
+
+	return fmt.Sprintf("/user-profile/{userId}/profile")
+}
+
+// Update user profile
+func (c *Client) UpdateUserProfileUserProfile(ctx context.Context, path string, payload *UserProfilePayload, userID *string, contentType string) (*http.Response, error) {
+	req, err := c.NewUpdateUserProfileUserProfileRequest(ctx, path, payload, userID, contentType)
+	if err != nil {
+		return nil, err
+	}
+	return c.Client.Do(ctx, req)
+}
+
+// NewUpdateUserProfileUserProfileRequest create the request corresponding to the UpdateUserProfile action endpoint of the userProfile resource.
+func (c *Client) NewUpdateUserProfileUserProfileRequest(ctx context.Context, path string, payload *UserProfilePayload, userID *string, contentType string) (*http.Request, error) {
+	var body bytes.Buffer
+	if contentType == "" {
+		contentType = "*/*" // Use default encoder
+	}
+	err := c.Encoder.Encode(payload, &body, contentType)
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode body: %s", err)
+	}
+	scheme := c.Scheme
+	if scheme == "" {
+		scheme = "http"
+	}
+	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	values := u.Query()
+	if userID != nil {
+		values.Set("userId", *userID)
+	}
+	u.RawQuery = values.Encode()
+	req, err := http.NewRequest("PUT", u.String(), &body)
+	if err != nil {
+		return nil, err
+	}
+	header := req.Header
+	if contentType == "*/*" {
+		header.Set("Content-Type", "application/json")
+	} else {
+		header.Set("Content-Type", contentType)
 	}
 	return req, nil
 }

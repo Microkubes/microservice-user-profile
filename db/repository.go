@@ -13,11 +13,10 @@ import (
 type UserProfileRepository interface {
 	// GetUserProfile looks up a UserProfile by the user ID.
 	GetUserProfile(userID string, mediaType *app.UserProfile) error
-
 	// UpdateUserProfile updates the UserProfile data for a particular user by its user ID.
 	// If the profile already exists, it updates the data. If not profile entry exists, a new one is created.
 	// Returns the updated or newly created user profile.
-	// UpdateUserProfile(profile app.UserProfilePayload) (*app.UserProfile, error)
+	UpdateUserProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error)
 }
 
 // MongoCollection wraps a mgo.Collection to embed methods in models.
@@ -89,4 +88,35 @@ func (c *MongoCollection) GetUserProfile(userID string, mediaType *app.UserProfi
 	}
 
 	return nil
+}
+
+func (c *MongoCollection) UpdateUserProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
+	created := int(time.Now().Unix())
+
+	_, err := c.Upsert(
+		bson.M{"userid": userID},
+		bson.M{"$set": bson.M{
+		"userid":     userID,
+		"email":      profile.Email,
+		"fullname":   profile.FullName,
+		"createdon":  created,
+		},
+	})
+
+	// Handle errors
+	if err != nil {
+		if mgo.IsDup(err) {
+			return nil, goa.ErrBadRequest("Email or FullName already exists in the database")
+		}
+		return nil, goa.ErrInternal(err)
+	}
+	
+	res := &app.UserProfile{
+		UserID:     userID,
+		FullName:   &profile.FullName,
+		Email:      &profile.Email,
+		CreatedOn:  created,
+	}
+
+	return res, nil
 }

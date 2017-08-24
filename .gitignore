@@ -14,6 +14,10 @@ user-profile
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
 
+# bin
+tool/user-profile-cli/user
+
+
 # SSH Keys directory
 keys
 ssh-keys

@@ -35,7 +35,21 @@ var _ = Resource("userProfile", func() {
 		Response(NotFound, ErrorMedia)
 		Response(InternalServerError, ErrorMedia)
 	})
+
+	Action("UpdateUserProfile", func() {
+		Description("Update user profile")
+		Routing(PUT("/{userId}/profile"))
+		Params(func() {
+			Param("userId", String, "User ID")
+		})
+		Payload(UserProfilePayload)
+		Response(InternalServerError, ErrorMedia)
+		Response(OK, UserProfileMedia)
+	})
 })
+
+
+
 
 // UserProfileMedia is the default media type for user-profile service
 var UserProfileMedia = MediaType("application/jormungandr.user-profile+json", func() {
@@ -61,11 +75,13 @@ var UserProfileMedia = MediaType("application/jormungandr.user-profile+json", fu
 // UserProfilePayload is the payload specification
 var UserProfilePayload = Type("UserProfilePayload", func() {
 	Description("UserProfile data")
-	Attribute("userId", String, "Unique user id")
+
 	Attribute("fullName", String, "Full name of the user")
 	Attribute("email", String, "Email of user", func() {
 		Format("email")
 	})
+
+	Required("fullName", "email")
 })
 
 // Swagger UI

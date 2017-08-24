@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/JormungandrK/microservice-security/auth"
+	"github.com/JormungandrK/microservice-user-profile/app"
 	"github.com/JormungandrK/microservice-user-profile/app/test"
 	"github.com/JormungandrK/microservice-user-profile/db"
 	"github.com/goadesign/goa"
@@ -20,6 +21,7 @@ var (
 	expectedUserEmail     = "frieda@oberbrunnerkirlin.name"
 	expectedUserFullName  = "Alexandra Anderson"
 )
+
 
 func TestGetUserProfileUserProfileOK(t *testing.T) {
 	// Call generated test helper, this checks that the returned media type is of the
@@ -102,4 +104,31 @@ func TestGetMyProfileUserProfileInternalServerError(t *testing.T) {
 	ctx = auth.SetAuth(ctx, authObj)
 
 	test.GetMyProfileUserProfileInternalServerError(t, ctx, service, ctrl)
+}
+
+func TestUpdateUserProfileUserProfileInternalServerError(t *testing.T){
+	ctx := context.Background()
+
+	userProfilePayload := &app.UserProfilePayload{
+			FullName:   expectedUserFullName,
+			Email:     	expectedUserEmail,
+	}
+	_, users := test.UpdateUserProfileUserProfileInternalServerError(t, ctx, service, ctrl, &internalErrorObjectID, userProfilePayload)
+	if users == nil {
+			t.Fatal()
+	}
+}
+
+
+func TestUpdateUserProfileUserProfileOK(t *testing.T){
+	ctx := context.Background()
+
+	userProfilePayload := &app.UserProfilePayload{
+			FullName:   expectedUserFullName,
+			Email:      expectedUserEmail,
+	}
+	_, users := test.UpdateUserProfileUserProfileOK(t, ctx, service, ctrl, &hexObjectID, userProfilePayload)
+	if users == nil {
+			t.Fatal()
+	}
 }

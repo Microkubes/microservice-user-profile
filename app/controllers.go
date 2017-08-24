@@ -60,6 +60,7 @@ type UserProfileController interface {
 	goa.Muxer
 	GetMyProfile(*GetMyProfileUserProfileContext) error
 	GetUserProfile(*GetUserProfileUserProfileContext) error
+	UpdateUserProfile(*UpdateUserProfileUserProfileContext) error
 }
 
 // MountUserProfileController "mounts" a UserProfile resource controller on the given service.
@@ -96,4 +97,40 @@ func MountUserProfileController(service *goa.Service, ctrl UserProfileController
 	}
 	service.Mux.Handle("GET", "/user-profile/:userId", ctrl.MuxHandler("GetUserProfile", h, nil))
 	service.LogInfo("mount", "ctrl", "UserProfile", "action", "GetUserProfile", "route", "GET /user-profile/:userId")
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewUpdateUserProfileUserProfileContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		// Build the payload
+		if rawPayload := goa.ContextRequest(ctx).Payload; rawPayload != nil {
+			rctx.Payload = rawPayload.(*UserProfilePayload)
+		} else {
+			return goa.MissingPayloadError()
+		}
+		return ctrl.UpdateUserProfile(rctx)
+	}
+	service.Mux.Handle("PUT", "/user-profile/{userId}/profile", ctrl.MuxHandler("UpdateUserProfile", h, unmarshalUpdateUserProfileUserProfilePayload))
+	service.LogInfo("mount", "ctrl", "UserProfile", "action", "UpdateUserProfile", "route", "PUT /user-profile/{userId}/profile")
+}
+
+// unmarshalUpdateUserProfileUserProfilePayload unmarshals the request body into the context request data Payload field.
+func unmarshalUpdateUserProfileUserProfilePayload(ctx context.Context, service *goa.Service, req *http.Request) error {
+	payload := &userProfilePayload{}
+	if err := service.DecodeRequest(req, payload); err != nil {
+		return err
+	}
+	if err := payload.Validate(); err != nil {
+		// Initialize payload with private data structure so it can be logged
+		goa.ContextRequest(ctx).Payload = payload
+		return err
+	}
+	goa.ContextRequest(ctx).Payload = payload.Publicize()
+	return nil
 }
