@@ -51,9 +51,9 @@ func (c *UserProfileController) GetUserProfile(ctx *app.GetUserProfileUserProfil
 	return ctx.OK(res)
 }
 
+// UpdateUserProfile runs the UpdateUserProfile action.
 func (c *UserProfileController) UpdateUserProfile(ctx *app.UpdateUserProfileUserProfileContext) error {
-	payload := *ctx.Payload
-	res, err := c.Repository.UpdateUserProfile(payload)
+	res, err := c.Repository.UpdateUserProfile(ctx.Payload, *ctx.UserID)
 
 	if err != nil {
 		return ctx.InternalServerError(err)
@@ -62,6 +62,7 @@ func (c *UserProfileController) UpdateUserProfile(ctx *app.UpdateUserProfileUser
 	return ctx.OK(res)
 }
 
+// GetMyProfile runs the GetMyProfile action.
 func (c *UserProfileController) GetMyProfile(ctx *app.GetMyProfileUserProfileContext) error {
 	var authObj *auth.Auth
 

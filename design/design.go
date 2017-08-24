@@ -39,6 +39,9 @@ var _ = Resource("userProfile", func() {
 	Action("UpdateUserProfile", func() {
 		Description("Update user profile")
 		Routing(PUT("/{userId}/profile"))
+		Params(func() {
+			Param("userId", String, "User ID")
+		})
 		Payload(UserProfilePayload)
 		Response(InternalServerError, ErrorMedia)
 		Response(OK, UserProfileMedia)
@@ -72,12 +75,13 @@ var UserProfileMedia = MediaType("application/jormungandr.user-profile+json", fu
 // UserProfilePayload is the payload specification
 var UserProfilePayload = Type("UserProfilePayload", func() {
 	Description("UserProfile data")
-	Attribute("userId", String, "Unique user id")
+
 	Attribute("fullName", String, "Full name of the user")
-	Attribute("createOn", Integer, "Timestamp when was the profile created")
 	Attribute("email", String, "Email of user", func() {
 		Format("email")
 	})
+
+	Required("fullName", "email")
 })
 
 // Swagger UI

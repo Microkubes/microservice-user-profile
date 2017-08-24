@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/JormungandrK/microservice-user-profile/design
-// --out=$(GOPATH)src/github.com/JormungandrK/microservice-user-profile
+// --out=$(GOPATH)/src/github.com/JormungandrK/microservice-user-profile
 // --version=v1.2.0-dirty
 
 package client
@@ -84,8 +84,8 @@ func UpdateUserProfileUserProfilePath() string {
 }
 
 // Update user profile
-func (c *Client) UpdateUserProfileUserProfile(ctx context.Context, path string, payload *UserProfilePayload, contentType string) (*http.Response, error) {
-	req, err := c.NewUpdateUserProfileUserProfileRequest(ctx, path, payload, contentType)
+func (c *Client) UpdateUserProfileUserProfile(ctx context.Context, path string, payload *UserProfilePayload, userID *string, contentType string) (*http.Response, error) {
+	req, err := c.NewUpdateUserProfileUserProfileRequest(ctx, path, payload, userID, contentType)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +93,7 @@ func (c *Client) UpdateUserProfileUserProfile(ctx context.Context, path string, 
 }
 
 // NewUpdateUserProfileUserProfileRequest create the request corresponding to the UpdateUserProfile action endpoint of the userProfile resource.
-func (c *Client) NewUpdateUserProfileUserProfileRequest(ctx context.Context, path string, payload *UserProfilePayload, contentType string) (*http.Request, error) {
+func (c *Client) NewUpdateUserProfileUserProfileRequest(ctx context.Context, path string, payload *UserProfilePayload, userID *string, contentType string) (*http.Request, error) {
 	var body bytes.Buffer
 	if contentType == "" {
 		contentType = "*/*" // Use default encoder
@@ -107,6 +107,11 @@ func (c *Client) NewUpdateUserProfileUserProfileRequest(ctx context.Context, pat
 		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	values := u.Query()
+	if userID != nil {
+		values.Set("userId", *userID)
+	}
+	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("PUT", u.String(), &body)
 	if err != nil {
 		return nil, err

@@ -16,7 +16,7 @@ type UserProfileRepository interface {
 	// UpdateUserProfile updates the UserProfile data for a particular user by its user ID.
 	// If the profile already exists, it updates the data. If not profile entry exists, a new one is created.
 	// Returns the updated or newly created user profile.
-	UpdateUserProfile(profile app.UserProfilePayload) (*app.UserProfile, error)
+	UpdateUserProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error)
 }
 
 // MongoCollection wraps a mgo.Collection to embed methods in models.
@@ -90,28 +90,32 @@ func (c *MongoCollection) GetUserProfile(userID string, mediaType *app.UserProfi
 	return nil
 }
 
-func (c *MongoCollection) UpdateUserProfile(profile app.UserProfilePayload) (*app.UserProfile, error) {
-
+func (c *MongoCollection) UpdateUserProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
 	created := int(time.Now().Unix())
-	p := &app.UserProfilePayload{
-		UserID: 	profile.UserID,
-		Email: 		profile.Email,
-		FullName: 	profile.FullName,
-		CreateOn:   &created,
-	}
-	upsertdata := bson.M{"$set": p}
 
-	_, err := c.UpsertId(p.UserID, upsertdata)
+	_, err := c.Upsert(
+		bson.M{"userid": userID},
+		bson.M{"$set": bson.M{
+		"userid":     userID,
+		"email":      profile.Email,
+		"fullname":   profile.FullName,
+		"createdon":  created,
+		},
+	})
 
+	// Handle errors
 	if err != nil {
-		return nil, goa.ErrInternal("Internal Server Error")
+		if mgo.IsDup(err) {
+			return nil, goa.ErrBadRequest("Email or FullName already exists in the database")
+		}
+		return nil, goa.ErrInternal(err)
 	}
 	
 	res := &app.UserProfile{
-		UserID:     *profile.UserID,
-		FullName:   profile.FullName,
-		Email:      profile.Email,
-		CreatedOn:   created,
+		UserID:     userID,
+		FullName:   &profile.FullName,
+		Email:      &profile.Email,
+		CreatedOn:  created,
 	}
 
 	return res, nil

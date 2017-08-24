@@ -7,29 +7,21 @@ definitions:
   UserProfilePayload:
     description: UserProfile data
     example:
-      createOn: 3.1143458e+18
-      email: alvah@keeling.net
-      fullName: Maxime itaque explicabo et cum.
-      userId: Est necessitatibus possimus autem.
+      email: alvah_rutherford@zulauf.com
+      fullName: Vero maxime.
     properties:
-      createOn:
-        description: Timestamp when was the profile created
-        example: 3.1143458e+18
-        format: int64
-        type: integer
       email:
         description: Email of user
-        example: alvah@keeling.net
+        example: alvah_rutherford@zulauf.com
         format: email
         type: string
       fullName:
         description: Full name of the user
-        example: Maxime itaque explicabo et cum.
+        example: Vero maxime.
         type: string
-      userId:
-        description: Unique user id
-        example: Est necessitatibus possimus autem.
-        type: string
+    required:
+    - fullName
+    - email
     title: UserProfilePayload
     type: object
   error:
@@ -175,6 +167,11 @@ paths:
       description: Update user profile
       operationId: userProfile#UpdateUserProfile
       parameters:
+      - description: User ID
+        in: query
+        name: userId
+        required: false
+        type: string
       - description: UserProfile data
         in: body
         name: payload

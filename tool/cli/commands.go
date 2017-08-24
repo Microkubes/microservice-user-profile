@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/JormungandrK/microservice-user-profile/design
-// --out=$(GOPATH)src/github.com/JormungandrK/microservice-user-profile
+// --out=$(GOPATH)/src/github.com/JormungandrK/microservice-user-profile
 // --version=v1.2.0-dirty
 
 package cli
@@ -45,6 +45,8 @@ type (
 	UpdateUserProfileUserProfileCommand struct {
 		Payload     string
 		ContentType string
+		// User ID
+		UserID      string
 		PrettyPrint bool
 	}
 
@@ -99,10 +101,8 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 Payload example:
 
 {
-   "createOn": 3114345668361207195,
-   "email": "alvah@keeling.net",
-   "fullName": "Maxime itaque explicabo et cum.",
-   "userId": "Est necessitatibus possimus autem."
+   "email": "alvah_rutherford@zulauf.com",
+   "fullName": "Vero maxime."
 }`,
 		RunE: func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
 	}
@@ -390,7 +390,7 @@ func (cmd *UpdateUserProfileUserProfileCommand) Run(c *client.Client, args []str
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.UpdateUserProfileUserProfile(ctx, path, &payload, cmd.ContentType)
+	resp, err := c.UpdateUserProfileUserProfile(ctx, path, &payload, stringFlagVal("userId", cmd.UserID), cmd.ContentType)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -404,4 +404,6 @@ func (cmd *UpdateUserProfileUserProfileCommand) Run(c *client.Client, args []str
 func (cmd *UpdateUserProfileUserProfileCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
 	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
+	var userID string
+	cc.Flags().StringVar(&cmd.UserID, "userId", userID, `User ID`)
 }

@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/JormungandrK/microservice-user-profile/design
-// --out=$(GOPATH)src/github.com/JormungandrK/microservice-user-profile
+// --out=$(GOPATH)/src/github.com/JormungandrK/microservice-user-profile
 // --version=v1.2.0-dirty
 
 package app
@@ -101,6 +101,7 @@ type UpdateUserProfileUserProfileContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
+	UserID  *string
 	Payload *UserProfilePayload
 }
 
@@ -113,6 +114,11 @@ func NewUpdateUserProfileUserProfileContext(ctx context.Context, r *http.Request
 	req := goa.ContextRequest(ctx)
 	req.Request = r
 	rctx := UpdateUserProfileUserProfileContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramUserID := req.Params["userId"]
+	if len(paramUserID) > 0 {
+		rawUserID := paramUserID[0]
+		rctx.UserID = &rawUserID
+	}
 	return &rctx, err
 }
 

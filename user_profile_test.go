@@ -110,11 +110,10 @@ func TestUpdateUserProfileUserProfileInternalServerError(t *testing.T){
 	ctx := context.Background()
 
 	userProfilePayload := &app.UserProfilePayload{
-			UserID: 	&internalErrorObjectID,
-			FullName:   &expectedUserFullName,
-			Email:     	&expectedUserEmail,
+			FullName:   expectedUserFullName,
+			Email:     	expectedUserEmail,
 	}
-	_, users := test.UpdateUserProfileUserProfileInternalServerError(t, ctx, service, ctrl, userProfilePayload)
+	_, users := test.UpdateUserProfileUserProfileInternalServerError(t, ctx, service, ctrl, &internalErrorObjectID, userProfilePayload)
 	if users == nil {
 			t.Fatal()
 	}
@@ -125,11 +124,10 @@ func TestUpdateUserProfileUserProfileOK(t *testing.T){
 	ctx := context.Background()
 
 	userProfilePayload := &app.UserProfilePayload{
-			UserID: 	&hexObjectID,
-			FullName:   &expectedUserFullName,
-			Email:      &expectedUserEmail,
+			FullName:   expectedUserFullName,
+			Email:      expectedUserEmail,
 	}
-	_, users := test.UpdateUserProfileUserProfileOK(t, ctx, service, ctrl, userProfilePayload)
+	_, users := test.UpdateUserProfileUserProfileOK(t, ctx, service, ctrl, &hexObjectID, userProfilePayload)
 	if users == nil {
 			t.Fatal()
 	}
