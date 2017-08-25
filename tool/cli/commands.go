@@ -66,7 +66,7 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	}
 	tmp1 := new(GetMyProfileUserProfileCommand)
 	sub = &cobra.Command{
-		Use:   `user-profile ["/user-profile/me"]`,
+		Use:   `user-profile ["/profiles/me"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp1.Run(c, args) },
 	}
@@ -80,7 +80,7 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	}
 	tmp2 := new(GetUserProfileUserProfileCommand)
 	sub = &cobra.Command{
-		Use:   `user-profile ["/user-profile/USERID"]`,
+		Use:   `user-profile ["/users/USERID/profile"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp2.Run(c, args) },
 	}
@@ -94,7 +94,7 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	}
 	tmp3 := new(UpdateUserProfileUserProfileCommand)
 	sub = &cobra.Command{
-		Use:   `user-profile ["/user-profile/USERID/profile"]`,
+		Use:   `user-profile ["/users/USERID/profile"]`,
 		Short: ``,
 		Long: `
 
@@ -329,7 +329,7 @@ func (cmd *GetMyProfileUserProfileCommand) Run(c *client.Client, args []string) 
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = "/user-profile/me"
+		path = "/profiles/me"
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
@@ -353,7 +353,7 @@ func (cmd *GetUserProfileUserProfileCommand) Run(c *client.Client, args []string
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = fmt.Sprintf("/user-profile/%v", url.QueryEscape(cmd.UserID))
+		path = fmt.Sprintf("/users/%v/profile", url.QueryEscape(cmd.UserID))
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
@@ -379,7 +379,7 @@ func (cmd *UpdateUserProfileUserProfileCommand) Run(c *client.Client, args []str
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = fmt.Sprintf("/user-profile/%v/profile", url.QueryEscape(cmd.UserID))
+		path = fmt.Sprintf("/users/%v/profile", url.QueryEscape(cmd.UserID))
 	}
 	var payload client.UserProfilePayload
 	if cmd.Payload != "" {

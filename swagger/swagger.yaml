@@ -92,12 +92,43 @@ definitions:
     - createdOn
     title: 'Mediatype identifier: application/jormungandr.user-profile+json; view=default'
     type: object
-host: localhost:8080
+host: localhost:8082
 info:
   description: API for managing UserProfile data.
   title: User Profile Microservice
   version: "1.0"
 paths:
+  /profiles/me:
+    get:
+      description: Get a UserProfile by UserID
+      operationId: userProfile#GetMyProfile
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.goa.error
+      - application/vnd.goa.error
+      - application/jormungandr.user-profile+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userProfile'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      summary: GetMyProfile userProfile
+      tags:
+      - userProfile
   /swagger-ui/{filepath}:
     get:
       operationId: swagger#/swagger-ui/*filepath
@@ -130,7 +161,7 @@ paths:
       schemes:
       - http
       summary: Download swagger/swagger.json
-  /user-profile/{userId}:
+  /users/{userId}/profile:
     get:
       description: Get a UserProfile by UserID
       operationId: userProfile#GetUserProfile
@@ -167,7 +198,6 @@ paths:
       summary: GetUserProfile userProfile
       tags:
       - userProfile
-  /user-profile/{userId}/profile:
     put:
       description: Update user profile
       operationId: userProfile#UpdateUserProfile
@@ -203,37 +233,6 @@ paths:
       schemes:
       - http
       summary: UpdateUserProfile userProfile
-      tags:
-      - userProfile
-  /user-profile/me:
-    get:
-      description: Get a UserProfile by UserID
-      operationId: userProfile#GetMyProfile
-      produces:
-      - application/vnd.goa.error
-      - application/vnd.goa.error
-      - application/vnd.goa.error
-      - application/jormungandr.user-profile+json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/userProfile'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/error'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/error'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/error'
-      schemes:
-      - http
-      summary: GetMyProfile userProfile
       tags:
       - userProfile
 produces:

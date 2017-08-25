@@ -80,8 +80,8 @@ func MountUserProfileController(service *goa.Service, ctrl UserProfileController
 		}
 		return ctrl.GetMyProfile(rctx)
 	}
-	service.Mux.Handle("GET", "/user-profile/me", ctrl.MuxHandler("GetMyProfile", h, nil))
-	service.LogInfo("mount", "ctrl", "UserProfile", "action", "GetMyProfile", "route", "GET /user-profile/me")
+	service.Mux.Handle("GET", "/profiles/me", ctrl.MuxHandler("GetMyProfile", h, nil))
+	service.LogInfo("mount", "ctrl", "UserProfile", "action", "GetMyProfile", "route", "GET /profiles/me")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -95,8 +95,8 @@ func MountUserProfileController(service *goa.Service, ctrl UserProfileController
 		}
 		return ctrl.GetUserProfile(rctx)
 	}
-	service.Mux.Handle("GET", "/user-profile/:userId", ctrl.MuxHandler("GetUserProfile", h, nil))
-	service.LogInfo("mount", "ctrl", "UserProfile", "action", "GetUserProfile", "route", "GET /user-profile/:userId")
+	service.Mux.Handle("GET", "/users/:userId/profile", ctrl.MuxHandler("GetUserProfile", h, nil))
+	service.LogInfo("mount", "ctrl", "UserProfile", "action", "GetUserProfile", "route", "GET /users/:userId/profile")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -116,8 +116,8 @@ func MountUserProfileController(service *goa.Service, ctrl UserProfileController
 		}
 		return ctrl.UpdateUserProfile(rctx)
 	}
-	service.Mux.Handle("PUT", "/user-profile/:userId/profile", ctrl.MuxHandler("UpdateUserProfile", h, unmarshalUpdateUserProfileUserProfilePayload))
-	service.LogInfo("mount", "ctrl", "UserProfile", "action", "UpdateUserProfile", "route", "PUT /user-profile/:userId/profile")
+	service.Mux.Handle("PUT", "/users/:userId/profile", ctrl.MuxHandler("UpdateUserProfile", h, unmarshalUpdateUserProfileUserProfilePayload))
+	service.LogInfo("mount", "ctrl", "UserProfile", "action", "UpdateUserProfile", "route", "PUT /users/:userId/profile")
 }
 
 // unmarshalUpdateUserProfileUserProfilePayload unmarshals the request body into the context request data Payload field.

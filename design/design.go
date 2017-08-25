@@ -10,16 +10,15 @@ var _ = API("user-profile", func() {
 	Description("API for managing UserProfile data.")
 	Version("1.0")
 	Scheme("http")
-	Host("localhost:8080")
+	Host("localhost:8082")
 })
 
 var _ = Resource("userProfile", func() {
-	BasePath("user-profile")
 	DefaultMedia(UserProfileMedia)
 
 	Action("GetUserProfile", func() {
 		Description("Get a UserProfile by UserID")
-		Routing(GET("/:userId"))
+		Routing(GET("users/:userId/profile"))
 		Params(func() {
 			Param("userId", String, "The user ID")
 		})
@@ -31,7 +30,7 @@ var _ = Resource("userProfile", func() {
 
 	Action("GetMyProfile", func() {
 		Description("Get a UserProfile by UserID")
-		Routing(GET("/me"))
+		Routing(GET("profiles/me"))
 		Response(OK)
 		Response(NotFound, ErrorMedia)
 		Response(BadRequest, ErrorMedia)
@@ -40,7 +39,7 @@ var _ = Resource("userProfile", func() {
 
 	Action("UpdateUserProfile", func() {
 		Description("Update user profile")
-		Routing(PUT("/:userId/profile"))
+		Routing(PUT("users/:userId/profile"))
 		Params(func() {
 			Param("userId", String, "User ID")
 		})

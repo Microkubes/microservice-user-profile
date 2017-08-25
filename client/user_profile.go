@@ -21,7 +21,7 @@ import (
 // GetMyProfileUserProfilePath computes a request path to the GetMyProfile action of userProfile.
 func GetMyProfileUserProfilePath() string {
 
-	return fmt.Sprintf("/user-profile/me")
+	return fmt.Sprintf("/profiles/me")
 }
 
 // Get a UserProfile by UserID
@@ -51,7 +51,7 @@ func (c *Client) NewGetMyProfileUserProfileRequest(ctx context.Context, path str
 func GetUserProfileUserProfilePath(userID string) string {
 	param0 := userID
 
-	return fmt.Sprintf("/user-profile/%s", param0)
+	return fmt.Sprintf("/users/%s/profile", param0)
 }
 
 // Get a UserProfile by UserID
@@ -81,7 +81,7 @@ func (c *Client) NewGetUserProfileUserProfileRequest(ctx context.Context, path s
 func UpdateUserProfileUserProfilePath(userID string) string {
 	param0 := userID
 
-	return fmt.Sprintf("/user-profile/%s/profile", param0)
+	return fmt.Sprintf("/users/%s/profile", param0)
 }
 
 // Update user profile

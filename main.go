@@ -47,7 +47,7 @@ func main() {
 	app.MountUserProfileController(service, c2)
 
 	// Start service
-	if err := service.ListenAndServe(":8080"); err != nil {
+	if err := service.ListenAndServe(":8082"); err != nil {
 		service.LogError("startup", "err", err)
 	}
 
