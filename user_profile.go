@@ -6,6 +6,7 @@ import (
 	"github.com/JormungandrK/microservice-user-profile/db"
 	"github.com/goadesign/goa"
 )
+
 //   "gopkg.in/mgo.v2"
 // UserProfileController implements the userProfile resource.
 type UserProfileController struct {
@@ -14,16 +15,15 @@ type UserProfileController struct {
 }
 
 type ChangeInfo struct {
-    Updated    int         // Number of existing documents updated
-    Removed    int         // Number of documents removed
-    UpsertedId interface{} // Upserted _id field, when not explicitly provided
+	Updated    int         // Number of existing documents updated
+	Removed    int         // Number of documents removed
+	UpsertedId interface{} // Upserted _id field, when not explicitly provided
 }
 
 // Collection is an interface to access to the collection struct.
 type Collection interface {
-        UpsertId(id interface{}, update interface{}) (info *ChangeInfo, err error)
+	UpsertId(id interface{}, update interface{}) (info *ChangeInfo, err error)
 }
-
 
 // NewUserProfileController creates a userProfile controller.
 func NewUserProfileController(service *goa.Service, Repository db.UserProfileRepository) *UserProfileController {
@@ -40,10 +40,16 @@ func (c *UserProfileController) GetUserProfile(ctx *app.GetUserProfileUserProfil
 
 	// Return one user profile by id.
 	if err := c.Repository.GetUserProfile(ctx.UserID, res); err != nil {
-		return ctx.InternalServerError(err)
-	}
-	if res.CreatedOn == 0 {
-		return ctx.NotFound(goa.ErrNotFound("User Profile not found"))
+		e := err.(*goa.ErrorResponse)
+	
+		switch e.Status {
+			case 400: 
+				return ctx.BadRequest(err)
+			case 404:
+				return ctx.NotFound(err)
+			default:
+				return ctx.InternalServerError(err)
+		}
 	}
 
 	res.UserID = ctx.UserID
@@ -56,7 +62,14 @@ func (c *UserProfileController) UpdateUserProfile(ctx *app.UpdateUserProfileUser
 	res, err := c.Repository.UpdateUserProfile(ctx.Payload, *ctx.UserID)
 
 	if err != nil {
-		return ctx.InternalServerError(err)
+		e := err.(*goa.ErrorResponse)
+	
+		switch e.Status {
+			case 400: 
+				return ctx.BadRequest(err)
+			default:
+				return ctx.InternalServerError(err)
+		}
 	}
 
 	return ctx.OK(res)
@@ -79,10 +92,16 @@ func (c *UserProfileController) GetMyProfile(ctx *app.GetMyProfileUserProfileCon
 
 	// Return one user profile by id.
 	if err := c.Repository.GetUserProfile(userID, res); err != nil {
-		return ctx.InternalServerError(err)
-	}
-	if res.CreatedOn == 0 {
-		return ctx.NotFound(goa.ErrNotFound("User Profile not found"))
+		e := err.(*goa.ErrorResponse)
+
+		switch e.Status {
+			case 400: 
+				return ctx.BadRequest(err)
+			case 404:
+				return ctx.NotFound(err)
+			default:
+				return ctx.InternalServerError(err)
+		}
 	}
 
 	res.UserID = userID

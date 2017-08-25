@@ -4,6 +4,7 @@
 *.so
 *.dylib
 user-profile
+tool/user-profile-cli/user-profile-cli
 
 # Test binary, build with `go test -c`
 *.test
@@ -15,8 +16,6 @@ user-profile
 .glide/
 
 # bin
-tool/user-profile-cli/user
-
 
 # SSH Keys directory
 keys

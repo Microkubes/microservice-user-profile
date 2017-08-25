@@ -143,12 +143,17 @@ paths:
       produces:
       - application/vnd.goa.error
       - application/vnd.goa.error
+      - application/vnd.goa.error
       - application/jormungandr.user-profile+json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/userProfile'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
         "404":
           description: Not Found
           schema:
@@ -180,12 +185,17 @@ paths:
           $ref: '#/definitions/UserProfilePayload'
       produces:
       - application/vnd.goa.error
+      - application/vnd.goa.error
       - application/jormungandr.user-profile+json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/userProfile'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
         "500":
           description: Internal Server Error
           schema:
@@ -202,12 +212,17 @@ paths:
       produces:
       - application/vnd.goa.error
       - application/vnd.goa.error
+      - application/vnd.goa.error
       - application/jormungandr.user-profile+json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/userProfile'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
         "404":
           description: Not Found
           schema:

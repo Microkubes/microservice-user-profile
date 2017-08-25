@@ -25,6 +25,7 @@ var _ = Resource("userProfile", func() {
 		})
 		Response(OK)
 		Response(NotFound, ErrorMedia)
+		Response(BadRequest, ErrorMedia)
 		Response(InternalServerError, ErrorMedia)
 	})
 
@@ -33,6 +34,7 @@ var _ = Resource("userProfile", func() {
 		Routing(GET("/me"))
 		Response(OK)
 		Response(NotFound, ErrorMedia)
+		Response(BadRequest, ErrorMedia)
 		Response(InternalServerError, ErrorMedia)
 	})
 
@@ -43,13 +45,11 @@ var _ = Resource("userProfile", func() {
 			Param("userId", String, "User ID")
 		})
 		Payload(UserProfilePayload)
+		Response(BadRequest, ErrorMedia)
 		Response(InternalServerError, ErrorMedia)
 		Response(OK, UserProfileMedia)
 	})
 })
-
-
-
 
 // UserProfileMedia is the default media type for user-profile service
 var UserProfileMedia = MediaType("application/jormungandr.user-profile+json", func() {

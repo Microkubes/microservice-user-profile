@@ -1,7 +1,6 @@
 package db
 
 import (
-	"errors"
 	"sync"
 
 	"github.com/JormungandrK/microservice-user-profile/app"
@@ -31,8 +30,11 @@ func (db *DB) GetUserProfile(objectID string, mediaType *app.UserProfile) error 
 	defer db.Unlock()
 
 	if objectID == "6975c461f9f8eb02aae053f3" {
-		err := errors.New("Internal error")
-		return goa.ErrInternal(err)
+		return goa.ErrInternal("Internal error")
+	}
+
+	if objectID == "fakeobjectidab02aae053f3" {
+		return goa.ErrNotFound("not found")
 	}
 
 	if user, ok := db.users[objectID]; ok {
@@ -45,30 +47,28 @@ func (db *DB) GetUserProfile(objectID string, mediaType *app.UserProfile) error 
 	return nil
 }
 
-func (db *DB) UpdateUserProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error){
+func (db *DB) UpdateUserProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
 
 	if userID == "6975c461f9f8eb02aae053f3" {
-		err := errors.New("Internal error")
-		return nil, goa.ErrInternal(err)
+		return nil, goa.ErrInternal("Internal error")
 	}
 
-
-    if _, ok := db.users[userID]; ok {
-        db.users[userID] =  &app.UserProfilePayload{
-            Email:    profile.Email,
-            FullName: profile.FullName,
-        }
-    }else{
-        db.users[userID] = &app.UserProfilePayload{
-            Email:    profile.Email,
-            FullName: profile.FullName,
-        }
-    }
+	if _, ok := db.users[userID]; ok {
+		db.users[userID] = &app.UserProfilePayload{
+			Email:    profile.Email,
+			FullName: profile.FullName,
+		}
+	} else {
+		db.users[userID] = &app.UserProfilePayload{
+			Email:    profile.Email,
+			FullName: profile.FullName,
+		}
+	}
 
 	res := &app.UserProfile{
-		UserID:     userID,
-		FullName:   &profile.FullName,
-		Email:      &profile.Email,
+		UserID:   userID,
+		FullName: &profile.FullName,
+		Email:    &profile.Email,
 	}
 
 	return res, nil

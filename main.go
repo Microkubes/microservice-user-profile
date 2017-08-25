@@ -36,7 +36,7 @@ func main() {
 	defer session.Close()
 
 	// Create users collection and indexes
-	indexes := []string{"fullname", "email"}
+	indexes := []string{"email"}
 	userProfileCollection := db.PrepareDB(session, database, "user-profiles", indexes)
 
 	// Mount "swagger" controller

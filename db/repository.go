@@ -70,53 +70,70 @@ func PrepareDB(session *mgo.Session, db string, dbCollection string, indexes []s
 
 // Find user profile by Id. Return media type if succeed.
 func (c *MongoCollection) GetUserProfile(userID string, mediaType *app.UserProfile) error {
-	// Return whether userID is a valid hex representation of object id.
-	if bson.IsObjectIdHex(userID) != true {
-		return goa.ErrInternal("Invalid User Id")
+	objectUserID, err := hexToObjectID(userID)
+	if err != nil {
+		return err
 	}
 
-	// Return an ObjectId from the provided hex representation.
-	objectID := bson.ObjectIdHex(userID)
-
-	// Return true if objectID is valid. A valid objectID must contain exactly 12 bytes.
-	if objectID.Valid() != true {
-		return goa.ErrInternal("Invalid object Id")
-	}
-
-	if err := c.FindId(objectID).One(&mediaType); err != nil {
-		return goa.ErrInternal(err)
+	if err := c.Find(bson.M{"userid": objectUserID}).One(&mediaType); err != nil {
+		if err.Error() == "not found" {
+			return goa.ErrNotFound(err)
+		} else {
+			return goa.ErrInternal(err)
+		}
 	}
 
 	return nil
 }
 
 func (c *MongoCollection) UpdateUserProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
-	created := int(time.Now().Unix())
+	objectUserID, err := hexToObjectID(userID)
+	if err != nil {
+		return nil, err
+	}
 
-	_, err := c.Upsert(
-		bson.M{"userid": userID},
+	created := int(time.Now().Unix())
+	_, err = c.Upsert(
+		bson.M{"userid": objectUserID},
 		bson.M{"$set": bson.M{
-		"userid":     userID,
-		"email":      profile.Email,
-		"fullname":   profile.FullName,
-		"createdon":  created,
+			"userid":    objectUserID,
+			"email":     profile.Email,
+			"fullname":  profile.FullName,
+			"createdon": created,
 		},
-	})
+		})
 
 	// Handle errors
 	if err != nil {
 		if mgo.IsDup(err) {
-			return nil, goa.ErrBadRequest("Email or FullName already exists in the database")
+			return nil, goa.ErrBadRequest("email already exists in the database")
 		}
 		return nil, goa.ErrInternal(err)
 	}
-	
+
 	res := &app.UserProfile{
-		UserID:     userID,
-		FullName:   &profile.FullName,
-		Email:      &profile.Email,
-		CreatedOn:  created,
+		UserID:    userID,
+		FullName:  &profile.FullName,
+		Email:     &profile.Email,
+		CreatedOn: created,
 	}
 
 	return res, nil
+}
+
+func hexToObjectID(hexID string) (bson.ObjectId, error) {
+	// Return whether userID is a valid hex representation of object id.
+	if bson.IsObjectIdHex(hexID) != true {
+		return "", goa.ErrBadRequest("invalid User ID")
+	}
+
+	// Return an ObjectId from the provided hex representation.
+	objectID := bson.ObjectIdHex(hexID)
+
+	// Return true if objectID is valid. A valid objectID must contain exactly 12 bytes.
+	if objectID.Valid() != true {
+		return "", goa.ErrInternal("invalid object ID")
+	}
+
+	return objectID, nil
 }

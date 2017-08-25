@@ -41,6 +41,12 @@ func (ctx *GetMyProfileUserProfileContext) OK(r *UserProfile) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
 
+// BadRequest sends a HTTP response with status code 400.
+func (ctx *GetMyProfileUserProfileContext) BadRequest(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
+}
+
 // NotFound sends a HTTP response with status code 404.
 func (ctx *GetMyProfileUserProfileContext) NotFound(r error) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
@@ -82,6 +88,12 @@ func NewGetUserProfileUserProfileContext(ctx context.Context, r *http.Request, s
 func (ctx *GetUserProfileUserProfileContext) OK(r *UserProfile) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/jormungandr.user-profile+json")
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// BadRequest sends a HTTP response with status code 400.
+func (ctx *GetUserProfileUserProfileContext) BadRequest(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
 }
 
 // NotFound sends a HTTP response with status code 404.
@@ -126,6 +138,12 @@ func NewUpdateUserProfileUserProfileContext(ctx context.Context, r *http.Request
 func (ctx *UpdateUserProfileUserProfileContext) OK(r *UserProfile) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/jormungandr.user-profile+json")
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// BadRequest sends a HTTP response with status code 400.
+func (ctx *UpdateUserProfileUserProfileContext) BadRequest(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
 }
 
 // InternalServerError sends a HTTP response with status code 500.
