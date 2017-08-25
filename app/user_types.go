@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/JormungandrK/microservice-user-profile/design
-// --out=$(GOPATH)/src/github.com/JormungandrK/microservice-user-profile
+// --out=$(GOPATH)src/github.com/JormungandrK/microservice-user-profile
 // --version=v1.2.0-dirty
 
 package app

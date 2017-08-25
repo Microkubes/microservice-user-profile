@@ -75,6 +75,39 @@ func (c *UserProfileController) UpdateUserProfile(ctx *app.UpdateUserProfileUser
 	return ctx.OK(res)
 }
 
+
+func (c *UserProfileController) UpdateMyProfile(ctx *app.UpdateMyProfileUserProfileContext) error {
+        var authObj *auth.Auth
+
+        hasAuth := auth.HasAuth(ctx)
+
+        if hasAuth {
+                authObj = auth.GetAuth(ctx.Context)
+        } else {
+                return ctx.InternalServerError(goa.ErrInternal("Auth has not been set"))
+        }
+        
+        userID := authObj.UserID
+
+        res, err := c.Repository.UpdateMyProfile(ctx.Payload, userID)
+
+        if err != nil {
+			e := err.(*goa.ErrorResponse)
+
+			switch e.Status {
+				case 400: 
+					return ctx.BadRequest(err)
+				case 404:
+					return ctx.NotFound(err)
+				default:
+					return ctx.InternalServerError(err)
+			}
+        }
+
+        return ctx.OK(res)
+}
+
+
 // GetMyProfile runs the GetMyProfile action.
 func (c *UserProfileController) GetMyProfile(ctx *app.GetMyProfileUserProfileContext) error {
 	var authObj *auth.Auth

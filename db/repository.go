@@ -17,6 +17,7 @@ type UserProfileRepository interface {
 	// If the profile already exists, it updates the data. If not profile entry exists, a new one is created.
 	// Returns the updated or newly created user profile.
 	UpdateUserProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error)
+	UpdateMyProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error)
 }
 
 // MongoCollection wraps a mgo.Collection to embed methods in models.
@@ -84,6 +85,39 @@ func (c *MongoCollection) GetUserProfile(userID string, mediaType *app.UserProfi
 	}
 
 	return nil
+}
+
+func (c *MongoCollection) UpdateMyProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
+	// Update(selector interface{}, update interface{}) error
+	objectUserID, err := hexToObjectID(userID)
+	if err != nil {
+		return nil, err
+	}
+	
+	err = c.Update(
+		bson.M{"userid": objectUserID},
+		bson.M{"$set": bson.M{
+			"email":     profile.Email,
+			"fullname":  profile.FullName,
+		},
+		})
+
+	// Handle errors
+	if err != nil {
+		if err.Error() == "not found" {
+			return nil, goa.ErrNotFound(err)
+		}else{
+			return nil, goa.ErrInternal(err)
+		}
+	}
+
+	res := &app.UserProfile{
+		UserID:    userID,
+		FullName:  &profile.FullName,
+		Email:     &profile.Email,
+	}
+
+	return res, nil
 }
 
 func (c *MongoCollection) UpdateUserProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {

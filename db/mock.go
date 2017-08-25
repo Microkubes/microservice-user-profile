@@ -73,3 +73,29 @@ func (db *DB) UpdateUserProfile(profile *app.UserProfilePayload, userID string) 
 
 	return res, nil
 }
+
+func (db *DB) UpdateMyProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
+
+	if userID == "6975c461f9f8eb02aae053f3" {
+		return nil, goa.ErrInternal("Internal error")
+	}
+
+	if userID == "fakeobjectidab02aae053f3" {
+		return nil, goa.ErrNotFound("Not Found")
+	}
+
+	if _, ok := db.users[userID]; ok {
+		db.users[userID] = &app.UserProfilePayload{
+			Email:    profile.Email,
+			FullName: profile.FullName,
+		}
+	}
+
+	res := &app.UserProfile{
+		UserID:   userID,
+		FullName: &profile.FullName,
+		Email:    &profile.Email,
+	}
+
+	return res, nil
+}

@@ -112,7 +112,7 @@ func TestUpdateUserProfileUserProfileInternalServerError(t *testing.T) {
 		FullName: expectedUserFullName,
 		Email:    expectedUserEmail,
 	}
-	_, users := test.UpdateUserProfileUserProfileInternalServerError(t, ctx, service, ctrl, &internalErrorObjectID, userProfilePayload)
+	_, users := test.UpdateUserProfileUserProfileInternalServerError(t, ctx, service, ctrl, internalErrorObjectID, userProfilePayload)
 	if users == nil {
 		t.Fatal()
 	}
@@ -125,8 +125,60 @@ func TestUpdateUserProfileUserProfileOK(t *testing.T) {
 		FullName: expectedUserFullName,
 		Email:    expectedUserEmail,
 	}
-	_, users := test.UpdateUserProfileUserProfileOK(t, ctx, service, ctrl, &hexObjectID, userProfilePayload)
+	_, users := test.UpdateUserProfileUserProfileOK(t, ctx, service, ctrl, hexObjectID, userProfilePayload)
 	if users == nil {
 		t.Fatal()
 	}
 }
+
+// func UpdateMyProfileUserProfileOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserProfileController, payload *app.UserProfilePayload) (http.ResponseWriter, *app.UserProfile) {
+func TestUpdateMyProfileUserProfileOK(t *testing.T) {
+	ctx := context.Background()
+	authObj := &auth.Auth{UserID: hexObjectID}
+	ctx = auth.SetAuth(ctx, authObj)
+
+	userProfilePayload := &app.UserProfilePayload{
+		FullName: expectedUserFullName,
+		Email:    expectedUserEmail,
+	}
+
+	_, users := test.UpdateMyProfileUserProfileOK(t, ctx, service, ctrl, userProfilePayload)
+
+	if users == nil {
+		t.Fatal()
+	}
+}
+
+// // func UpdateMyProfileUserProfileInternalServerError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserProfileController, payload *app.UserProfilePayload) (http.ResponseWriter, error) {
+func TestUpdateMyProfileUserProfileInternalServerError(t *testing.T) {
+	ctx := context.Background()
+	authObj := &auth.Auth{UserID: internalErrorObjectID}
+	ctx = auth.SetAuth(ctx, authObj)
+
+	userProfilePayload := &app.UserProfilePayload{
+		FullName: expectedUserFullName,
+		Email:    expectedUserEmail,
+	}
+
+	_, users := test.UpdateMyProfileUserProfileInternalServerError(t, ctx, service, ctrl, userProfilePayload)
+
+	if users == nil {
+		t.Fatal()
+	}}
+
+// // func UpdateMyProfileUserProfileNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserProfileController, payload *app.UserProfilePayload) (http.ResponseWriter, error) {
+func TestUpdateMyProfileUserProfileNotFound(t *testing.T) {
+	ctx := context.Background()
+	authObj := &auth.Auth{UserID: fakeHexObjectID}
+	ctx = auth.SetAuth(ctx, authObj)
+
+	userProfilePayload := &app.UserProfilePayload{
+		FullName: expectedUserFullName,
+		Email:    expectedUserEmail,
+	}
+
+	_, users := test.UpdateMyProfileUserProfileNotFound(t, ctx, service, ctrl, userProfilePayload)
+
+	if users == nil {
+		t.Fatal()
+	}}
