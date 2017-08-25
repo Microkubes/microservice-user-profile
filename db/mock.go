@@ -37,6 +37,10 @@ func (db *DB) GetUserProfile(objectID string, mediaType *app.UserProfile) error 
 		return goa.ErrNotFound("not found")
 	}
 
+	if objectID == "fakeobjectidab02aae053f3aasadas" {
+		return goa.ErrBadRequest("invalid User ID")
+	}
+
 	if user, ok := db.users[objectID]; ok {
 		mediaType.UserID = objectID
 		mediaType.Email = &user.Email
@@ -48,9 +52,12 @@ func (db *DB) GetUserProfile(objectID string, mediaType *app.UserProfile) error 
 }
 
 func (db *DB) UpdateUserProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
-
 	if userID == "6975c461f9f8eb02aae053f3" {
 		return nil, goa.ErrInternal("Internal error")
+	}
+
+	if userID == "fakeobjectidab02aae053f3aasadas" {
+		return nil, goa.ErrBadRequest("invalid User ID")
 	}
 
 	if _, ok := db.users[userID]; ok {
@@ -82,6 +89,10 @@ func (db *DB) UpdateMyProfile(profile *app.UserProfilePayload, userID string) (*
 
 	if userID == "fakeobjectidab02aae053f3" {
 		return nil, goa.ErrNotFound("Not Found")
+	}
+
+	if userID == "fakeobjectidab02aae053f3aasadas" {
+		return nil, goa.ErrBadRequest("invalid User ID")
 	}
 
 	if _, ok := db.users[userID]; ok {
