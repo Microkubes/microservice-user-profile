@@ -78,14 +78,15 @@ func (c *Client) NewGetUserProfileUserProfileRequest(ctx context.Context, path s
 }
 
 // UpdateUserProfileUserProfilePath computes a request path to the UpdateUserProfile action of userProfile.
-func UpdateUserProfileUserProfilePath() string {
+func UpdateUserProfileUserProfilePath(userID string) string {
+	param0 := userID
 
-	return fmt.Sprintf("/user-profile/{userId}/profile")
+	return fmt.Sprintf("/user-profile/%s/profile", param0)
 }
 
 // Update user profile
-func (c *Client) UpdateUserProfileUserProfile(ctx context.Context, path string, payload *UserProfilePayload, userID *string, contentType string) (*http.Response, error) {
-	req, err := c.NewUpdateUserProfileUserProfileRequest(ctx, path, payload, userID, contentType)
+func (c *Client) UpdateUserProfileUserProfile(ctx context.Context, path string, payload *UserProfilePayload, contentType string) (*http.Response, error) {
+	req, err := c.NewUpdateUserProfileUserProfileRequest(ctx, path, payload, contentType)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +94,7 @@ func (c *Client) UpdateUserProfileUserProfile(ctx context.Context, path string, 
 }
 
 // NewUpdateUserProfileUserProfileRequest create the request corresponding to the UpdateUserProfile action endpoint of the userProfile resource.
-func (c *Client) NewUpdateUserProfileUserProfileRequest(ctx context.Context, path string, payload *UserProfilePayload, userID *string, contentType string) (*http.Request, error) {
+func (c *Client) NewUpdateUserProfileUserProfileRequest(ctx context.Context, path string, payload *UserProfilePayload, contentType string) (*http.Request, error) {
 	var body bytes.Buffer
 	if contentType == "" {
 		contentType = "*/*" // Use default encoder
@@ -107,11 +108,6 @@ func (c *Client) NewUpdateUserProfileUserProfileRequest(ctx context.Context, pat
 		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
-	values := u.Query()
-	if userID != nil {
-		values.Set("userId", *userID)
-	}
-	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("PUT", u.String(), &body)
 	if err != nil {
 		return nil, err

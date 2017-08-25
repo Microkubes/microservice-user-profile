@@ -94,7 +94,7 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	}
 	tmp3 := new(UpdateUserProfileUserProfileCommand)
 	sub = &cobra.Command{
-		Use:   `user-profile ["/user-profile/{userId}/profile"]`,
+		Use:   `user-profile ["/user-profile/USERID/profile"]`,
 		Short: ``,
 		Long: `
 
@@ -379,7 +379,7 @@ func (cmd *UpdateUserProfileUserProfileCommand) Run(c *client.Client, args []str
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = "/user-profile/{userId}/profile"
+		path = fmt.Sprintf("/user-profile/%v/profile", url.QueryEscape(cmd.UserID))
 	}
 	var payload client.UserProfilePayload
 	if cmd.Payload != "" {
@@ -390,7 +390,7 @@ func (cmd *UpdateUserProfileUserProfileCommand) Run(c *client.Client, args []str
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.UpdateUserProfileUserProfile(ctx, path, &payload, stringFlagVal("userId", cmd.UserID), cmd.ContentType)
+	resp, err := c.UpdateUserProfileUserProfile(ctx, path, &payload, cmd.ContentType)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err

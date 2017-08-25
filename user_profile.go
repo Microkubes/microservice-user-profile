@@ -59,7 +59,7 @@ func (c *UserProfileController) GetUserProfile(ctx *app.GetUserProfileUserProfil
 
 // UpdateUserProfile runs the UpdateUserProfile action.
 func (c *UserProfileController) UpdateUserProfile(ctx *app.UpdateUserProfileUserProfileContext) error {
-	res, err := c.Repository.UpdateUserProfile(ctx.Payload, *ctx.UserID)
+	res, err := c.Repository.UpdateUserProfile(ctx.Payload, ctx.UserID)
 
 	if err != nil {
 		e := err.(*goa.ErrorResponse)

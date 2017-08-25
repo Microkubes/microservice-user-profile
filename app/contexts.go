@@ -113,7 +113,7 @@ type UpdateUserProfileUserProfileContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
-	UserID  *string
+	UserID  string
 	Payload *UserProfilePayload
 }
 
@@ -129,7 +129,7 @@ func NewUpdateUserProfileUserProfileContext(ctx context.Context, r *http.Request
 	paramUserID := req.Params["userId"]
 	if len(paramUserID) > 0 {
 		rawUserID := paramUserID[0]
-		rctx.UserID = &rawUserID
+		rctx.UserID = rawUserID
 	}
 	return &rctx, err
 }

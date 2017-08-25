@@ -116,8 +116,8 @@ func MountUserProfileController(service *goa.Service, ctrl UserProfileController
 		}
 		return ctrl.UpdateUserProfile(rctx)
 	}
-	service.Mux.Handle("PUT", "/user-profile/{userId}/profile", ctrl.MuxHandler("UpdateUserProfile", h, unmarshalUpdateUserProfileUserProfilePayload))
-	service.LogInfo("mount", "ctrl", "UserProfile", "action", "UpdateUserProfile", "route", "PUT /user-profile/{userId}/profile")
+	service.Mux.Handle("PUT", "/user-profile/:userId/profile", ctrl.MuxHandler("UpdateUserProfile", h, unmarshalUpdateUserProfileUserProfilePayload))
+	service.LogInfo("mount", "ctrl", "UserProfile", "action", "UpdateUserProfile", "route", "PUT /user-profile/:userId/profile")
 }
 
 // unmarshalUpdateUserProfileUserProfilePayload unmarshals the request body into the context request data Payload field.

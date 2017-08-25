@@ -173,9 +173,9 @@ paths:
       operationId: userProfile#UpdateUserProfile
       parameters:
       - description: User ID
-        in: query
+        in: path
         name: userId
-        required: false
+        required: true
         type: string
       - description: UserProfile data
         in: body

@@ -40,7 +40,7 @@ var _ = Resource("userProfile", func() {
 
 	Action("UpdateUserProfile", func() {
 		Description("Update user profile")
-		Routing(PUT("/{userId}/profile"))
+		Routing(PUT("/:userId/profile"))
 		Params(func() {
 			Param("userId", String, "User ID")
 		})

@@ -552,7 +552,7 @@ func GetUserProfileUserProfileOK(t goatest.TInterface, ctx context.Context, serv
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func UpdateUserProfileUserProfileBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserProfileController, userID *string, payload *app.UserProfilePayload) (http.ResponseWriter, error) {
+func UpdateUserProfileUserProfileBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserProfileController, userID string, payload *app.UserProfilePayload) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -582,24 +582,15 @@ func UpdateUserProfileUserProfileBadRequest(t goatest.TInterface, ctx context.Co
 
 	// Setup request context
 	rw := httptest.NewRecorder()
-	query := url.Values{}
-	if userID != nil {
-		sliceVal := []string{*userID}
-		query["userId"] = sliceVal
-	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/user-profile/{userId}/profile"),
-		RawQuery: query.Encode(),
+		Path: fmt.Sprintf("/user-profile/%v/profile", userID),
 	}
 	req, _err := http.NewRequest("PUT", u.String(), nil)
 	if _err != nil {
 		panic("invalid test " + _err.Error()) // bug
 	}
 	prms := url.Values{}
-	if userID != nil {
-		sliceVal := []string{*userID}
-		prms["userId"] = sliceVal
-	}
+	prms["userId"] = []string{fmt.Sprintf("%v", userID)}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -637,7 +628,7 @@ func UpdateUserProfileUserProfileBadRequest(t goatest.TInterface, ctx context.Co
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func UpdateUserProfileUserProfileInternalServerError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserProfileController, userID *string, payload *app.UserProfilePayload) (http.ResponseWriter, error) {
+func UpdateUserProfileUserProfileInternalServerError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserProfileController, userID string, payload *app.UserProfilePayload) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -667,24 +658,15 @@ func UpdateUserProfileUserProfileInternalServerError(t goatest.TInterface, ctx c
 
 	// Setup request context
 	rw := httptest.NewRecorder()
-	query := url.Values{}
-	if userID != nil {
-		sliceVal := []string{*userID}
-		query["userId"] = sliceVal
-	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/user-profile/{userId}/profile"),
-		RawQuery: query.Encode(),
+		Path: fmt.Sprintf("/user-profile/%v/profile", userID),
 	}
 	req, _err := http.NewRequest("PUT", u.String(), nil)
 	if _err != nil {
 		panic("invalid test " + _err.Error()) // bug
 	}
 	prms := url.Values{}
-	if userID != nil {
-		sliceVal := []string{*userID}
-		prms["userId"] = sliceVal
-	}
+	prms["userId"] = []string{fmt.Sprintf("%v", userID)}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -722,7 +704,7 @@ func UpdateUserProfileUserProfileInternalServerError(t goatest.TInterface, ctx c
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func UpdateUserProfileUserProfileOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserProfileController, userID *string, payload *app.UserProfilePayload) (http.ResponseWriter, *app.UserProfile) {
+func UpdateUserProfileUserProfileOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserProfileController, userID string, payload *app.UserProfilePayload) (http.ResponseWriter, *app.UserProfile) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -753,24 +735,15 @@ func UpdateUserProfileUserProfileOK(t goatest.TInterface, ctx context.Context, s
 
 	// Setup request context
 	rw := httptest.NewRecorder()
-	query := url.Values{}
-	if userID != nil {
-		sliceVal := []string{*userID}
-		query["userId"] = sliceVal
-	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/user-profile/{userId}/profile"),
-		RawQuery: query.Encode(),
+		Path: fmt.Sprintf("/user-profile/%v/profile", userID),
 	}
 	req, _err := http.NewRequest("PUT", u.String(), nil)
 	if _err != nil {
 		panic("invalid test " + _err.Error()) // bug
 	}
 	prms := url.Values{}
-	if userID != nil {
-		sliceVal := []string{*userID}
-		prms["userId"] = sliceVal
-	}
+	prms["userId"] = []string{fmt.Sprintf("%v", userID)}
 	if ctx == nil {
 		ctx = context.Background()
 	}
