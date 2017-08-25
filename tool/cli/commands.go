@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/JormungandrK/microservice-user-profile/design
-// --out=$(GOPATH)/src/github.com/JormungandrK/microservice-user-profile
+// --out=$(GOPATH)src/github.com/JormungandrK/microservice-user-profile
 // --version=v1.2.0-dirty
 
 package cli
@@ -38,6 +38,13 @@ type (
 	GetUserProfileUserProfileCommand struct {
 		// The user ID
 		UserID      string
+		PrettyPrint bool
+	}
+
+	// UpdateMyProfileUserProfileCommand is the command line data structure for the UpdateMyProfile action of userProfile
+	UpdateMyProfileUserProfileCommand struct {
+		Payload     string
+		ContentType string
 		PrettyPrint bool
 	}
 
@@ -89,12 +96,12 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "update-user-profile",
-		Short: `Update user profile`,
+		Use:   "update-my-profile",
+		Short: `Update my profile`,
 	}
-	tmp3 := new(UpdateUserProfileUserProfileCommand)
+	tmp3 := new(UpdateMyProfileUserProfileCommand)
 	sub = &cobra.Command{
-		Use:   `user-profile ["/users/USERID/profile"]`,
+		Use:   `user-profile ["/profiles/me"]`,
 		Short: ``,
 		Long: `
 
@@ -108,6 +115,28 @@ Payload example:
 	}
 	tmp3.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp3.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "update-user-profile",
+		Short: `Update user profile`,
+	}
+	tmp4 := new(UpdateUserProfileUserProfileCommand)
+	sub = &cobra.Command{
+		Use:   `user-profile ["/users/USERID/profile"]`,
+		Short: ``,
+		Long: `
+
+Payload example:
+
+{
+   "email": "alvah_rutherford@zulauf.com",
+   "fullName": "Vero maxime."
+}`,
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp4.Run(c, args) },
+	}
+	tmp4.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp4.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 
@@ -371,6 +400,39 @@ func (cmd *GetUserProfileUserProfileCommand) Run(c *client.Client, args []string
 func (cmd *GetUserProfileUserProfileCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 	var userID string
 	cc.Flags().StringVar(&cmd.UserID, "userId", userID, `The user ID`)
+}
+
+// Run makes the HTTP request corresponding to the UpdateMyProfileUserProfileCommand command.
+func (cmd *UpdateMyProfileUserProfileCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = "/profiles/me"
+	}
+	var payload client.UserProfilePayload
+	if cmd.Payload != "" {
+		err := json.Unmarshal([]byte(cmd.Payload), &payload)
+		if err != nil {
+			return fmt.Errorf("failed to deserialize payload: %s", err)
+		}
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.UpdateMyProfileUserProfile(ctx, path, &payload, cmd.ContentType)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *UpdateMyProfileUserProfileCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
+	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
 }
 
 // Run makes the HTTP request corresponding to the UpdateUserProfileUserProfileCommand command.

@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/JormungandrK/microservice-user-profile/design
-// --out=$(GOPATH)/src/github.com/JormungandrK/microservice-user-profile
+// --out=$(GOPATH)src/github.com/JormungandrK/microservice-user-profile
 // --version=v1.2.0-dirty
 
 package app
@@ -104,6 +104,50 @@ func (ctx *GetUserProfileUserProfileContext) NotFound(r error) error {
 
 // InternalServerError sends a HTTP response with status code 500.
 func (ctx *GetUserProfileUserProfileContext) InternalServerError(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}
+
+// UpdateMyProfileUserProfileContext provides the userProfile UpdateMyProfile action context.
+type UpdateMyProfileUserProfileContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	Payload *UserProfilePayload
+}
+
+// NewUpdateMyProfileUserProfileContext parses the incoming request URL and body, performs validations and creates the
+// context used by the userProfile controller UpdateMyProfile action.
+func NewUpdateMyProfileUserProfileContext(ctx context.Context, r *http.Request, service *goa.Service) (*UpdateMyProfileUserProfileContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := UpdateMyProfileUserProfileContext{Context: ctx, ResponseData: resp, RequestData: req}
+	return &rctx, err
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *UpdateMyProfileUserProfileContext) OK(r *UserProfile) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/jormungandr.user-profile+json")
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// BadRequest sends a HTTP response with status code 400.
+func (ctx *UpdateMyProfileUserProfileContext) BadRequest(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
+}
+
+// NotFound sends a HTTP response with status code 404.
+func (ctx *UpdateMyProfileUserProfileContext) NotFound(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
+}
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *UpdateMyProfileUserProfileContext) InternalServerError(r error) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
 	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
 }
