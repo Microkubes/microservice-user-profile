@@ -1,6 +1,6 @@
 {
   "name": "user-profile-microservice",
-  "port": 8080,
+  "port": 8082,
   "virtual_host": "user-profile.services.jormugandr.org",
   "hosts": ["localhost", "user-profile.services.jormugandr.org"],
   "weight": 10,
