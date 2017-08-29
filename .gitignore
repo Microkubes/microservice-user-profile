@@ -4,7 +4,7 @@
 *.so
 *.dylib
 user-profile
-tool/user-profile-cli/user-profile-cli
+tool/user-profile-cli/user-cli
 
 # Test binary, build with `go test -c`
 *.test

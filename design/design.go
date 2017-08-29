@@ -28,6 +28,16 @@ var _ = Resource("userProfile", func() {
 		Response(InternalServerError, ErrorMedia)
 	})
 
+	Action("UpdateMyProfile", func() {
+		Description("Update my profile")
+		Routing(PUT("profiles/me"))
+		Payload(UserProfilePayload)
+		Response(OK)
+		Response(NotFound, ErrorMedia)
+		Response(BadRequest, ErrorMedia)
+		Response(InternalServerError, ErrorMedia)
+	})
+
 	Action("GetMyProfile", func() {
 		Description("Get a UserProfile by UserID")
 		Routing(GET("profiles/me"))
