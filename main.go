@@ -3,9 +3,13 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
+	"github.com/JormungandrK/microservice-security/chain"
+	"github.com/JormungandrK/microservice-security/flow"
+	"github.com/JormungandrK/microservice-tools/config"
 	"github.com/JormungandrK/microservice-tools/gateway"
 	"github.com/JormungandrK/microservice-user-profile/app"
 	"github.com/JormungandrK/microservice-user-profile/db"
@@ -14,9 +18,20 @@ import (
 )
 
 func main() {
+	gatewayAdminURL, configFile := loadGatewaySettings()
+	conf, err := config.LoadConfig(configFile)
+	if err != nil {
+		panic(err)
+	}
 	// Gateway self-registration
-	unregisterService := registerMicroservice()
+	unregisterService := registerMicroservice(gatewayAdminURL, conf)
 	defer unregisterService() // defer the unregister for after main exits
+
+	securityChain, cleanup, err := flow.NewSecurityFromConfig(conf)
+	if err != nil {
+		panic(err)
+	}
+	defer cleanup()
 
 	// Create service
 	service := goa.New("user-profile")
@@ -27,17 +42,20 @@ func main() {
 	service.Use(middleware.ErrorHandler(service, true))
 	service.Use(middleware.Recover())
 
+	service.Use(chain.AsGoaMiddleware(securityChain))
+
 	// Load MongoDB ENV variables
-	host, username, password, database := loadMongnoSettings()
+	//host, username, password, database := loadMongnoSettings()
+	dbConf := conf.DBConfig
 	// Create new session to MongoDB
-	session := db.NewSession(host, username, password, database)
+	session := db.NewSession(dbConf.Host, dbConf.Username, dbConf.Password, dbConf.DatabaseName)
 
 	// At the end close session
 	defer session.Close()
 
 	// Create users collection and indexes
 	indexes := []string{"email"}
-	userProfileCollection := db.PrepareDB(session, database, "user-profiles", indexes)
+	userProfileCollection := db.PrepareDB(session, dbConf.DatabaseName, "user-profiles", indexes)
 
 	// Mount "swagger" controller
 	c := NewSwaggerController(service)
@@ -47,7 +65,7 @@ func main() {
 	app.MountUserProfileController(service, c2)
 
 	// Start service
-	if err := service.ListenAndServe(":8082"); err != nil {
+	if err := service.ListenAndServe(fmt.Sprintf(":%d", conf.Service.MicroservicePort)); err != nil {
 		service.LogError("startup", "err", err)
 	}
 
@@ -89,13 +107,9 @@ func loadGatewaySettings() (string, string) {
 	return gatewayURL, serviceConfigFile
 }
 
-func registerMicroservice() func() {
-	gatewayURL, configFile := loadGatewaySettings()
-	registration, err := gateway.NewKongGatewayFromConfigFile(gatewayURL, &http.Client{}, configFile)
-	if err != nil {
-		panic(err)
-	}
-	err = registration.SelfRegister()
+func registerMicroservice(gatewayAdminURL string, conf *config.ServiceConfig) func() {
+	registration := gateway.NewKongGateway(gatewayAdminURL, &http.Client{}, conf.Service)
+	err := registration.SelfRegister()
 	if err != nil {
 		panic(err)
 	}
