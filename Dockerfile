@@ -14,7 +14,7 @@ RUN go get -u github.com/goadesign/goa/... && \
 
 RUN go get -u github.com/JormungandrK/microservice-tools; exit 0
 
-RUN go get -u github.com/JormungandrK/microservice-security; exit 0
+RUN go get -u github.com/JormungandrK/microservice-security/...; exit 0
 
 COPY . /go/src/github.com/JormungandrK/microservice-user-profile
 RUN go install github.com/JormungandrK/microservice-user-profile
