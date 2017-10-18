@@ -1,5 +1,8 @@
 User Profile Microservice
 =========================
+[![Build](https://travis-ci.com/JormungandrK/microservice-user-profile.svg?token=UB5yzsLHNSbtjSYrGbWf&branch=master)](https://travis-ci.com/JormungandrK/microservice-user-profile#)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/6614f6160530bc4d3298/test_coverage)](https://codeclimate.com/repos/59e726aa13034802aa00095e/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/6614f6160530bc4d3298/maintainability)](https://codeclimate.com/repos/59e726aa13034802aa00095e/maintainability)
 
 ## Prerequisite
 Create a project directory. Set GOPATH enviroment variable to that project. Add $GOPATH/bin to the $PATH
