@@ -69,7 +69,7 @@ func PrepareDB(session *mgo.Session, db string, dbCollection string, indexes []s
 	return collection
 }
 
-// Find user profile by Id. Return media type if succeed.
+// GetUserProfile finds user profile by Id. Return media type if succeed.
 func (c *MongoCollection) GetUserProfile(userID string, mediaType *app.UserProfile) error {
 	objectUserID, err := hexToObjectID(userID)
 	if err != nil {
@@ -79,26 +79,26 @@ func (c *MongoCollection) GetUserProfile(userID string, mediaType *app.UserProfi
 	if err := c.Find(bson.M{"userid": objectUserID}).One(&mediaType); err != nil {
 		if err.Error() == "not found" {
 			return goa.ErrNotFound(err)
-		} else {
-			return goa.ErrInternal(err)
 		}
+		return goa.ErrInternal(err)
 	}
 
 	return nil
 }
 
+// UpdateMyProfile updates own profile.
 func (c *MongoCollection) UpdateMyProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
 	// Update(selector interface{}, update interface{}) error
 	objectUserID, err := hexToObjectID(userID)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	err = c.Update(
 		bson.M{"userid": objectUserID},
 		bson.M{"$set": bson.M{
-			"email":     profile.Email,
-			"fullname":  profile.FullName,
+			"email":    profile.Email,
+			"fullname": profile.FullName,
 		},
 		})
 
@@ -106,20 +106,20 @@ func (c *MongoCollection) UpdateMyProfile(profile *app.UserProfilePayload, userI
 	if err != nil {
 		if err.Error() == "not found" {
 			return nil, goa.ErrNotFound(err)
-		}else{
-			return nil, goa.ErrInternal(err)
 		}
+		return nil, goa.ErrInternal(err)
 	}
 
 	res := &app.UserProfile{
-		UserID:    userID,
-		FullName:  &profile.FullName,
-		Email:     &profile.Email,
+		UserID:   userID,
+		FullName: &profile.FullName,
+		Email:    &profile.Email,
 	}
 
 	return res, nil
 }
 
+// UpdateUserProfile updates user profile by id. Return media type if succeed.
 func (c *MongoCollection) UpdateUserProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
 	objectUserID, err := hexToObjectID(userID)
 	if err != nil {

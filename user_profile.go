@@ -7,17 +7,17 @@ import (
 	"github.com/goadesign/goa"
 )
 
-//   "gopkg.in/mgo.v2"
 // UserProfileController implements the userProfile resource.
 type UserProfileController struct {
 	*goa.Controller
 	Repository db.UserProfileRepository
 }
 
+// ChangeInfo keeps the number of changed documents
 type ChangeInfo struct {
 	Updated    int         // Number of existing documents updated
 	Removed    int         // Number of documents removed
-	UpsertedId interface{} // Upserted _id field, when not explicitly provided
+	UpsertedID interface{} // Upserted _id field, when not explicitly provided
 }
 
 // Collection is an interface to access to the collection struct.
@@ -41,14 +41,14 @@ func (c *UserProfileController) GetUserProfile(ctx *app.GetUserProfileUserProfil
 	// Return one user profile by id.
 	if err := c.Repository.GetUserProfile(ctx.UserID, res); err != nil {
 		e := err.(*goa.ErrorResponse)
-	
+
 		switch e.Status {
-			case 400: 
-				return ctx.BadRequest(err)
-			case 404:
-				return ctx.NotFound(err)
-			default:
-				return ctx.InternalServerError(err)
+		case 400:
+			return ctx.BadRequest(err)
+		case 404:
+			return ctx.NotFound(err)
+		default:
+			return ctx.InternalServerError(err)
 		}
 	}
 
@@ -63,50 +63,49 @@ func (c *UserProfileController) UpdateUserProfile(ctx *app.UpdateUserProfileUser
 
 	if err != nil {
 		e := err.(*goa.ErrorResponse)
-	
+
 		switch e.Status {
-			case 400: 
-				return ctx.BadRequest(err)
-			default:
-				return ctx.InternalServerError(err)
+		case 400:
+			return ctx.BadRequest(err)
+		default:
+			return ctx.InternalServerError(err)
 		}
 	}
 
 	return ctx.OK(res)
 }
 
-
+// UpdateMyProfile runs the UpdateMyProfile action.
 func (c *UserProfileController) UpdateMyProfile(ctx *app.UpdateMyProfileUserProfileContext) error {
-        var authObj *auth.Auth
+	var authObj *auth.Auth
 
-        hasAuth := auth.HasAuth(ctx)
+	hasAuth := auth.HasAuth(ctx)
 
-        if hasAuth {
-                authObj = auth.GetAuth(ctx.Context)
-        } else {
-                return ctx.InternalServerError(goa.ErrInternal("Auth has not been set"))
-        }
-        
-        userID := authObj.UserID
+	if hasAuth {
+		authObj = auth.GetAuth(ctx.Context)
+	} else {
+		return ctx.InternalServerError(goa.ErrInternal("Auth has not been set"))
+	}
 
-        res, err := c.Repository.UpdateMyProfile(ctx.Payload, userID)
+	userID := authObj.UserID
 
-        if err != nil {
-			e := err.(*goa.ErrorResponse)
+	res, err := c.Repository.UpdateMyProfile(ctx.Payload, userID)
 
-			switch e.Status {
-				case 400: 
-					return ctx.BadRequest(err)
-				case 404:
-					return ctx.NotFound(err)
-				default:
-					return ctx.InternalServerError(err)
-			}
-        }
+	if err != nil {
+		e := err.(*goa.ErrorResponse)
 
-        return ctx.OK(res)
+		switch e.Status {
+		case 400:
+			return ctx.BadRequest(err)
+		case 404:
+			return ctx.NotFound(err)
+		default:
+			return ctx.InternalServerError(err)
+		}
+	}
+
+	return ctx.OK(res)
 }
-
 
 // GetMyProfile runs the GetMyProfile action.
 func (c *UserProfileController) GetMyProfile(ctx *app.GetMyProfileUserProfileContext) error {
@@ -128,12 +127,12 @@ func (c *UserProfileController) GetMyProfile(ctx *app.GetMyProfileUserProfileCon
 		e := err.(*goa.ErrorResponse)
 
 		switch e.Status {
-			case 400: 
-				return ctx.BadRequest(err)
-			case 404:
-				return ctx.NotFound(err)
-			default:
-				return ctx.InternalServerError(err)
+		case 400:
+			return ctx.BadRequest(err)
+		case 404:
+			return ctx.NotFound(err)
+		default:
+			return ctx.InternalServerError(err)
 		}
 	}
 
