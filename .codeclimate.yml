@@ -6,6 +6,9 @@ engines:
     enabled: true
   golint:
     enabled: true
+    checks:
+      GoLint/Imports/ImportDot:
+        enabled: false
   govet:
     enabled: true
 ratings:
