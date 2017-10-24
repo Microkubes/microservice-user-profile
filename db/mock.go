@@ -51,6 +51,7 @@ func (db *DB) GetUserProfile(objectID string, mediaType *app.UserProfile) error 
 	return nil
 }
 
+// UpdateUserProfile mock implementation
 func (db *DB) UpdateUserProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
 	if userID == "6975c461f9f8eb02aae053f3" {
 		return nil, goa.ErrInternal("Internal error")
@@ -81,6 +82,7 @@ func (db *DB) UpdateUserProfile(profile *app.UserProfilePayload, userID string) 
 	return res, nil
 }
 
+// UpdateMyProfile mock implementation
 func (db *DB) UpdateMyProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
 
 	if userID == "6975c461f9f8eb02aae053f3" {
