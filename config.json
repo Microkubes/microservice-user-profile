@@ -7,28 +7,28 @@
     "weight": 10,
     "slots": 100
   },
-  "gatewayUrl": "http://localhost:8000",
+  "gatewayUrl": "http://kong:8000",
   "security":{
-    "keysDir": "keys",
+    "keysDir": "/run/secrets",
     "jwt":{
       "description": "JWT security middleware",
-      "tokenUrl": "http://localhost:8000/jwt/signin"
+      "tokenUrl": "http://kong:8000/jwt/signin"
     },
     "saml":{
-      "certFile": "keys/default.cert",
-      "keyFile": "keys/default",
-      "identityProviderUrl": "http://localhost:8000/saml/idp",
-      "userServiceUrl": "http://localhost:8000/user",
-      "registrationServiceUrl": "http://localhost:8000/user/register"
+      "certFile": "/run/secrets/service.cert",
+      "keyFile": "/run/secrets/service.key",
+      "identityProviderUrl": "http://kong:8000/saml/idp",
+      "userServiceUrl": "http://kong:8000/user",
+      "registrationServiceUrl": "http://kong:8000/user/register"
     },
     "oauth2":{
       "description": "OAuth2 security middleware",
-      "tokenUrl": "https://localhost:8000/oauth2/token",
-      "authorizeUrl": "https://localhost:8000/oauth2/authorize"
+      "tokenUrl": "https://kong:8000/oauth2/token",
+      "authorizeUrl": "https://kong:8000/oauth2/authorize"
     }
   },
   "database":{
-    "host": "127.0.0.1:27017",
+    "host": "mongo:27017",
     "database": "user-profiles",
     "user": "restapi",
     "pass": "restapi"
