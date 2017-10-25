@@ -81,8 +81,8 @@ func MountUserProfileController(service *goa.Service, ctrl UserProfileController
 		}
 		return ctrl.GetMyProfile(rctx)
 	}
-	service.Mux.Handle("GET", "/me", ctrl.MuxHandler("GetMyProfile", h, nil))
-	service.LogInfo("mount", "ctrl", "UserProfile", "action", "GetMyProfile", "route", "GET /me")
+	service.Mux.Handle("GET", "/profiles/me", ctrl.MuxHandler("GetMyProfile", h, nil))
+	service.LogInfo("mount", "ctrl", "UserProfile", "action", "GetMyProfile", "route", "GET /profiles/me")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -96,8 +96,8 @@ func MountUserProfileController(service *goa.Service, ctrl UserProfileController
 		}
 		return ctrl.GetUserProfile(rctx)
 	}
-	service.Mux.Handle("GET", "/:userId", ctrl.MuxHandler("GetUserProfile", h, nil))
-	service.LogInfo("mount", "ctrl", "UserProfile", "action", "GetUserProfile", "route", "GET /:userId")
+	service.Mux.Handle("GET", "/profiles/:userId", ctrl.MuxHandler("GetUserProfile", h, nil))
+	service.LogInfo("mount", "ctrl", "UserProfile", "action", "GetUserProfile", "route", "GET /profiles/:userId")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -117,8 +117,8 @@ func MountUserProfileController(service *goa.Service, ctrl UserProfileController
 		}
 		return ctrl.UpdateMyProfile(rctx)
 	}
-	service.Mux.Handle("PUT", "/me", ctrl.MuxHandler("UpdateMyProfile", h, unmarshalUpdateMyProfileUserProfilePayload))
-	service.LogInfo("mount", "ctrl", "UserProfile", "action", "UpdateMyProfile", "route", "PUT /me")
+	service.Mux.Handle("PUT", "/profiles/me", ctrl.MuxHandler("UpdateMyProfile", h, unmarshalUpdateMyProfileUserProfilePayload))
+	service.LogInfo("mount", "ctrl", "UserProfile", "action", "UpdateMyProfile", "route", "PUT /profiles/me")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -138,8 +138,8 @@ func MountUserProfileController(service *goa.Service, ctrl UserProfileController
 		}
 		return ctrl.UpdateUserProfile(rctx)
 	}
-	service.Mux.Handle("PUT", "/:userId", ctrl.MuxHandler("UpdateUserProfile", h, unmarshalUpdateUserProfileUserProfilePayload))
-	service.LogInfo("mount", "ctrl", "UserProfile", "action", "UpdateUserProfile", "route", "PUT /:userId")
+	service.Mux.Handle("PUT", "/profiles/:userId", ctrl.MuxHandler("UpdateUserProfile", h, unmarshalUpdateUserProfileUserProfilePayload))
+	service.LogInfo("mount", "ctrl", "UserProfile", "action", "UpdateUserProfile", "route", "PUT /profiles/:userId")
 }
 
 // unmarshalUpdateMyProfileUserProfilePayload unmarshals the request body into the context request data Payload field.

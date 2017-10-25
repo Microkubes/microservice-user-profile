@@ -98,7 +98,7 @@ info:
   title: User Profile Microservice
   version: "1.0"
 paths:
-  /{userId}:
+  /profiles/{userId}:
     get:
       description: Get a UserProfile by UserID
       operationId: userProfile#GetUserProfile
@@ -169,7 +169,7 @@ paths:
       summary: UpdateUserProfile userProfile
       tags:
       - userProfile
-  /me:
+  /profiles/me:
     get:
       description: Get a UserProfile by UserID
       operationId: userProfile#GetMyProfile

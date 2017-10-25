@@ -14,7 +14,7 @@ var _ = API("user-profile", func() {
 })
 
 var _ = Resource("userProfile", func() {
-	BasePath("")
+	BasePath("profiles")
 	DefaultMedia(UserProfileMedia)
 
 	Action("GetUserProfile", func() {
