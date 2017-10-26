@@ -2,8 +2,8 @@
   "service":{
     "name": "user-profile-microservice",
     "port": 8080,
+    "paths": ["/profiles"],
     "virtual_host": "user-profile.services.jormugandr.org",
-    "hosts": ["localhost", "user-profile.services.jormugandr.org"],
     "weight": 10,
     "slots": 100
   },

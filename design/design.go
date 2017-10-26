@@ -14,11 +14,12 @@ var _ = API("user-profile", func() {
 })
 
 var _ = Resource("userProfile", func() {
+	BasePath("profiles")
 	DefaultMedia(UserProfileMedia)
 
 	Action("GetUserProfile", func() {
 		Description("Get a UserProfile by UserID")
-		Routing(GET("users/:userId/profile"))
+		Routing(GET(":userId"))
 		Params(func() {
 			Param("userId", String, "The user ID")
 		})
@@ -30,7 +31,7 @@ var _ = Resource("userProfile", func() {
 
 	Action("UpdateMyProfile", func() {
 		Description("Update my profile")
-		Routing(PUT("profiles/me"))
+		Routing(PUT("me"))
 		Payload(UserProfilePayload)
 		Response(OK)
 		Response(NotFound, ErrorMedia)
@@ -40,7 +41,7 @@ var _ = Resource("userProfile", func() {
 
 	Action("GetMyProfile", func() {
 		Description("Get a UserProfile by UserID")
-		Routing(GET("profiles/me"))
+		Routing(GET("me"))
 		Response(OK)
 		Response(NotFound, ErrorMedia)
 		Response(BadRequest, ErrorMedia)
@@ -49,7 +50,7 @@ var _ = Resource("userProfile", func() {
 
 	Action("UpdateUserProfile", func() {
 		Description("Update user profile")
-		Routing(PUT("users/:userId/profile"))
+		Routing(PUT(":userId"))
 		Params(func() {
 			Param("userId", String, "User ID")
 		})
