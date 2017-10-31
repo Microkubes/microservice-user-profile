@@ -5,7 +5,7 @@ RUN apk --no-cache add git curl openssh
 
 RUN go get -u -v github.com/goadesign/goa/... && \
     go get -u -v gopkg.in/mgo.v2 && \
-    go get -u -v golang.org/x/crypto/bcrypt &&
+    go get -u -v golang.org/x/crypto/bcrypt && \
     go get -u -v github.com/JormungandrK/microservice-tools && \
     go get -u -v github.com/JormungandrK/microservice-security/...
 
