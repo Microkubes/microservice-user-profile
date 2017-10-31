@@ -18,8 +18,9 @@
       "certFile": "/run/secrets/service.cert",
       "keyFile": "/run/secrets/service.key",
       "identityProviderUrl": "http://kong:8000/saml/idp",
-      "userServiceUrl": "http://kong:8000/user",
-      "registrationServiceUrl": "http://kong:8000/user/register"
+      "userServiceUrl": "http://kong:8000/users",
+      "registrationServiceUrl": "http://kong:8000/users/register",
+      "rootURL": "http://kong:8000/profiles"
     },
     "oauth2":{
       "description": "OAuth2 security middleware",
