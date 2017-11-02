@@ -1,13 +1,5 @@
 ### Multi-stage build
-FROM golang:1.8.3-alpine3.6 as build
-
-RUN apk --no-cache add git curl openssh
-
-RUN go get -u -v github.com/goadesign/goa/... && \
-    go get -u -v gopkg.in/mgo.v2 && \
-    go get -u -v golang.org/x/crypto/bcrypt && \
-    go get -u -v github.com/JormungandrK/microservice-tools && \
-    go get -u -v github.com/JormungandrK/microservice-security/...
+FROM jormungandrk/goa-build as build
 
 COPY . /go/src/github.com/JormungandrK/microservice-user-profile
 RUN go install github.com/JormungandrK/microservice-user-profile
