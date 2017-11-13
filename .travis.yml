@@ -2,6 +2,9 @@ sudo: required
 
 env:
   global:
+    - VERSION=$(git describe --tags --exact-match 2>/dev/null || echo latest)
+    - DOCKERHUB_NAMESPACE=jormungandrk
+    - IMAGE=${DOCKERHUB_NAMESPACE}/microservice-user-profile:${VERSION}
     - CC_TEST_REPORTER_ID=${CODE_CLIMATE_REPORTER_ID}
     - GIT_COMMITTED_AT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then git log -1 --pretty=format:%ct; else git log -1 --skip 1 --pretty=format:%ct; fi)
 
@@ -15,6 +18,8 @@ before_install:
   - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
   - sudo apt-get update
   - sudo apt-get -y install docker-ce
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  - docker build -t "$IMAGE" .
   - go get github.com/axw/gocov/gocov
   - go get github.com/AlekSi/gocov-xml
   - go get gopkg.in/h2non/gock.v1
@@ -32,5 +37,4 @@ script:
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter upload-coverage -i coverage.json; fi
 
 after_success:
-  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-  - make push
+  - docker push "$IMAGE"
