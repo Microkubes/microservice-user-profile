@@ -1,3 +1,5 @@
+sudo: required
+
 env:
   global:
     - CC_TEST_REPORTER_ID=${CODE_CLIMATE_REPORTER_ID}
@@ -9,7 +11,10 @@ go:
   - 1.8.x
 
 before_install:
-  - git config --global url."git@github.com:".insteadOf "https://github.com/"
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get -y install docker-ce
   - go get github.com/axw/gocov/gocov
   - go get github.com/AlekSi/gocov-xml
   - go get gopkg.in/h2non/gock.v1
@@ -24,4 +29,12 @@ before_script:
 
 script:
   - gocov test github.com/JormungandrK/microservice-user-profile/... | gocov-xml > coverage.xml && ./cc-test-reporter format-coverage -t cobertura -o coverage.json coverage.xml
-  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter upload-coverage -i coverage.json; fi
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRIGGER" != "yes" ]; then
+    ./cc-test-reporter upload-coverage -i coverage.json;
+    fi
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+    docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+    make push;
+    fi
