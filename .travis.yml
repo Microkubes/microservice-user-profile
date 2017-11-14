@@ -29,7 +29,9 @@ before_script:
 
 script:
   - gocov test github.com/JormungandrK/microservice-user-profile/... | gocov-xml > coverage.xml && ./cc-test-reporter format-coverage -t cobertura -o coverage.json coverage.xml
-  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter upload-coverage -i coverage.json; fi
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRIGGER" != "yes" ]; then
+    ./cc-test-reporter upload-coverage -i coverage.json;
+    fi
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
