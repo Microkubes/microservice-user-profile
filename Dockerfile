@@ -6,7 +6,7 @@ RUN go install github.com/JormungandrK/microservice-user-profile
 
 
 ### Main
-FROM alpine:3.6
+FROM alpine:3.7
 
 COPY --from=build /go/bin/microservice-user-profile /usr/local/bin/microservice-user-profile
 EXPOSE 8080
