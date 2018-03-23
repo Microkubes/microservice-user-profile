@@ -1,6 +1,6 @@
 User Profile Microservice
 =========================
-[![Build](https://travis-ci.com/JormungandrK/microservice-user-profile.svg?token=UB5yzsLHNSbtjSYrGbWf&branch=master)](https://travis-ci.com/JormungandrK/microservice-user-profile#)
+[![Build](https://travis-ci.com/Microkubes/microservice-user-profile.svg?token=UB5yzsLHNSbtjSYrGbWf&branch=master)](https://travis-ci.com/Microkubes/microservice-user-profile#)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/6614f6160530bc4d3298/test_coverage)](https://codeclimate.com/repos/59e726aa13034802aa00095e/test_coverage)
 [![Maintainability](https://api.codeclimate.com/v1/badges/6614f6160530bc4d3298/maintainability)](https://codeclimate.com/repos/59e726aa13034802aa00095e/maintainability)
 
@@ -20,14 +20,14 @@ go get -u github.com/goadesign/goa/...
 Clone the repo:
 ```
 cd $GOPATH/src
-git clone https://github.com/JormungandrK/microservice-user-profile.git /path/to/project-workspace/src/github.com/JormungandrK/microservice-user-profile
+git clone https://github.com/Microkubes/microservice-user-profile.git /path/to/project-workspace/src/github.com/Microkubes/microservice-user-profile
 ```
 Be sure to use the full domain name and resource path here (compatible with ```go get```).
 
 
 Then compile and run:
 ```
-cd /path/to/project-workspace/src/github.com/JormungandrK/microservice-user-profile
+cd /path/to/project-workspace/src/github.com/Microkubes/microservice-user-profile
 go build -o user-profile
 ./user-profile
 ```
@@ -35,14 +35,14 @@ go build -o user-profile
 ## Change the design
 If you change the design then you should regenerate the files. Run:
 ```
-cd /path/to/project-workspace/src/github.com/JormungandrK/microservice-user-profile
+cd /path/to/project-workspace/src/github.com/Microkubes/microservice-user-profile
 go generate
 ```
 **NOTE:** If the above command does not update the generated code per the changes in the design,
 then run ```goagen bootstrap```:
 
 ```bash
-goagen bootstrap -d github.com/JormungandrK/microservice-user-profile/design -o .
+goagen bootstrap -d github.com/Microkubes/microservice-user-profile/design -o .
 ```
 
 
@@ -55,7 +55,7 @@ go build -o user-profile
 ## Other changes, not related to the design
 For all other changes that are not related to the design just recompile the service and start it again:
 ```
-cd $GOPATH/src/github.com/JormungandrK/microservice-user-profile
+cd $GOPATH/src/github.com/Microkubes/microservice-user-profile
 go build -o user-profile
 ./user-profile
 ```
@@ -68,7 +68,7 @@ go test -v
 
 ## Set up MongoDB
 Create users database with default username and password.
-See: [Set up MongoDB](https://github.com/JormungandrK/jormungandr-infrastructure#mongodb--v346-)
+See: [Set up MongoDB](https://github.com/Microkubes/jormungandr-infrastructure#mongodb--v346-)
 ```
 export MS_DBNAME=user-profiles
 ./mongo/run.sh
@@ -86,9 +86,9 @@ First, create a directory for the shh keys:
 mkdir keys
 ```
 
-Find a key that you'll use to acceess JormungandrK organization on github. Then copy the
+Find a key that you'll use to acceess Microkubes organization on github. Then copy the
 private key to the directory you created above. The build would use this key to
-access ```JormungandrK/microservice-tools``` repository.
+access ```Microkubes/microservice-tools``` repository.
 
 ```bash
 cp ~/.ssh/id_rsa keys/
@@ -124,7 +124,7 @@ docker run user-profile-microservice
 
 ## Check if the service is self-registering on Kong Gateway
 
-First make sure you have started Kong. See [Jormungandr Infrastructure](https://github.com/JormungandrK/jormungandr-infrastructure)
+First make sure you have started Kong. See [Jormungandr Infrastructure](https://github.com/Microkubes/jormungandr-infrastructure)
 on how to set up Kong locally.
 
 If you have Kong admin endpoint running on http://localhost:8001 , you're good to go.

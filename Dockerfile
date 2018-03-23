@@ -1,8 +1,8 @@
 ### Multi-stage build
 FROM jormungandrk/goa-build as build
 
-COPY . /go/src/github.com/JormungandrK/microservice-user-profile
-RUN go install github.com/JormungandrK/microservice-user-profile
+COPY . /go/src/github.com/Microkubes/microservice-user-profile
+RUN go install github.com/Microkubes/microservice-user-profile
 
 
 ### Main
