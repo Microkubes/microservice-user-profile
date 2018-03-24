@@ -1,16 +1,23 @@
 ### Multi-stage build
-FROM jormungandrk/goa-build as build
+FROM golang:1.10-alpine3.7 as build
+
+RUN apk --no-cache add git
+
+RUN go get -u -v github.com/goadesign/goa/... && \
+    go get -u -v gopkg.in/mgo.v2 && \
+    go get -u -v github.com/Microkubes/microservice-security/...
 
 COPY . /go/src/github.com/Microkubes/microservice-user-profile
 RUN go install github.com/Microkubes/microservice-user-profile
 
 
 ### Main
-FROM alpine:3.7
-
-COPY --from=build /go/bin/microservice-user-profile /usr/local/bin/microservice-user-profile
-EXPOSE 8080
+FROM scratch
 
 ENV API_GATEWAY_URL="http://localhost:8001"
+
+COPY --from=build /go/bin/microservice-user-profile /usr/local/bin/microservice-user-profile
+
+EXPOSE 8080
 
 CMD ["/usr/local/bin/microservice-user-profile"]
