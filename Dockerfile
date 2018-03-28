@@ -9,7 +9,8 @@ RUN go get -u -v github.com/goadesign/goa/... && \
     go get -u -v github.com/Microkubes/microservice-tools/...
 
 COPY . /go/src/github.com/Microkubes/microservice-user-profile
-RUN go install github.com/Microkubes/microservice-user-profile
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go install github.com/Microkubes/microservice-user-profile
 
 
 ### Main
