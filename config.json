@@ -29,9 +29,15 @@
     }
   },
   "database":{
-    "host": "mongo:27017",
-    "database": "user-profiles",
-    "user": "restapi",
-    "pass": "restapi"
+    "dbName": "mongodb",
+    "dbInfo": {
+      "credentials": "/full/path/to/aws/credentials",
+      "endpoint": "http://localhost:9000",
+      "awsRegion": "us-east-1",
+      "host": "mongo:27017",
+      "database": "user-profiles",
+      "user": "restapi",
+      "pass": "restapi"
+    }
   }
 }
