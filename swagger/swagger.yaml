@@ -90,7 +90,7 @@ definitions:
     required:
     - userId
     - createdOn
-    title: 'Mediatype identifier: application/jormungandr.user-profile+json; view=default'
+    title: 'Mediatype identifier: application/microkubes.user-profile+json; view=default'
     type: object
 host: localhost:8082
 info:
@@ -109,7 +109,7 @@ paths:
         required: true
         type: string
       produces:
-      - application/jormungandr.user-profile+json
+      - application/microkubes.user-profile+json
       - application/vnd.goa.error
       responses:
         "200":
@@ -149,7 +149,7 @@ paths:
         schema:
           $ref: '#/definitions/UserProfilePayload'
       produces:
-      - application/jormungandr.user-profile+json
+      - application/microkubes.user-profile+json
       - application/vnd.goa.error
       responses:
         "200":
@@ -174,7 +174,7 @@ paths:
       description: Get a UserProfile by UserID
       operationId: userProfile#GetMyProfile
       produces:
-      - application/jormungandr.user-profile+json
+      - application/microkubes.user-profile+json
       - application/vnd.goa.error
       responses:
         "200":
@@ -209,7 +209,7 @@ paths:
         schema:
           $ref: '#/definitions/UserProfilePayload'
       produces:
-      - application/jormungandr.user-profile+json
+      - application/microkubes.user-profile+json
       - application/vnd.goa.error
       responses:
         "200":

@@ -1,5 +1,5 @@
 VERSION := $(shell git describe --tags --exact-match 2>/dev/null || echo latest)
-DOCKERHUB_NAMESPACE ?= jormungandrk
+DOCKERHUB_NAMESPACE ?= microkubes
 IMAGE := ${DOCKERHUB_NAMESPACE}/microservice-user-profile:${VERSION}
 
 build:

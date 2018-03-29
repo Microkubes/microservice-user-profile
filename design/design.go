@@ -62,7 +62,7 @@ var _ = Resource("userProfile", func() {
 })
 
 // UserProfileMedia is the default media type for user-profile service
-var UserProfileMedia = MediaType("application/jormungandr.user-profile+json", func() {
+var UserProfileMedia = MediaType("application/microkubes.user-profile+json", func() {
 	TypeName("userProfile")
 	Reference(UserProfilePayload)
 

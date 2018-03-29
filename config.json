@@ -8,7 +8,7 @@
     "slots": 100
   },
   "gatewayUrl": "http://kong:8000",
-  "gatewayAdminUrl": "http://kong:8001",
+  "gatewayAdminUrl": "http://kong-admin:8001",
   "security":{
     "keysDir": "/run/secrets",
     "jwt":{
