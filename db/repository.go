@@ -7,6 +7,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"time"
+	"github.com/JormungandrK/backends"
 )
 
 // UserProfileRepository defaines the interface for accessing the user profile data
@@ -21,9 +22,9 @@ type UserProfileRepository interface {
 }
 
 // MongoCollection wraps a mgo.Collection to embed methods in models.
-type MongoCollection struct {
-	*mgo.Collection
-}
+// type MongoCollection struct {
+// 	*mgo.Collection
+// }
 
 // NewSession returns a new Mongo Session.
 func NewSession(Host string, Username string, Password string, Database string) *mgo.Session {
@@ -70,90 +71,90 @@ func PrepareDB(session *mgo.Session, db string, dbCollection string, indexes []s
 }
 
 // GetUserProfile finds user profile by Id. Return media type if succeed.
-func (c *MongoCollection) GetUserProfile(userID string, mediaType *app.UserProfile) error {
-	objectUserID, err := hexToObjectID(userID)
-	if err != nil {
-		return err
-	}
+// func (c *MongoCollection) GetUserProfile(userID string, mediaType *app.UserProfile) error {
+// 	objectUserID, err := hexToObjectID(userID)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	if err := c.Find(bson.M{"userid": objectUserID}).One(&mediaType); err != nil {
-		if err.Error() == "not found" {
-			return goa.ErrNotFound(err)
-		}
-		return goa.ErrInternal(err)
-	}
+// 	if err := c.Find(bson.M{"userid": objectUserID}).One(&mediaType); err != nil {
+// 		if err.Error() == "not found" {
+// 			return goa.ErrNotFound(err)
+// 		}
+// 		return goa.ErrInternal(err)
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 // UpdateMyProfile updates own profile.
-func (c *MongoCollection) UpdateMyProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
-	// Update(selector interface{}, update interface{}) error
-	objectUserID, err := hexToObjectID(userID)
-	if err != nil {
-		return nil, err
-	}
+// func (c *MongoCollection) UpdateMyProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
+// 	// Update(selector interface{}, update interface{}) error
+// 	objectUserID, err := hexToObjectID(userID)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	err = c.Update(
-		bson.M{"userid": objectUserID},
-		bson.M{"$set": bson.M{
-			"email":    profile.Email,
-			"fullname": profile.FullName,
-		},
-		})
+// 	err = c.Update(
+// 		bson.M{"userid": objectUserID},
+// 		bson.M{"$set": bson.M{
+// 			"email":    profile.Email,
+// 			"fullname": profile.FullName,
+// 		},
+// 		})
 
-	// Handle errors
-	if err != nil {
-		if err.Error() == "not found" {
-			return nil, goa.ErrNotFound(err)
-		}
-		return nil, goa.ErrInternal(err)
-	}
+// 	// Handle errors
+// 	if err != nil {
+// 		if err.Error() == "not found" {
+// 			return nil, goa.ErrNotFound(err)
+// 		}
+// 		return nil, goa.ErrInternal(err)
+// 	}
 
-	res := &app.UserProfile{
-		UserID:   userID,
-		FullName: &profile.FullName,
-		Email:    &profile.Email,
-	}
+// 	res := &app.UserProfile{
+// 		UserID:   userID,
+// 		FullName: &profile.FullName,
+// 		Email:    &profile.Email,
+// 	}
 
-	return res, nil
-}
+// 	return res, nil
+// }
 
 // UpdateUserProfile updates user profile by id. Return media type if succeed.
-func (c *MongoCollection) UpdateUserProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
-	objectUserID, err := hexToObjectID(userID)
-	if err != nil {
-		return nil, err
-	}
+// func (c *MongoCollection) UpdateUserProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
+// 	objectUserID, err := hexToObjectID(userID)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	created := int(time.Now().Unix())
-	_, err = c.Upsert(
-		bson.M{"userid": objectUserID},
-		bson.M{"$set": bson.M{
-			"userid":    objectUserID,
-			"email":     profile.Email,
-			"fullname":  profile.FullName,
-			"createdon": created,
-		},
-		})
+// 	created := int(time.Now().Unix())
+// 	_, err = c.Upsert(
+// 		bson.M{"userid": objectUserID},
+// 		bson.M{"$set": bson.M{
+// 			"userid":    objectUserID,
+// 			"email":     profile.Email,
+// 			"fullname":  profile.FullName,
+// 			"createdon": created,
+// 		},
+// 		})
 
-	// Handle errors
-	if err != nil {
-		if mgo.IsDup(err) {
-			return nil, goa.ErrBadRequest("email already exists in the database")
-		}
-		return nil, goa.ErrInternal(err)
-	}
+// 	// Handle errors
+// 	if err != nil {
+// 		if mgo.IsDup(err) {
+// 			return nil, goa.ErrBadRequest("email already exists in the database")
+// 		}
+// 		return nil, goa.ErrInternal(err)
+// 	}
 
-	res := &app.UserProfile{
-		UserID:    userID,
-		FullName:  &profile.FullName,
-		Email:     &profile.Email,
-		CreatedOn: created,
-	}
+// 	res := &app.UserProfile{
+// 		UserID:    userID,
+// 		FullName:  &profile.FullName,
+// 		Email:     &profile.Email,
+// 		CreatedOn: created,
+// 	}
 
-	return res, nil
-}
+// 	return res, nil
+// }
 
 func hexToObjectID(hexID string) (bson.ObjectId, error) {
 	// Return whether userID is a valid hex representation of object id.
@@ -170,4 +171,35 @@ func hexToObjectID(hexID string) (bson.ObjectId, error) {
 	}
 
 	return objectID, nil
+}
+
+type BackendsUserRepository struct {
+	Repository backends.Repository
+}
+ 
+// GetUserProfile finds user profile by Id. Return media type if succeed.
+func (r *BackendsUserRepository) GetUserProfile(userID string, mediaType *app.UserProfile) error {
+	profile, err := r.Repository.GetOne(backends.NewFilter().Match("id", userID), mediaType)
+	if err != nil {
+		return  err
+	}
+	return nil
+}
+
+// UpdateUserProfile updates user profile by id. Return media type if succeed.
+func (r *BackendsUserRepository) UpdateUserProfile (profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
+
+	prof, err := r.Repository.GetOne(backends.NewFilter().Match("id", userID), &app.UserProfile{}) 
+	if err != nil {
+		return nil, err
+	}
+
+	existing := prof.(*app.UserProfile)
+
+	prof, err = r.Repository.Save(existing, backends.NewFilter().Match("id", userID))
+	if err != nil {
+		return nil, err
+	}    
+	    
+	return prof.(*app.UserProfile), nil
 }

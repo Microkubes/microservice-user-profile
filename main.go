@@ -15,6 +15,7 @@ import (
 	"github.com/Microkubes/microservice-user-profile/db"
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
+	"github.com/JormungandrK/backends"
 )
 
 func main() {
@@ -73,6 +74,39 @@ func main() {
 
 }
 
+func setupBackend(cfg *config.ResourceServiceConfig) (backendManager backends.BackendManager, Repository backends.Repository) {
+	dbInfo := map[string]*toolscfg.DBInfo{}
+
+	dbInfo[cfg.DBConfig.DBName] = &cfg.DBConfig.DBInfo
+
+	backendManager = backends.NewBackendSupport(dbInfo)
+	backend, err := backendManager.GetBackend(cfg.DBConfig.DBName)
+
+	if err != nil {
+		log.Fatal("Failed to configure backend: ", err)
+	}
+
+	Repository, err = backend.DefineRepository("user-profile", backends.RepositoryDefinitionMap{
+		"name":          "user-profile",
+		"indexes":       []string{"id", "name"},
+		"hashKey":       "id",
+		"readCapacity":  int64(5),
+		"writeCapacity": int64(5),
+		"GSI": map[string]interface{}{
+			"email": map[string]interface{}{
+				"readCapacity":  1,
+				"writeCapacity": 1,
+			},
+		},
+	})
+
+	if err != nil {
+		log.Fatal("Failed to create backend repository: ", err)
+	}
+	return backendManager, Repository
+}
+
+
 func loadMongnoSettings() (string, string, string, string) {
 	host := os.Getenv("MONGO_URL")
 	username := os.Getenv("MS_USERNAME")
@@ -120,3 +154,4 @@ func registerMicroservice(gatewayAdminURL string, conf *config.ServiceConfig) fu
 		registration.Unregister()
 	}
 }
+ 
