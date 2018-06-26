@@ -51,7 +51,7 @@ func main() {
 	//host, username, password, database := loadMongnoSettings()
 	dbConf := conf.DBConfig
 	// Create new session to MongoDB
-	session := db.NewSession(dbConf.Host, dbConf.Username, dbConf.Password, dbConf.DatabaseName)
+ 	session := db.NewSession(dbConf.Host, dbConf.Username, dbConf.Password, dbConf.DatabaseName)
 
 	// At the end close session
 	defer session.Close()
@@ -64,7 +64,7 @@ func main() {
 	c := NewSwaggerController(service)
 	app.MountSwaggerController(service, c)
 	// Mount "userProfile" controller
-	c2 := NewUserProfileController(service, &db.MongoCollection{Collection: userProfileCollection})
+	c2 := NewUserProfileController(service, &db.BackendsUserRepository{db.Collection: userProfileCollection})
 	app.MountUserProfileController(service, c2)
 
 	// Start service

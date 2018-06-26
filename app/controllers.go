@@ -60,7 +60,7 @@ type UserProfileController interface {
 	goa.Muxer
 	GetMyProfile(*GetMyProfileUserProfileContext) error
 	GetUserProfile(*GetUserProfileUserProfileContext) error
-	UpdateMyProfile(*UpdateMyProfileUserProfileContext) error
+	// UpdateMyProfile(*UpdateMyProfileUserProfileContext) error
 	UpdateUserProfile(*UpdateUserProfileUserProfileContext) error
 }
 
@@ -115,7 +115,8 @@ func MountUserProfileController(service *goa.Service, ctrl UserProfileController
 		} else {
 			return goa.MissingPayloadError()
 		}
-		return ctrl.UpdateMyProfile(rctx)
+		//return ctrl.UpdateMyProfile(rctx)
+		return nil
 	}
 	service.Mux.Handle("PUT", "/profiles/me", ctrl.MuxHandler("UpdateMyProfile", h, unmarshalUpdateMyProfileUserProfilePayload))
 	service.LogInfo("mount", "ctrl", "UserProfile", "action", "UpdateMyProfile", "route", "PUT /profiles/me")

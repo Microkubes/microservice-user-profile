@@ -18,7 +18,7 @@ type UserProfileRepository interface {
 	// If the profile already exists, it updates the data. If not profile entry exists, a new one is created.
 	// Returns the updated or newly created user profile.
 	UpdateUserProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error)
-	UpdateMyProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error)
+	// UpdateMyProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error)
 }
 
 // MongoCollection wraps a mgo.Collection to embed methods in models.
@@ -179,7 +179,7 @@ type BackendsUserRepository struct {
  
 // GetUserProfile finds user profile by Id. Return media type if succeed.
 func (r *BackendsUserRepository) GetUserProfile(userID string, mediaType *app.UserProfile) error {
-	profile, err := r.Repository.GetOne(backends.NewFilter().Match("id", userID), mediaType)
+	_, err := r.Repository.GetOne(backends.NewFilter().Match("id", userID), mediaType)
 	if err != nil {
 		return  err
 	}
