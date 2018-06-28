@@ -4,9 +4,9 @@ import (
 	"github.com/Microkubes/microservice-user-profile/app"
 	"github.com/goadesign/goa"
 
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
-	"time"
+	// "gopkg.in/mgo.v2"
+	// "gopkg.in/mgo.v2/bson"
+	// "time"
 	"github.com/JormungandrK/backends"
 )
 
@@ -27,48 +27,48 @@ type UserProfileRepository interface {
 // }
 
 // NewSession returns a new Mongo Session.
-func NewSession(Host string, Username string, Password string, Database string) *mgo.Session {
-	session, err := mgo.DialWithInfo(&mgo.DialInfo{
-		Addrs:    []string{Host},
-		Username: Username,
-		Password: Password,
-		Database: Database,
-		Timeout:  30 * time.Second,
-	})
-	if err != nil {
-		panic(err)
-	}
+// func NewSession(Host string, Username string, Password string, Database string) *mgo.Session {
+// 	session, err := mgo.DialWithInfo(&mgo.DialInfo{
+// 		Addrs:    []string{Host},
+// 		Username: Username,
+// 		Password: Password,
+// 		Database: Database,
+// 		Timeout:  30 * time.Second,
+// 	})
+// 	if err != nil {
+// 		panic(err)
+// 	}
 
-	// SetMode - consistency mode for the session.
-	session.SetMode(mgo.Monotonic, true)
+// 	// SetMode - consistency mode for the session.
+// 	session.SetMode(mgo.Monotonic, true)
 
-	return session
-}
+// 	return session
+// }
 
 // PrepareDB ensure presence of persistent and immutable data in the DB.
-func PrepareDB(session *mgo.Session, db string, dbCollection string, indexes []string) *mgo.Collection {
-	// Create collection
-	collection := session.DB(db).C(dbCollection)
+// func PrepareDB(session *mgo.Session, db string, dbCollection string, indexes []string) *mgo.Collection {
+// 	// Create collection
+// 	collection := session.DB(db).C(dbCollection)
 
-	// Define indexes
-	for _, elem := range indexes {
-		i := []string{elem}
-		index := mgo.Index{
-			Key:        i,
-			Unique:     true,
-			DropDups:   true,
-			Background: true,
-			Sparse:     true,
-		}
+// 	// Define indexes
+// 	for _, elem := range indexes {
+// 		i := []string{elem}
+// 		index := mgo.Index{
+// 			Key:        i,
+// 			Unique:     true,
+// 			DropDups:   true,
+// 			Background: true,
+// 			Sparse:     true,
+// 		}
 
-		// Create indexes
-		if err := collection.EnsureIndex(index); err != nil {
-			panic(err)
-		}
-	}
+// 		// Create indexes
+// 		if err := collection.EnsureIndex(index); err != nil {
+// 			panic(err)
+// 		}
+// 	}
 
-	return collection
-}
+// 	return collection
+// }
 
 // GetUserProfile finds user profile by Id. Return media type if succeed.
 // func (c *MongoCollection) GetUserProfile(userID string, mediaType *app.UserProfile) error {
@@ -156,50 +156,59 @@ func PrepareDB(session *mgo.Session, db string, dbCollection string, indexes []s
 // 	return res, nil
 // }
 
-func hexToObjectID(hexID string) (bson.ObjectId, error) {
-	// Return whether userID is a valid hex representation of object id.
-	if bson.IsObjectIdHex(hexID) != true {
-		return "", goa.ErrBadRequest("invalid User ID")
-	}
 
-	// Return an ObjectId from the provided hex representation.
-	objectID := bson.ObjectIdHex(hexID)
 
-	// Return true if objectID is valid. A valid objectID must contain exactly 12 bytes.
-	if objectID.Valid() != true {
-		return "", goa.ErrInternal("invalid object ID")
-	}
+// func hexToObjectID(hexID string) (bson.ObjectId, error) {
+// 	// Return whether userID is a valid hex representation of object id.
+// 	if bson.IsObjectIdHex(hexID) != true {
+// 		return "", goa.ErrBadRequest("invalid User ID")
+// 	}
 
-	return objectID, nil
+// 	// Return an ObjectId from the provided hex representation.
+// 	objectID := bson.ObjectIdHex(hexID)
+
+// 	// Return true if objectID is valid. A valid objectID must contain exactly 12 bytes.
+// 	if objectID.Valid() != true {
+// 		return "", goa.ErrInternal("invalid object ID")
+// 	}
+
+// 	return objectID, nil
+// }
+
+
+type BackendUserService struct {
+	userRepository backends.Repository
 }
 
-type BackendsUserRepository struct {
-	Repository backends.Repository
+func NewUserService(userRepository backends.Repository) UserRepository {
+	return &BackendUserService{
+		userRepository: userRepository,
+	}
 }
  
 // GetUserProfile finds user profile by Id. Return media type if succeed.
-func (r *BackendsUserRepository) GetUserProfile(userID string, mediaType *app.UserProfile) error {
-	_, err := r.Repository.GetOne(backends.NewFilter().Match("id", userID), mediaType)
-	if err != nil {
-		return  err
-	}
-	return nil
-}
+// func (r *BackendUserService) GetUserProfile(userID string, mediaType *app.UserProfile) error {
+// 	_, err := r.userRepository.GetOne(backends.NewFilter().Match("id", userID), mediaType)
+// 	if err != nil {
+// 		return  err
+// 	}
+// 	return nil
+// }
 
-// UpdateUserProfile updates user profile by id. Return media type if succeed.
-func (r *BackendsUserRepository) UpdateUserProfile (profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
+// // UpdateUserProfile updates user profile by id. Return media type if succeed.
+// func (r *BackendUserService) UpdateUserProfile (profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
 
-	prof, err := r.Repository.GetOne(backends.NewFilter().Match("id", userID), &app.UserProfile{}) 
-	if err != nil {
-		return nil, err
-	}
+// 	prof, err := r.userRepository.GetOne(backends.NewFilter().Match("id", userID), &app.UserProfile{}) 
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	existing := prof.(*app.UserProfile)
+// 	existing := prof.(*app.UserProfile)
 
-	prof, err = r.Repository.Save(existing, backends.NewFilter().Match("id", userID))
-	if err != nil {
-		return nil, err
-	}    
+// 	prof, err = r.userRepository.Save(existing, backends.NewFilter().Match("id", userID))
+// 	if err != nil {
+// 		return nil, err
+// 	}    
 	    
-	return prof.(*app.UserProfile), nil
-}
+// 	return prof.(*app.UserProfile), nil
+// }

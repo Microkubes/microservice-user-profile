@@ -13,6 +13,7 @@ import (
 	"github.com/Microkubes/microservice-tools/gateway"
 	"github.com/Microkubes/microservice-user-profile/app"
 	"github.com/Microkubes/microservice-user-profile/db"
+	toolscfg "github.com/Microkubes/microservice-tools/config"
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
 	"github.com/JormungandrK/backends"
@@ -24,14 +25,20 @@ func main() {
 
 	gatewayAdminURL, configFile := loadGatewaySettings()
 
-	conf, err := config.LoadConfig(configFile)
+	cfg, err := toolscfg.LoadConfig(configFile)
 	if err != nil {
 		service.LogError("config", "err", err)
 		return
 	}
 	// Gateway self-registration
-	unregisterService := registerMicroservice(gatewayAdminURL, conf)
+	unregisterService := registerMicroservice(gatewayAdminURL, cfg)
 	defer unregisterService() // defer the unregister for after main exits
+
+	// Setup user-profile service
+	userService, err := setupUserService(cfg)
+	if err != nil {
+		service.LogError("config", err)
+	}
 
 	securityChain, cleanup, err := flow.NewSecurityFromConfig(conf)
 	if err != nil {
@@ -48,45 +55,34 @@ func main() {
 	service.Use(chain.AsGoaMiddleware(securityChain))
 
 	// Load MongoDB ENV variables
-	//host, username, password, database := loadMongnoSettings()
-	dbConf := conf.DBConfig
+	//host, username, password, database := loadMongoSettings()
+	// dbConf := conf.DBConfig
 	// Create new session to MongoDB
- 	session := db.NewSession(dbConf.Host, dbConf.Username, dbConf.Password, dbConf.DatabaseName)
+ 	// session := db.NewSession(dbConf.Host, dbConf.Username, dbConf.Password, dbConf.DatabaseName)
 
 	// At the end close session
-	defer session.Close()
+	// defer session.Close()
 
 	// Create users collection and indexes
-	indexes := []string{"email"}
-	userProfileCollection := db.PrepareDB(session, dbConf.DatabaseName, "user-profiles", indexes)
+	// indexes := []string{"email"}
+	// userProfileCollection := db.PrepareDB(session, dbConf.DatabaseName, "user-profiles", indexes)
 
 	// Mount "swagger" controller
 	c := NewSwaggerController(service)
 	app.MountSwaggerController(service, c)
 	// Mount "userProfile" controller
-	c2 := NewUserProfileController(service, &db.BackendsUserRepository{db.Collection: userProfileCollection})
+	c2 := NewUserProfileController(service, userService)
 	app.MountUserProfileController(service, c2)
 
 	// Start service
-	if err := service.ListenAndServe(fmt.Sprintf(":%d", conf.Service.MicroservicePort)); err != nil {
+	if err := service.ListenAndServe(fmt.Sprintf(":%d", cfg.Service.MicroservicePort)); err != nil {
 		service.LogError("startup", "err", err)
 	}
 
 }
 
-func setupBackend(cfg *config.ResourceServiceConfig) (backendManager backends.BackendManager, Repository backends.Repository) {
-	dbInfo := map[string]*toolscfg.DBInfo{}
-
-	dbInfo[cfg.DBConfig.DBName] = &cfg.DBConfig.DBInfo
-
-	backendManager = backends.NewBackendSupport(dbInfo)
-	backend, err := backendManager.GetBackend(cfg.DBConfig.DBName)
-
-	if err != nil {
-		log.Fatal("Failed to configure backend: ", err)
-	}
-
-	Repository, err = backend.DefineRepository("user-profile", backends.RepositoryDefinitionMap{
+func setupRepository(backend backends.Backend) (backends.Repository, error) {
+	return backend.DefineRepository("user-profile", backends.RepositoryDefinitionMap{
 		"name":          "user-profile",
 		"indexes":       []string{"id", "name"},
 		"hashKey":       "id",
@@ -100,34 +96,51 @@ func setupBackend(cfg *config.ResourceServiceConfig) (backendManager backends.Ba
 		},
 	})
 
-	if err != nil {
-		log.Fatal("Failed to create backend repository: ", err)
-	}
-	return backendManager, Repository
+	// if err != nil {
+	// 	log.Fatal("Failed to create backend repository: ", err)
+	// }
+	// return backendManager, Repository
 }
 
 
-func loadMongnoSettings() (string, string, string, string) {
-	host := os.Getenv("MONGO_URL")
-	username := os.Getenv("MS_USERNAME")
-	password := os.Getenv("MS_PASSWORD")
-	database := os.Getenv("MS_DBNAME")
+func setupBackend(dbConfig toolscfg.DBConfig) (backends.Backend, backends.BackendManager, error) {
+	dbInfo := map[string]*toolscfg.DBInfo{}
 
-	if host == "" {
-		host = "127.0.0.1:27017"
-	}
-	if username == "" {
-		username = "restapi"
-	}
-	if password == "" {
-		password = "restapi"
-	}
-	if database == "" {
-		database = "user-profiles"
-	}
+	dbInfo[cfg.DBConfig.DBName] = &cfg.DBConfig.DBInfo
 
-	return host, username, password, database
+	backendManager = backends.NewBackendSupport(dbInfo)
+	backend, err := backendManager.GetBackend(cfg.DBConfig.DBName)
+
+	return backend, backendManager, err 
 }
+
+
+// func loadMongoSettings() (string, string, string, string) {
+// 	host := os.Getenv("MONGO_URL")
+// 	username := os.Getenv("MS_USERNAME")
+// 	password := os.Getenv("MS_PASSWORD")
+// 	database := os.Getenv("MS_DBNAME")
+
+// 	if host == "" {
+// 		host = "127.0.0.1:27017"
+// 	}
+// 	if username == "" {
+// 		username = "restapi"
+// 	}
+// 	if password == "" {
+// 		password = "restapi"
+// 	}
+// 	if database == "" {
+// 		database = "user-profiles"
+// 	}
+
+// 	return host, username, password, database
+// }
+
+func setupUserService(serviceConfig *toolscfg.ServiceConfig) (){
+
+}
+
 
 func loadGatewaySettings() (string, string) {
 	gatewayURL := os.Getenv("API_GATEWAY_URL")
@@ -143,7 +156,7 @@ func loadGatewaySettings() (string, string) {
 	return gatewayURL, serviceConfigFile
 }
 
-func registerMicroservice(gatewayAdminURL string, conf *config.ServiceConfig) func() {
+func registerMicroservice(gatewayAdminURL string, conf *toolscfg.ServiceConfig) func() {
 	registration := gateway.NewKongGateway(gatewayAdminURL, &http.Client{}, conf.Service)
 	err := registration.SelfRegister()
 	if err != nil {
