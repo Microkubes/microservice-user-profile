@@ -2,7 +2,7 @@ package db
 
 import (
 	"github.com/Microkubes/microservice-user-profile/app"
-	"github.com/goadesign/goa"
+	// "github.com/goadesign/goa"
 
 	// "gopkg.in/mgo.v2"
 	// "gopkg.in/mgo.v2/bson"
@@ -10,7 +10,16 @@ import (
 	"github.com/JormungandrK/backends"
 )
 
-// UserProfileRepository defaines the interface for accessing the user profile data
+// User is an object which holds the UserID, FullName, Email and the date of creation 
+type User struct {
+	UserID 		string `json:"userId" bson:"userId"`
+	FullName 	string `json:"fullname" bson:"fullname"`
+	Email 		string `json:"email" bson:"email"`
+	CreatedOn 	int  `json:"createdOn,omitempty" bson:"createdOn"` 
+}
+
+
+// UserProfileRepository defines the interface for accessing the user profile data
 type UserProfileRepository interface {
 	// GetUserProfile looks up a UserProfile by the user ID.
 	GetUserProfile(userID string, mediaType *app.UserProfile) error
@@ -180,35 +189,35 @@ type BackendUserService struct {
 	userRepository backends.Repository
 }
 
-func NewUserService(userRepository backends.Repository) UserRepository {
+func NewUserService(userRepository backends.Repository) UserProfileRepository {
 	return &BackendUserService{
 		userRepository: userRepository,
 	}
 }
  
 // GetUserProfile finds user profile by Id. Return media type if succeed.
-// func (r *BackendUserService) GetUserProfile(userID string, mediaType *app.UserProfile) error {
-// 	_, err := r.userRepository.GetOne(backends.NewFilter().Match("id", userID), mediaType)
-// 	if err != nil {
-// 		return  err
-// 	}
-// 	return nil
-// }
+func (r *BackendUserService) GetUserProfile(userID string, mediaType *app.UserProfile) error {
+	_, err := r.userRepository.GetOne(backends.NewFilter().Match("id", userID), mediaType)
+	if err != nil {
+		return  err
+	}
+	return nil
+}
 
-// // UpdateUserProfile updates user profile by id. Return media type if succeed.
-// func (r *BackendUserService) UpdateUserProfile (profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
+// UpdateUserProfile updates user profile by id. Return media type if succeed.
+func (r *BackendUserService) UpdateUserProfile (profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
 
-// 	prof, err := r.userRepository.GetOne(backends.NewFilter().Match("id", userID), &app.UserProfile{}) 
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	prof, err := r.userRepository.GetOne(backends.NewFilter().Match("id", userID), &app.UserProfile{}) 
+	if err != nil {
+		return nil, err
+	}
 
-// 	existing := prof.(*app.UserProfile)
+	existing := prof.(*app.UserProfile)
 
-// 	prof, err = r.userRepository.Save(existing, backends.NewFilter().Match("id", userID))
-// 	if err != nil {
-// 		return nil, err
-// 	}    
+	prof, err = r.userRepository.Save(existing, backends.NewFilter().Match("id", userID))
+	if err != nil {
+		return nil, err
+	}    
 	    
-// 	return prof.(*app.UserProfile), nil
-// }
+	return prof.(*app.UserProfile), nil
+}

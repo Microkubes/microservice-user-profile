@@ -28,7 +28,6 @@ func main() {
 	cfg, err := toolscfg.LoadConfig(configFile)
 	if err != nil {
 		service.LogError("config", "err", err)
-		return
 	}
 	// Gateway self-registration
 	unregisterService := registerMicroservice(gatewayAdminURL, cfg)
@@ -38,9 +37,10 @@ func main() {
 	userService, err := setupUserService(cfg)
 	if err != nil {
 		service.LogError("config", err)
+		return
 	}
 
-	securityChain, cleanup, err := flow.NewSecurityFromConfig(conf)
+	securityChain, cleanup, err := flow.NewSecurityFromConfig(cfg)
 	if err != nil {
 		panic(err)
 	}
@@ -67,12 +67,12 @@ func main() {
 	// indexes := []string{"email"}
 	// userProfileCollection := db.PrepareDB(session, dbConf.DatabaseName, "user-profiles", indexes)
 
-	// Mount "swagger" controller
-	c := NewSwaggerController(service)
-	app.MountSwaggerController(service, c)
+	// Mount "user-profile" controller
+	c := NewUserProfileController(service, userService)
+	app.MountUserProfileController(service, c)
 	// Mount "userProfile" controller
-	c2 := NewUserProfileController(service, userService)
-	app.MountUserProfileController(service, c2)
+	//c2 := NewUserProfileController(service, userService)
+	//app.MountUserProfileController(service, c2)
 
 	// Start service
 	if err := service.ListenAndServe(fmt.Sprintf(":%d", cfg.Service.MicroservicePort)); err != nil {
@@ -83,8 +83,11 @@ func main() {
 
 func setupRepository(backend backends.Backend) (backends.Repository, error) {
 	return backend.DefineRepository("user-profile", backends.RepositoryDefinitionMap{
-		"name":          "user-profile",
-		"indexes":       []string{"id", "name"},
+		"name":    "user-profile",
+		"indexes":  []backends.Index{
+				backends.NewUniqueIndex("userId"),
+				backends.NewUniqueIndex("fullname"),
+		},
 		"hashKey":       "id",
 		"readCapacity":  int64(5),
 		"writeCapacity": int64(5),
@@ -104,14 +107,14 @@ func setupRepository(backend backends.Backend) (backends.Repository, error) {
 
 
 func setupBackend(dbConfig toolscfg.DBConfig) (backends.Backend, backends.BackendManager, error) {
-	dbInfo := map[string]*toolscfg.DBInfo{}
+	dbinfo := map[string]*toolscfg.DBInfo{}
 
-	dbInfo[cfg.DBConfig.DBName] = &cfg.DBConfig.DBInfo
+	dbinfo[dbConfig.DBName] = &dbConfig.DBInfo
 
-	backendManager = backends.NewBackendSupport(dbInfo)
-	backend, err := backendManager.GetBackend(cfg.DBConfig.DBName)
+	backendsManager := backends.NewBackendSupport(dbinfo)
+	backend, err := backendsManager.GetBackend(dbConfig.DBName)
 
-	return backend, backendManager, err 
+	return backend, backendsManager, err 
 }
 
 
@@ -137,8 +140,18 @@ func setupBackend(dbConfig toolscfg.DBConfig) (backends.Backend, backends.Backen
 // 	return host, username, password, database
 // }
 
-func setupUserService(serviceConfig *toolscfg.ServiceConfig) (){
+func setupUserService(serviceConfig *toolscfg.ServiceConfig) (db.UserProfileRepository, error){
+	backend, _, err := setupBackend(serviceConfig.DBConfig)
+	if err != nil {
+		return nil, err
+	}
 
+	userRepo, err := setupRepository(backend)
+	if err != nil {
+		return nil, err
+	}
+
+	return db.NewUserService(userRepo), err
 }
 
 
@@ -156,8 +169,8 @@ func loadGatewaySettings() (string, string) {
 	return gatewayURL, serviceConfigFile
 }
 
-func registerMicroservice(gatewayAdminURL string, conf *toolscfg.ServiceConfig) func() {
-	registration := gateway.NewKongGateway(gatewayAdminURL, &http.Client{}, conf.Service)
+func registerMicroservice(gatewayAdminURL string, cfg *toolscfg.ServiceConfig) func() {
+	registration := gateway.NewKongGateway(gatewayAdminURL, &http.Client{}, cfg.Service)
 	err := registration.SelfRegister()
 	if err != nil {
 		panic(err)
