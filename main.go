@@ -9,7 +9,7 @@ import (
 
 	"github.com/Microkubes/microservice-security/chain"
 	"github.com/Microkubes/microservice-security/flow"
-	"github.com/Microkubes/microservice-tools/config"
+	// "github.com/Microkubes/microservice-tools/config"
 	"github.com/Microkubes/microservice-tools/gateway"
 	"github.com/Microkubes/microservice-user-profile/app"
 	"github.com/Microkubes/microservice-user-profile/db"
@@ -53,19 +53,6 @@ func main() {
 	service.Use(middleware.Recover())
 
 	service.Use(chain.AsGoaMiddleware(securityChain))
-
-	// Load MongoDB ENV variables
-	//host, username, password, database := loadMongoSettings()
-	// dbConf := conf.DBConfig
-	// Create new session to MongoDB
- 	// session := db.NewSession(dbConf.Host, dbConf.Username, dbConf.Password, dbConf.DatabaseName)
-
-	// At the end close session
-	// defer session.Close()
-
-	// Create users collection and indexes
-	// indexes := []string{"email"}
-	// userProfileCollection := db.PrepareDB(session, dbConf.DatabaseName, "user-profiles", indexes)
 
 	// Mount "user-profile" controller
 	c := NewUserProfileController(service, userService)
@@ -117,28 +104,6 @@ func setupBackend(dbConfig toolscfg.DBConfig) (backends.Backend, backends.Backen
 	return backend, backendsManager, err 
 }
 
-
-// func loadMongoSettings() (string, string, string, string) {
-// 	host := os.Getenv("MONGO_URL")
-// 	username := os.Getenv("MS_USERNAME")
-// 	password := os.Getenv("MS_PASSWORD")
-// 	database := os.Getenv("MS_DBNAME")
-
-// 	if host == "" {
-// 		host = "127.0.0.1:27017"
-// 	}
-// 	if username == "" {
-// 		username = "restapi"
-// 	}
-// 	if password == "" {
-// 		password = "restapi"
-// 	}
-// 	if database == "" {
-// 		database = "user-profiles"
-// 	}
-
-// 	return host, username, password, database
-// }
 
 func setupUserService(serviceConfig *toolscfg.ServiceConfig) (db.UserProfileRepository, error){
 	backend, _, err := setupBackend(serviceConfig.DBConfig)

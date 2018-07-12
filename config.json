@@ -7,26 +7,18 @@
     "weight": 10,
     "slots": 100
   },
-  "gatewayUrl": "http://kong:8000",
-  "gatewayAdminUrl": "http://kong-admin:8001",
+  "gatewayUrl": "http://localhost:8000",
+  "gatewayAdminUrl": "http://localhost:8001",
   "security":{
-    "keysDir": "/run/secrets",
+    "keysDir": "keys",
     "jwt":{
       "description": "JWT security middleware",
-      "tokenUrl": "http://kong:8000/jwt/signin"
-    },
-    "saml":{
-      "certFile": "/run/secrets/service.cert",
-      "keyFile": "/run/secrets/service.key",
-      "identityProviderUrl": "http://kong:8000/saml/idp",
-      "userServiceUrl": "http://kong:8000/users",
-      "registrationServiceUrl": "http://kong:8000/users/register",
-      "rootURL": "http://localhost:8000/profiles"
+      "tokenUrl": "http://localhost:8000/jwt/signin"
     },
     "oauth2":{
       "description": "OAuth2 security middleware",
-      "tokenUrl": "https://kong:8000/oauth2/token",
-      "authorizeUrl": "https://kong:8000/oauth2/authorize"
+      "tokenUrl": "https://localhost:8000/oauth2/token",
+      "authorizeUrl": "https://localhost:8000/oauth2/authorize"
     },
     "acl": {
       "policies":[{
@@ -64,14 +56,10 @@
   "database":{
     "dbName": "mongodb",
     "dbInfo": {
-      "credentials": "/full/path/to/aws/credentials",
-      "endpoint": "http://localhost:9000",
-      "awsRegion": "us-east-1",
-      "host": "mongo:27017",
+      "host": "localhost:27017",
       "database": "user-profiles",
       "user": "restapi",
       "pass": "restapi"
     }
   }
-
 }
