@@ -5,6 +5,8 @@ import (
 	"github.com/Microkubes/microservice-user-profile/app"
 	"github.com/Microkubes/microservice-user-profile/db"
 	"github.com/goadesign/goa"
+	errors "github.com/JormungandrK/backends"
+	"fmt"
 )
 
 // UserProfileController implements the userProfile resource.
@@ -39,22 +41,19 @@ func (c *UserProfileController) GetUserProfile(ctx *app.GetUserProfileUserProfil
 	res := &app.UserProfile{}
 
 	// Return one user profile by id.
-	if err := c.Repository.GetUserProfile(ctx.UserID, res); err != nil {
-		e := err.(*goa.ErrorResponse)
-
-		switch e.Status {
-		case 400:
-			return ctx.BadRequest(err)
-		case 404:
-			return ctx.NotFound(err)
-		default:
+	 res, err := c.Repository.GetUserProfile(ctx.UserID)
+	
+		if err != nil {
+			if errors.IsErrNotFound(err) {
+				return ctx.NotFound(err)
+			}
+			
 			return ctx.InternalServerError(err)
 		}
-	}
 
-	res.UserID = ctx.UserID
+		res.UserID = ctx.UserID
 
-	return ctx.OK(res)
+		return ctx.OK(res)
 }
 
 // UpdateUserProfile runs the UpdateUserProfile action.
@@ -62,50 +61,52 @@ func (c *UserProfileController) UpdateUserProfile(ctx *app.UpdateUserProfileUser
 	res, err := c.Repository.UpdateUserProfile(ctx.Payload, ctx.UserID)
 
 	if err != nil {
-		e := err.(*goa.ErrorResponse)
-
-		switch e.Status {
-		case 400:
+		fmt.Printf("  => ERROR:%s\n", err)
+		// if errors.IsErrNotFound(err) {
+		// 	return ctx.NotFound(err)
+		
+		// }
+		if errors.IsErrAlreadyExists(err) {
 			return ctx.BadRequest(err)
-		default:
-			return ctx.InternalServerError(err)
 		}
+		
+		return ctx.InternalServerError(err)
 	}
 
 	return ctx.OK(res)
 }
 
 // UpdateMyProfile runs the UpdateMyProfile action.
-// func (c *UserProfileController) UpdateMyProfile(ctx *app.UpdateMyProfileUserProfileContext) error {
-// 	var authObj *auth.Auth
+func (c *UserProfileController) UpdateMyProfile(ctx *app.UpdateMyProfileUserProfileContext) error {
+	var authObj *auth.Auth
 
-// 	hasAuth := auth.HasAuth(ctx)
+	hasAuth := auth.HasAuth(ctx)
 
-// 	if hasAuth {
-// 		authObj = auth.GetAuth(ctx.Context)
-// 	} else {
-// 		return ctx.InternalServerError(goa.ErrInternal("Auth has not been set"))
-// 	}
+	if hasAuth {
+		authObj = auth.GetAuth(ctx.Context)
+	} else {
+		return ctx.InternalServerError(goa.ErrInternal("Auth has not been set"))
+	}
 
-// 	userID := authObj.UserID
+	userID := authObj.UserID
 
-// 	res, err := c.Repository.UpdateMyProfile(ctx.Payload, userID)
+	res, err := c.Repository.UpdateUserProfile(ctx.Payload, userID)
 
-// 	if err != nil {
-// 		e := err.(*goa.ErrorResponse)
+	if err != nil {
+		fmt.Printf("  => ERROR:%s\n", err)
+		// if errors.IsErrNotFound(err) {
+		// 	return ctx.NotFound(err)
+		
+		// }
+		if errors.IsErrAlreadyExists(err) {
+			return ctx.BadRequest(err)
+		}
+		
+		return ctx.InternalServerError(err)
+	}
 
-// 		switch e.Status {
-// 		case 400:
-// 			return ctx.BadRequest(err)
-// 		case 404:
-// 			return ctx.NotFound(err)
-// 		default:
-// 			return ctx.InternalServerError(err)
-// 		}
-// 	}
-
-// 	return ctx.OK(res)
-// }
+	return ctx.OK(res)
+}
 
 // GetMyProfile runs the GetMyProfile action.
 func (c *UserProfileController) GetMyProfile(ctx *app.GetMyProfileUserProfileContext) error {
@@ -123,18 +124,15 @@ func (c *UserProfileController) GetMyProfile(ctx *app.GetMyProfileUserProfileCon
 	res := &app.UserProfile{}
 
 	// Return one user profile by id.
-	if err := c.Repository.GetUserProfile(userID, res); err != nil {
-		e := err.(*goa.ErrorResponse)
-
-		switch e.Status {
-		case 400:
-			return ctx.BadRequest(err)
-		case 404:
-			return ctx.NotFound(err)
-		default:
+	 res, err := c.Repository.GetUserProfile(userID)
+	
+		if err != nil {
+			if errors.IsErrNotFound(err) {
+				return ctx.NotFound(err)
+			}
+			
 			return ctx.InternalServerError(err)
 		}
-	}
 
 	res.UserID = userID
 
