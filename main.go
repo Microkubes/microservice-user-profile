@@ -57,9 +57,6 @@ func main() {
 	// Mount "user-profile" controller
 	c := NewUserProfileController(service, userService)
 	app.MountUserProfileController(service, c)
-	// Mount "userProfile" controller
-	//c2 := NewUserProfileController(service, userService)
-	//app.MountUserProfileController(service, c2)
 
 	// Start service
 	if err := service.ListenAndServe(fmt.Sprintf(":%d", cfg.Service.MicroservicePort)); err != nil {
@@ -85,11 +82,6 @@ func setupRepository(backend backends.Backend) (backends.Repository, error) {
 			},
 		},
 	})
-
-	// if err != nil {
-	// 	log.Fatal("Failed to create backend repository: ", err)
-	// }
-	// return backendManager, Repository
 }
 
 

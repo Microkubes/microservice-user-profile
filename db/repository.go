@@ -13,10 +13,10 @@ import (
 
 // User is an object which holds the UserID, FullName, Email and the date of creation 
 type User struct {
-	UserID 		string `json:"userId" xml:"userId"`
-	FullName 	string `json:"fullname,omitempty" xml:"fullName,omitempty"`
-	Email 		string `json:"email,omitempty" xml:"email,omitempty"`
-	CreatedOn 	int    `json:"createdOn,omitempty" xml:"createdOn"` 
+	UserID 		string `json:"userId" bson:"userId"`
+	FullName 	string `json:"fullname,omitempty" bson:"fullName,omitempty"`
+	Email 		string `json:"email,omitempty" bson:"email,omitempty"`
+	CreatedOn 	int    `json:"createdOn,omitempty" bson:"createdOn"` 
 }
 
 
@@ -65,11 +65,10 @@ func (r *BackendUserService) UpdateUserProfile(profile *app.UserProfilePayload, 
 	if err != nil {
 		fmt.Printf("Error: %s\n", err.Error())
 		if !backends.IsErrNotFound(err){
-			// fmt.Println("  ==> ne e ok")
 			return nil, err			
 		}
 	}
-	// fmt.Println(" ==> ok")
+
 	var existing *app.UserProfile
 
 	var filter backends.Filter
@@ -90,7 +89,6 @@ func (r *BackendUserService) UpdateUserProfile(profile *app.UserProfilePayload, 
 
 	_, err = r.userRepository.Save(existing, filter)
 	if err != nil {
-		// fmt.Println(" ==> vo save error")
 		return nil, err
 	}    
 	    

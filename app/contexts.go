@@ -210,6 +210,14 @@ func (ctx *UpdateUserProfileUserProfileContext) OK(r *UserProfile) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
 
+// OK sends a HTTP response with status code 201.
+func (ctx *UpdateUserProfileUserProfileContext) Created(r *UserProfile) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/microkubes.user-profile+json")	
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 201, r)	
+}
+
 // BadRequest sends a HTTP response with status code 400.
 func (ctx *UpdateUserProfileUserProfileContext) BadRequest(r error) error {
 	if ctx.ResponseData.Header().Get("Content-Type") == "" {

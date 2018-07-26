@@ -62,10 +62,7 @@ func (c *UserProfileController) UpdateUserProfile(ctx *app.UpdateUserProfileUser
 
 	if err != nil {
 		fmt.Printf("  => ERROR:%s\n", err)
-		// if errors.IsErrNotFound(err) {
-		// 	return ctx.NotFound(err)
 		
-		// }
 		if errors.IsErrAlreadyExists(err) {
 			return ctx.BadRequest(err)
 		}
@@ -73,7 +70,7 @@ func (c *UserProfileController) UpdateUserProfile(ctx *app.UpdateUserProfileUser
 		return ctx.InternalServerError(err)
 	}
 
-	return ctx.OK(res)
+	return ctx.Created(res)
 }
 
 // UpdateMyProfile runs the UpdateMyProfile action.
@@ -94,10 +91,7 @@ func (c *UserProfileController) UpdateMyProfile(ctx *app.UpdateMyProfileUserProf
 
 	if err != nil {
 		fmt.Printf("  => ERROR:%s\n", err)
-		// if errors.IsErrNotFound(err) {
-		// 	return ctx.NotFound(err)
-		
-		// }
+	
 		if errors.IsErrAlreadyExists(err) {
 			return ctx.BadRequest(err)
 		}
