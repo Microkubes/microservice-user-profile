@@ -9,12 +9,14 @@ import (
 
 	"github.com/Microkubes/microservice-security/chain"
 	"github.com/Microkubes/microservice-security/flow"
-	"github.com/Microkubes/microservice-tools/config"
+	// "github.com/Microkubes/microservice-tools/config"
 	"github.com/Microkubes/microservice-tools/gateway"
 	"github.com/Microkubes/microservice-user-profile/app"
 	"github.com/Microkubes/microservice-user-profile/db"
+	toolscfg "github.com/Microkubes/microservice-tools/config"
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
+	"github.com/JormungandrK/backends"
 )
 
 func main() {
@@ -23,16 +25,22 @@ func main() {
 
 	gatewayAdminURL, configFile := loadGatewaySettings()
 
-	conf, err := config.LoadConfig(configFile)
+	cfg, err := toolscfg.LoadConfig(configFile)
 	if err != nil {
 		service.LogError("config", "err", err)
-		return
 	}
 	// Gateway self-registration
-	unregisterService := registerMicroservice(gatewayAdminURL, conf)
+	unregisterService := registerMicroservice(gatewayAdminURL, cfg)
 	defer unregisterService() // defer the unregister for after main exits
 
-	securityChain, cleanup, err := flow.NewSecurityFromConfig(conf)
+	// Setup user-profile service
+	userService, err := setupUserService(cfg)
+	if err != nil {
+		service.LogError("config", err)
+		return
+	}
+
+	securityChain, cleanup, err := flow.NewSecurityFromConfig(cfg)
 	if err != nil {
 		panic(err)
 	}
@@ -46,54 +54,63 @@ func main() {
 
 	service.Use(chain.AsGoaMiddleware(securityChain))
 
-	// Load MongoDB ENV variables
-	//host, username, password, database := loadMongnoSettings()
-	dbConf := conf.DBConfig
-	// Create new session to MongoDB
-	session := db.NewSession(dbConf.Host, dbConf.Username, dbConf.Password, dbConf.DatabaseName)
-
-	// At the end close session
-	defer session.Close()
-
-	// Create users collection and indexes
-	indexes := []string{"email"}
-	userProfileCollection := db.PrepareDB(session, dbConf.DatabaseName, "user-profiles", indexes)
-
-	// Mount "swagger" controller
-	c := NewSwaggerController(service)
-	app.MountSwaggerController(service, c)
-	// Mount "userProfile" controller
-	c2 := NewUserProfileController(service, &db.MongoCollection{Collection: userProfileCollection})
-	app.MountUserProfileController(service, c2)
+	// Mount "user-profile" controller
+	c := NewUserProfileController(service, userService)
+	app.MountUserProfileController(service, c)
 
 	// Start service
-	if err := service.ListenAndServe(fmt.Sprintf(":%d", conf.Service.MicroservicePort)); err != nil {
+	if err := service.ListenAndServe(fmt.Sprintf(":%d", cfg.Service.MicroservicePort)); err != nil {
 		service.LogError("startup", "err", err)
 	}
 
 }
 
-func loadMongnoSettings() (string, string, string, string) {
-	host := os.Getenv("MONGO_URL")
-	username := os.Getenv("MS_USERNAME")
-	password := os.Getenv("MS_PASSWORD")
-	database := os.Getenv("MS_DBNAME")
-
-	if host == "" {
-		host = "127.0.0.1:27017"
-	}
-	if username == "" {
-		username = "restapi"
-	}
-	if password == "" {
-		password = "restapi"
-	}
-	if database == "" {
-		database = "user-profiles"
-	}
-
-	return host, username, password, database
+func setupRepository(backend backends.Backend) (backends.Repository, error) {
+	return backend.DefineRepository("user-profile", backends.RepositoryDefinitionMap{
+		"name":    "user-profile",
+		"indexes":  []backends.Index{
+				backends.NewUniqueIndex("userId"),
+				backends.NewUniqueIndex("fullname"),
+		},
+		"hashKey":       "id",
+		"readCapacity":  int64(5),
+		"writeCapacity": int64(5),
+		"GSI": map[string]interface{}{
+			"email": map[string]interface{}{
+				"readCapacity":  1,
+				"writeCapacity": 1,
+			},
+		},
+	})
 }
+
+
+func setupBackend(dbConfig toolscfg.DBConfig) (backends.Backend, backends.BackendManager, error) {
+	dbinfo := map[string]*toolscfg.DBInfo{}
+
+	dbinfo[dbConfig.DBName] = &dbConfig.DBInfo
+
+	backendsManager := backends.NewBackendSupport(dbinfo)
+	backend, err := backendsManager.GetBackend(dbConfig.DBName)
+
+	return backend, backendsManager, err 
+}
+
+
+func setupUserService(serviceConfig *toolscfg.ServiceConfig) (db.UserProfileRepository, error){
+	backend, _, err := setupBackend(serviceConfig.DBConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	userRepo, err := setupRepository(backend)
+	if err != nil {
+		return nil, err
+	}
+
+	return db.NewUserService(userRepo), err
+}
+
 
 func loadGatewaySettings() (string, string) {
 	gatewayURL := os.Getenv("API_GATEWAY_URL")
@@ -109,8 +126,8 @@ func loadGatewaySettings() (string, string) {
 	return gatewayURL, serviceConfigFile
 }
 
-func registerMicroservice(gatewayAdminURL string, conf *config.ServiceConfig) func() {
-	registration := gateway.NewKongGateway(gatewayAdminURL, &http.Client{}, conf.Service)
+func registerMicroservice(gatewayAdminURL string, cfg *toolscfg.ServiceConfig) func() {
+	registration := gateway.NewKongGateway(gatewayAdminURL, &http.Client{}, cfg.Service)
 	err := registration.SelfRegister()
 	if err != nil {
 		panic(err)
@@ -120,3 +137,4 @@ func registerMicroservice(gatewayAdminURL string, conf *config.ServiceConfig) fu
 		registration.Unregister()
 	}
 }
+ 
