@@ -4,6 +4,7 @@ env:
   global:
     - CC_TEST_REPORTER_ID=${CODE_CLIMATE_REPORTER_ID}
     - GIT_COMMITTED_AT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then git log -1 --pretty=format:%ct; else git log -1 --skip 1 --pretty=format:%ct; fi)
+    - CURRENT_BRANCH=$(if [ ! -z "$TRAVIS_TAG" ]; then echo $TRAVIS_TAG; else echo "master"; fi)
 
 language: go
 
@@ -34,7 +35,7 @@ script:
     fi
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+  - if [ "$TRAVIS_BRANCH" == "$CURRENT_BRANCH" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
     make push;
     fi
