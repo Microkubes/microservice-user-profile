@@ -20,13 +20,13 @@ import (
 // Identifier: application/microkubes.user-profile+json; view=default
 type UserProfile struct {
 	// User profile created timestamp
-	CreatedOn int `form:"createdOn" json:"createdOn" xml:"createdOn"`
+	CreatedOn int `form:"createdOn" json:"createdOn" yaml:"createdOn" xml:"createdOn"`
 	// Email of user
-	Email *string `form:"email,omitempty" json:"email,omitempty" xml:"email,omitempty"`
+	Email *string `form:"email,omitempty" json:"email,omitempty" yaml:"email,omitempty" xml:"email,omitempty"`
 	// Full name of the user
-	FullName *string `form:"fullName,omitempty" json:"fullName,omitempty" xml:"fullName,omitempty"`
+	FullName *string `form:"fullName,omitempty" json:"fullName,omitempty" yaml:"fullName,omitempty" xml:"fullName,omitempty"`
 	// Unique user ID
-	UserID string `form:"userId" json:"userId" xml:"userId"`
+	UserID string `form:"userId" json:"userId" yaml:"userId" xml:"userId"`
 }
 
 // Validate validates the UserProfile media type instance.

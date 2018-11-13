@@ -17,9 +17,9 @@ import (
 // UserProfile data
 type userProfilePayload struct {
 	// Email of user
-	Email *string `form:"email,omitempty" json:"email,omitempty" xml:"email,omitempty"`
+	Email *string `form:"email,omitempty" json:"email,omitempty" yaml:"email,omitempty" xml:"email,omitempty"`
 	// Full name of the user
-	FullName *string `form:"fullName,omitempty" json:"fullName,omitempty" xml:"fullName,omitempty"`
+	FullName *string `form:"fullName,omitempty" json:"fullName,omitempty" yaml:"fullName,omitempty" xml:"fullName,omitempty"`
 }
 
 // Validate validates the userProfilePayload type instance.
@@ -53,9 +53,9 @@ func (ut *userProfilePayload) Publicize() *UserProfilePayload {
 // UserProfile data
 type UserProfilePayload struct {
 	// Email of user
-	Email string `form:"email" json:"email" xml:"email"`
+	Email string `form:"email" json:"email" yaml:"email" xml:"email"`
 	// Full name of the user
-	FullName string `form:"fullName" json:"fullName" xml:"fullName"`
+	FullName string `form:"fullName" json:"fullName" yaml:"fullName" xml:"fullName"`
 }
 
 // Validate validates the UserProfilePayload type instance.

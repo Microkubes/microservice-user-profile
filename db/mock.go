@@ -3,6 +3,7 @@ package db
 import (
 	"sync"
 
+	"github.com/JormungandrK/backends"
 	"github.com/Microkubes/microservice-user-profile/app"
 	"github.com/goadesign/goa"
 )
@@ -25,20 +26,21 @@ func New() *DB {
 }
 
 // GetUserProfile mock implementation
-func (db *DB) GetUserProfile(objectID string, mediaType *app.UserProfile) error {
+func (db *DB) GetUserProfile(objectID string) (*app.UserProfile, error) {
 	db.Lock()
 	defer db.Unlock()
+	mediaType := &app.UserProfile{}
 
 	if objectID == "6975c461f9f8eb02aae053f3" {
-		return goa.ErrInternal("Internal error")
+		return nil, goa.ErrInternal("Internal error")
 	}
 
 	if objectID == "fakeobjectidab02aae053f3" {
-		return goa.ErrNotFound("not found")
+		return nil, backends.ErrNotFound("not found")
 	}
 
 	if objectID == "fakeobjectidab02aae053f3aasadas" {
-		return goa.ErrBadRequest("invalid User ID")
+		return nil, backends.ErrInvalidInput("invalid User ID")
 	}
 
 	if user, ok := db.users[objectID]; ok {
@@ -48,7 +50,7 @@ func (db *DB) GetUserProfile(objectID string, mediaType *app.UserProfile) error 
 		mediaType.CreatedOn = 1502722729
 	}
 
-	return nil
+	return mediaType, nil
 }
 
 // UpdateUserProfile mock implementation
@@ -57,8 +59,12 @@ func (db *DB) UpdateUserProfile(profile *app.UserProfilePayload, userID string) 
 		return nil, goa.ErrInternal("Internal error")
 	}
 
+	if userID == "fakeobjectidab02aae053f3" {
+		return nil, backends.ErrNotFound("not found")
+	}
+
 	if userID == "fakeobjectidab02aae053f3aasadas" {
-		return nil, goa.ErrBadRequest("invalid User ID")
+		return nil, backends.ErrInvalidInput("invalid User ID")
 	}
 
 	if _, ok := db.users[userID]; ok {
@@ -90,11 +96,11 @@ func (db *DB) UpdateMyProfile(profile *app.UserProfilePayload, userID string) (*
 	}
 
 	if userID == "fakeobjectidab02aae053f3" {
-		return nil, goa.ErrNotFound("Not Found")
+		return nil, backends.ErrNotFound("not found")
 	}
 
 	if userID == "fakeobjectidab02aae053f3aasadas" {
-		return nil, goa.ErrBadRequest("invalid User ID")
+		return nil, backends.ErrInvalidInput("invalid User ID")
 	}
 
 	if _, ok := db.users[userID]; ok {

@@ -7,17 +7,17 @@ definitions:
   UserProfilePayload:
     description: UserProfile data
     example:
-      email: alvah_rutherford@zulauf.com
-      fullName: Vero maxime.
+      email: seamus@wuckerttorp.com
+      fullName: Accusamus est exercitationem officia.
     properties:
       email:
         description: Email of user
-        example: alvah_rutherford@zulauf.com
+        example: seamus@wuckerttorp.com
         format: email
         type: string
       fullName:
         description: Full name of the user
-        example: Vero maxime.
+        example: Accusamus est exercitationem officia.
         type: string
     required:
     - fullName
@@ -31,7 +31,7 @@ definitions:
       detail: Value of ID must be an integer
       id: 3F1FKVRR
       meta:
-        timestamp: 1.458609e+09
+        timestamp: 1.458609066e+09
       status: "400"
     properties:
       code:
@@ -52,7 +52,7 @@ definitions:
         description: a meta object containing non-standard meta-information about
           the error.
         example:
-          timestamp: 1.458609e+09
+          timestamp: 1.458609066e+09
         type: object
       status:
         description: the HTTP status code applicable to this problem, expressed as
@@ -64,14 +64,14 @@ definitions:
   userProfile:
     description: userProfile media type (default view)
     example:
-      createdOn: 4.694125e+18
+      createdOn: 4.694125368506792e+18
       email: savion.pacocha@lueilwitzmante.org
-      fullName: Saepe blanditiis dolor at.
-      userId: Autem alias.
+      fullName: Dolor at architecto autem alias eos dolorem.
+      userId: Veritatis velit assumenda minus rerum in ipsam.
     properties:
       createdOn:
         description: User profile created timestamp
-        example: 4.694125e+18
+        example: 4.694125368506792e+18
         format: int64
         type: integer
       email:
@@ -81,11 +81,11 @@ definitions:
         type: string
       fullName:
         description: Full name of the user
-        example: Saepe blanditiis dolor at.
+        example: Dolor at architecto autem alias eos dolorem.
         type: string
       userId:
         description: Unique user ID
-        example: Autem alias.
+        example: Veritatis velit assumenda minus rerum in ipsam.
         type: string
     required:
     - userId

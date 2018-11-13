@@ -1,12 +1,13 @@
 package main
 
 import (
+	"fmt"
+
+	errors "github.com/JormungandrK/backends"
 	"github.com/Microkubes/microservice-security/auth"
 	"github.com/Microkubes/microservice-user-profile/app"
 	"github.com/Microkubes/microservice-user-profile/db"
 	"github.com/goadesign/goa"
-	errors "github.com/JormungandrK/backends"
-	"fmt"
 )
 
 // UserProfileController implements the userProfile resource.
@@ -41,19 +42,23 @@ func (c *UserProfileController) GetUserProfile(ctx *app.GetUserProfileUserProfil
 	res := &app.UserProfile{}
 
 	// Return one user profile by id.
-	 res, err := c.Repository.GetUserProfile(ctx.UserID)
-	
-		if err != nil {
-			if errors.IsErrNotFound(err) {
-				return ctx.NotFound(err)
-			}
-			
-			return ctx.InternalServerError(err)
+	res, err := c.Repository.GetUserProfile(ctx.UserID)
+
+	if err != nil {
+		if errors.IsErrNotFound(err) {
+			return ctx.NotFound(err)
 		}
 
-		res.UserID = ctx.UserID
+		if errors.IsErrInvalidInput(err) {
+			return ctx.BadRequest(err)
+		}
 
-		return ctx.OK(res)
+		return ctx.InternalServerError(err)
+	}
+
+	res.UserID = ctx.UserID
+
+	return ctx.OK(res)
 }
 
 // UpdateUserProfile runs the UpdateUserProfile action.
@@ -62,15 +67,19 @@ func (c *UserProfileController) UpdateUserProfile(ctx *app.UpdateUserProfileUser
 
 	if err != nil {
 		fmt.Printf("  => ERROR:%s\n", err)
-		
+
+		if errors.IsErrInvalidInput(err) {
+			return ctx.BadRequest(err)
+		}
+
 		if errors.IsErrAlreadyExists(err) {
 			return ctx.BadRequest(err)
 		}
-		
+
 		return ctx.InternalServerError(err)
 	}
 
-	return ctx.Created(res)
+	return ctx.OK(res)
 }
 
 // UpdateMyProfile runs the UpdateMyProfile action.
@@ -87,15 +96,25 @@ func (c *UserProfileController) UpdateMyProfile(ctx *app.UpdateMyProfileUserProf
 
 	userID := authObj.UserID
 
+	fmt.Println(userID)
+
 	res, err := c.Repository.UpdateUserProfile(ctx.Payload, userID)
 
 	if err != nil {
 		fmt.Printf("  => ERROR:%s\n", err)
-	
+
+		if errors.IsErrNotFound(err) {
+			return ctx.NotFound(err)
+		}
+
+		if errors.IsErrInvalidInput(err) {
+			return ctx.BadRequest(err)
+		}
+
 		if errors.IsErrAlreadyExists(err) {
 			return ctx.BadRequest(err)
 		}
-		
+
 		return ctx.InternalServerError(err)
 	}
 
@@ -118,15 +137,19 @@ func (c *UserProfileController) GetMyProfile(ctx *app.GetMyProfileUserProfileCon
 	res := &app.UserProfile{}
 
 	// Return one user profile by id.
-	 res, err := c.Repository.GetUserProfile(userID)
-	
-		if err != nil {
-			if errors.IsErrNotFound(err) {
-				return ctx.NotFound(err)
-			}
-			
-			return ctx.InternalServerError(err)
+	res, err := c.Repository.GetUserProfile(userID)
+
+	if err != nil {
+		if errors.IsErrNotFound(err) {
+			return ctx.NotFound(err)
 		}
+
+		if errors.IsErrInvalidInput(err) {
+			return ctx.BadRequest(err)
+		}
+
+		return ctx.InternalServerError(err)
+	}
 
 	res.UserID = userID
 
