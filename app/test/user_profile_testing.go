@@ -6,7 +6,7 @@
 // $ goagen
 // --design=github.com/Microkubes/microservice-user-profile/design
 // --out=$(GOPATH)/src/github.com/Microkubes/microservice-user-profile
-// --version=v1.3.0
+// --version=v1.3.1
 
 package test
 
