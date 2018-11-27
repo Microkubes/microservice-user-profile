@@ -10,13 +10,13 @@ import (
 	"github.com/Microkubes/microservice-security/chain"
 	"github.com/Microkubes/microservice-security/flow"
 	// "github.com/Microkubes/microservice-tools/config"
+	"github.com/JormungandrK/backends"
+	toolscfg "github.com/Microkubes/microservice-tools/config"
 	"github.com/Microkubes/microservice-tools/gateway"
 	"github.com/Microkubes/microservice-user-profile/app"
 	"github.com/Microkubes/microservice-user-profile/db"
-	toolscfg "github.com/Microkubes/microservice-tools/config"
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
-	"github.com/JormungandrK/backends"
 )
 
 func main() {
@@ -28,7 +28,9 @@ func main() {
 	cfg, err := toolscfg.LoadConfig(configFile)
 	if err != nil {
 		service.LogError("config", "err", err)
+		return
 	}
+
 	// Gateway self-registration
 	unregisterService := registerMicroservice(gatewayAdminURL, cfg)
 	defer unregisterService() // defer the unregister for after main exits
@@ -67,10 +69,10 @@ func main() {
 
 func setupRepository(backend backends.Backend) (backends.Repository, error) {
 	return backend.DefineRepository("user-profile", backends.RepositoryDefinitionMap{
-		"name":    "user-profile",
-		"indexes":  []backends.Index{
-				backends.NewUniqueIndex("userId"),
-				backends.NewUniqueIndex("fullname"),
+		"name": "user-profile",
+		"indexes": []backends.Index{
+			backends.NewUniqueIndex("userId"),
+			backends.NewUniqueIndex("fullname"),
 		},
 		"hashKey":       "id",
 		"readCapacity":  int64(5),
@@ -84,7 +86,6 @@ func setupRepository(backend backends.Backend) (backends.Repository, error) {
 	})
 }
 
-
 func setupBackend(dbConfig toolscfg.DBConfig) (backends.Backend, backends.BackendManager, error) {
 	dbinfo := map[string]*toolscfg.DBInfo{}
 
@@ -93,11 +94,10 @@ func setupBackend(dbConfig toolscfg.DBConfig) (backends.Backend, backends.Backen
 	backendsManager := backends.NewBackendSupport(dbinfo)
 	backend, err := backendsManager.GetBackend(dbConfig.DBName)
 
-	return backend, backendsManager, err 
+	return backend, backendsManager, err
 }
 
-
-func setupUserService(serviceConfig *toolscfg.ServiceConfig) (db.UserProfileRepository, error){
+func setupUserService(serviceConfig *toolscfg.ServiceConfig) (db.UserProfileRepository, error) {
 	backend, _, err := setupBackend(serviceConfig.DBConfig)
 	if err != nil {
 		return nil, err
@@ -110,7 +110,6 @@ func setupUserService(serviceConfig *toolscfg.ServiceConfig) (db.UserProfileRepo
 
 	return db.NewUserService(userRepo), err
 }
-
 
 func loadGatewaySettings() (string, string) {
 	gatewayURL := os.Getenv("API_GATEWAY_URL")
@@ -137,4 +136,3 @@ func registerMicroservice(gatewayAdminURL string, cfg *toolscfg.ServiceConfig) f
 		registration.Unregister()
 	}
 }
- 

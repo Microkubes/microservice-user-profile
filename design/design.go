@@ -17,6 +17,11 @@ var _ = Resource("userProfile", func() {
 	BasePath("profiles")
 	DefaultMedia(UserProfileMedia)
 
+	// Allow preflight HTTP requests
+	Origin("*", func() {
+		Methods("OPTIONS")
+	})
+
 	Action("GetUserProfile", func() {
 		Description("Get a UserProfile by UserID")
 		Routing(GET(":userId"))

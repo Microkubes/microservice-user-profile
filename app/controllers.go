@@ -6,13 +6,14 @@
 // $ goagen
 // --design=github.com/Microkubes/microservice-user-profile/design
 // --out=$(GOPATH)/src/github.com/Microkubes/microservice-user-profile
-// --version=v1.3.0
+// --version=v1.3.1
 
 package app
 
 import (
 	"context"
 	"github.com/goadesign/goa"
+	"github.com/goadesign/goa/cors"
 	"net/http"
 )
 
@@ -68,6 +69,8 @@ type UserProfileController interface {
 func MountUserProfileController(service *goa.Service, ctrl UserProfileController) {
 	initService(service)
 	var h goa.Handler
+	service.Mux.Handle("OPTIONS", "/profiles/me", ctrl.MuxHandler("preflight", handleUserProfileOrigin(cors.HandlePreflight()), nil))
+	service.Mux.Handle("OPTIONS", "/profiles/:userId", ctrl.MuxHandler("preflight", handleUserProfileOrigin(cors.HandlePreflight()), nil))
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -81,6 +84,7 @@ func MountUserProfileController(service *goa.Service, ctrl UserProfileController
 		}
 		return ctrl.GetMyProfile(rctx)
 	}
+	h = handleUserProfileOrigin(h)
 	service.Mux.Handle("GET", "/profiles/me", ctrl.MuxHandler("GetMyProfile", h, nil))
 	service.LogInfo("mount", "ctrl", "UserProfile", "action", "GetMyProfile", "route", "GET /profiles/me")
 
@@ -96,6 +100,7 @@ func MountUserProfileController(service *goa.Service, ctrl UserProfileController
 		}
 		return ctrl.GetUserProfile(rctx)
 	}
+	h = handleUserProfileOrigin(h)
 	service.Mux.Handle("GET", "/profiles/:userId", ctrl.MuxHandler("GetUserProfile", h, nil))
 	service.LogInfo("mount", "ctrl", "UserProfile", "action", "GetUserProfile", "route", "GET /profiles/:userId")
 
@@ -117,6 +122,7 @@ func MountUserProfileController(service *goa.Service, ctrl UserProfileController
 		}
 		return ctrl.UpdateMyProfile(rctx)
 	}
+	h = handleUserProfileOrigin(h)
 	service.Mux.Handle("PUT", "/profiles/me", ctrl.MuxHandler("UpdateMyProfile", h, unmarshalUpdateMyProfileUserProfilePayload))
 	service.LogInfo("mount", "ctrl", "UserProfile", "action", "UpdateMyProfile", "route", "PUT /profiles/me")
 
@@ -138,8 +144,33 @@ func MountUserProfileController(service *goa.Service, ctrl UserProfileController
 		}
 		return ctrl.UpdateUserProfile(rctx)
 	}
+	h = handleUserProfileOrigin(h)
 	service.Mux.Handle("PUT", "/profiles/:userId", ctrl.MuxHandler("UpdateUserProfile", h, unmarshalUpdateUserProfileUserProfilePayload))
 	service.LogInfo("mount", "ctrl", "UserProfile", "action", "UpdateUserProfile", "route", "PUT /profiles/:userId")
+}
+
+// handleUserProfileOrigin applies the CORS response headers corresponding to the origin.
+func handleUserProfileOrigin(h goa.Handler) goa.Handler {
+
+	return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		origin := req.Header.Get("Origin")
+		if origin == "" {
+			// Not a CORS request
+			return h(ctx, rw, req)
+		}
+		if cors.MatchOrigin(origin, "*") {
+			ctx = goa.WithLogContext(ctx, "origin", origin)
+			rw.Header().Set("Access-Control-Allow-Origin", origin)
+			rw.Header().Set("Access-Control-Allow-Credentials", "false")
+			if acrm := req.Header.Get("Access-Control-Request-Method"); acrm != "" {
+				// We are handling a preflight request
+				rw.Header().Set("Access-Control-Allow-Methods", "OPTIONS")
+			}
+			return h(ctx, rw, req)
+		}
+
+		return h(ctx, rw, req)
+	}
 }
 
 // unmarshalUpdateMyProfileUserProfilePayload unmarshals the request body into the context request data Payload field.
