@@ -6,19 +6,18 @@ import (
 
 	// "gopkg.in/mgo.v2"
 	// "time"
-	backends "github.com/JormungandrK/backends"
 	"fmt"
-	
+
+	backends "github.com/Microkubes/backends"
 )
 
-// User is an object which holds the UserID, FullName, Email and the date of creation 
+// User is an object which holds the UserID, FullName, Email and the date of creation
 type User struct {
-	UserID 		string `json:"userId" bson:"userId"`
-	FullName 	string `json:"fullname,omitempty" bson:"fullName,omitempty"`
-	Email 		string `json:"email,omitempty" bson:"email,omitempty"`
-	CreatedOn 	int    `json:"createdOn,omitempty" bson:"createdOn"` 
+	UserID    string `json:"userId" bson:"userId"`
+	FullName  string `json:"fullname,omitempty" bson:"fullName,omitempty"`
+	Email     string `json:"email,omitempty" bson:"email,omitempty"`
+	CreatedOn int    `json:"createdOn,omitempty" bson:"createdOn"`
 }
-
 
 // UserProfileRepository defines the interface for accessing the user profile data
 type UserProfileRepository interface {
@@ -31,8 +30,6 @@ type UserProfileRepository interface {
 	// UpdateMyProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error)
 }
 
-
-
 type BackendUserService struct {
 	userRepository backends.Repository
 }
@@ -42,7 +39,7 @@ func NewUserService(userRepository backends.Repository) UserProfileRepository {
 		userRepository: userRepository,
 	}
 }
- 
+
 // GetUserProfile finds user profile by Id. Return media type if succeed.
 func (r *BackendUserService) GetUserProfile(userID string) (*app.UserProfile, error) {
 	profile, err := r.userRepository.GetOne(backends.NewFilter().Match("userid", userID), &User{})
@@ -50,22 +47,20 @@ func (r *BackendUserService) GetUserProfile(userID string) (*app.UserProfile, er
 		return nil, err
 	}
 	result := &app.UserProfile{}
-	if err = backends.MapToInterface(profile, result); 
-	err != nil {
+	if err = backends.MapToInterface(profile, result); err != nil {
 		return nil, err
 	}
 	return result, err
 }
 
-
 // UpdateUserProfile updates user profile by id. Return media type if succeed.
 func (r *BackendUserService) UpdateUserProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
 
-	exitingIntf, err := r.userRepository.GetOne(backends.NewFilter().Match("userid", userID), &app.UserProfile{}) 
+	exitingIntf, err := r.userRepository.GetOne(backends.NewFilter().Match("userid", userID), &app.UserProfile{})
 	if err != nil {
 		fmt.Printf("Error: %s\n", err.Error())
-		if !backends.IsErrNotFound(err){
-			return nil, err			
+		if !backends.IsErrNotFound(err) {
+			return nil, err
 		}
 	}
 
@@ -76,8 +71,8 @@ func (r *BackendUserService) UpdateUserProfile(profile *app.UserProfilePayload, 
 	if exitingIntf == nil {
 		existing = &app.UserProfile{
 			FullName: &profile.FullName,
-			Email: &profile.Email,
-			UserID: userID,
+			Email:    &profile.Email,
+			UserID:   userID,
 		}
 	} else {
 		existing = exitingIntf.(*app.UserProfile)
@@ -85,12 +80,11 @@ func (r *BackendUserService) UpdateUserProfile(profile *app.UserProfilePayload, 
 		existing.Email = &profile.Email
 		filter = backends.NewFilter().Match("userid", userID)
 	}
-	
 
 	_, err = r.userRepository.Save(existing, filter)
 	if err != nil {
 		return nil, err
-	}    
-	    
+	}
+
 	return existing, nil
 }
