@@ -3,7 +3,7 @@ package db
 import (
 	"sync"
 
-	"github.com/JormungandrK/backends"
+	"github.com/Microkubes/backends"
 	"github.com/Microkubes/microservice-user-profile/app"
 	"github.com/goadesign/goa"
 )

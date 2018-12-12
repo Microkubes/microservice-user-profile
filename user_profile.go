@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	errors "github.com/JormungandrK/backends"
+	errors "github.com/Microkubes/backends"
 	"github.com/Microkubes/microservice-security/auth"
 	"github.com/Microkubes/microservice-user-profile/app"
 	"github.com/Microkubes/microservice-user-profile/db"
