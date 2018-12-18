@@ -196,3 +196,7 @@ Configuration properties:
  * **hosts** - list of valid hosts. Used for proxying and load balancing of the incoming request. You need to have at least the **virtual_host** in the list.
  * **weight** - instance weight - user for load balancing.
  * **slots** - maximal number of service instances under ```"user-profile.services.jormugandr.org"```.
+
+## Contributing
+
+For contributing to this repository or its documentation, see the [Contributing guidelines](CONTRIBUTING.md).
