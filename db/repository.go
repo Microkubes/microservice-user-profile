@@ -42,7 +42,7 @@ func NewUserService(userRepository backends.Repository) UserProfileRepository {
 
 // GetUserProfile finds user profile by Id. Return media type if succeed.
 func (r *BackendUserService) GetUserProfile(userID string) (*app.UserProfile, error) {
-	profile, err := r.userRepository.GetOne(backends.NewFilter().Match("userid", userID), &User{})
+	profile, err := r.userRepository.GetOne(backends.NewFilter().Match("userId", userID), &User{})
 	if err != nil {
 		return nil, err
 	}
@@ -56,12 +56,12 @@ func (r *BackendUserService) GetUserProfile(userID string) (*app.UserProfile, er
 // UpdateUserProfile updates user profile by id. Return media type if succeed.
 func (r *BackendUserService) UpdateUserProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error) {
 
-	exitingIntf, err := r.userRepository.GetOne(backends.NewFilter().Match("userid", userID), &app.UserProfile{})
+	exitingIntf, err := r.userRepository.GetOne(backends.NewFilter().Match("userId", userID), &app.UserProfile{})
 	if err != nil {
 		fmt.Printf("Error: %s\n", err.Error())
 		if !backends.IsErrNotFound(err) {
 			return nil, err
-		}
+		} 
 	}
 
 	var existing *app.UserProfile
@@ -78,13 +78,13 @@ func (r *BackendUserService) UpdateUserProfile(profile *app.UserProfilePayload, 
 		existing = exitingIntf.(*app.UserProfile)
 		existing.FullName = &profile.FullName
 		existing.Email = &profile.Email
-		filter = backends.NewFilter().Match("userid", userID)
+		filter = backends.NewFilter().Match("userId", userID)
 	}
-
+	
 	_, err = r.userRepository.Save(existing, filter)
+
 	if err != nil {
 		return nil, err
 	}
-
 	return existing, nil
 }
