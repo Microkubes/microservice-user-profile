@@ -80,6 +80,7 @@ func (c *UserProfileController) UpdateUserProfile(ctx *app.UpdateUserProfileUser
 	}
 
 	return ctx.OK(res)
+	
 }
 
 // UpdateMyProfile runs the UpdateMyProfile action.
