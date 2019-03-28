@@ -9,6 +9,7 @@
   },
   "gatewayUrl": "http://kong:8000",
   "gatewayAdminUrl": "http://kong:8001",
+  "version": "v1.0.1-beta",
   "security":{
     "keysDir": "/run/secrets",
     "jwt":{

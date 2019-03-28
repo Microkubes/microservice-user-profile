@@ -13,6 +13,8 @@ import (
 	"github.com/Microkubes/backends"
 	toolscfg "github.com/Microkubes/microservice-tools/config"
 	"github.com/Microkubes/microservice-tools/gateway"
+	"github.com/Microkubes/microservice-tools/utils"
+	"github.com/Microkubes/microservice-tools/utils/version"
 	"github.com/Microkubes/microservice-user-profile/app"
 	"github.com/Microkubes/microservice-user-profile/db"
 	"github.com/goadesign/goa"
@@ -55,6 +57,10 @@ func main() {
 	service.Use(middleware.Recover())
 
 	service.Use(chain.AsGoaMiddleware(securityChain))
+
+	service.Use(healthcheck.NewCheckMiddleware("/healthcheck"))
+
+	service.Use(version.NewVersionMiddleware(cfg.Version, "/version"))
 
 	// Mount "user-profile" controller
 	c := NewUserProfileController(service, userService)
