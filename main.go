@@ -13,7 +13,7 @@ import (
 	"github.com/Microkubes/backends"
 	toolscfg "github.com/Microkubes/microservice-tools/config"
 	"github.com/Microkubes/microservice-tools/gateway"
-	"github.com/Microkubes/microservice-tools/utils"
+	"github.com/Microkubes/microservice-tools/utils/healthcheck"
 	"github.com/Microkubes/microservice-tools/utils/version"
 	"github.com/Microkubes/microservice-user-profile/app"
 	"github.com/Microkubes/microservice-user-profile/db"
