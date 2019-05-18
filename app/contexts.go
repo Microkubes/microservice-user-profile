@@ -12,7 +12,7 @@ package app
 
 import (
 	"context"
-	"github.com/goadesign/goa"
+	"github.com/keitaroinc/goa"
 	"net/http"
 )
 

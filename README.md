@@ -13,7 +13,7 @@ export PATH=$GOPATH/bin:$PATH
 Install goa and goagen:
 ```
 cd $GOPATH
-go get -u github.com/goadesign/goa/...
+go get -u github.com/keitaroinc/goa/...
 ```
 
 ## Compile and run the service:

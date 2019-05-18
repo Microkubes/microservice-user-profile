@@ -11,7 +11,7 @@
 package client
 
 import (
-	"github.com/goadesign/goa"
+	"github.com/keitaroinc/goa"
 	"net/http"
 )
 

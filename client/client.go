@@ -11,8 +11,8 @@
 package client
 
 import (
-	"github.com/goadesign/goa"
-	goaclient "github.com/goadesign/goa/client"
+	"github.com/keitaroinc/goa"
+	goaclient "github.com/keitaroinc/goa/client"
 )
 
 // Client is the user-profile service client.

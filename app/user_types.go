@@ -11,7 +11,7 @@
 package app
 
 import (
-	"github.com/goadesign/goa"
+	"github.com/keitaroinc/goa"
 )
 
 // UserProfile data

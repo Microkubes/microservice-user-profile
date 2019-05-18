@@ -2,7 +2,7 @@ package db
 
 import (
 	"github.com/Microkubes/microservice-user-profile/app"
-	// "github.com/goadesign/goa"
+	// "github.com/keitaroinc/goa"
 
 	// "gopkg.in/mgo.v2"
 	// "time"
