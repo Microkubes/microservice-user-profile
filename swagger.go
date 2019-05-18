@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/goadesign/goa"
+	"github.com/keitaroinc/goa"
 )
 
 // SwaggerController implements the swagger resource.

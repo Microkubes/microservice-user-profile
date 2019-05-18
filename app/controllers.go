@@ -12,8 +12,8 @@ package app
 
 import (
 	"context"
-	"github.com/goadesign/goa"
-	"github.com/goadesign/goa/cors"
+	"github.com/keitaroinc/goa"
+	"github.com/keitaroinc/goa/cors"
 	"net/http"
 )
 

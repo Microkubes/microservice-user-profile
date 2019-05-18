@@ -17,8 +17,8 @@ import (
 	"github.com/Microkubes/microservice-tools/utils/version"
 	"github.com/Microkubes/microservice-user-profile/app"
 	"github.com/Microkubes/microservice-user-profile/db"
-	"github.com/goadesign/goa"
-	"github.com/goadesign/goa/middleware"
+	"github.com/keitaroinc/goa"
+	"github.com/keitaroinc/goa/middleware"
 )
 
 func main() {
