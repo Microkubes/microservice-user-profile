@@ -3,13 +3,17 @@ sudo: required
 env:
   global:
     - CC_TEST_REPORTER_ID=${CODE_CLIMATE_REPORTER_ID}
+    - GO_ENABLED=0
+    - GO111MODULE=on
+    - GOOS=linux
+    - GOARCH=amd64
     - GIT_COMMITTED_AT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then git log -1 --pretty=format:%ct; else git log -1 --skip 1 --pretty=format:%ct; fi)
     - CURRENT_BRANCH=$(if [ ! -z "$TRAVIS_TAG" ]; then echo $TRAVIS_TAG; else echo "master"; fi)
 
 language: go
 
 go:
-  - 1.10.x
+  - 1.13.x
 
 before_install:
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -18,12 +22,6 @@ before_install:
   - sudo apt-get -y install docker-ce
   - go get github.com/axw/gocov/gocov
   - go get github.com/AlekSi/gocov-xml
-  - go get gopkg.in/h2non/gock.v1
-  - go get github.com/Microkubes/microservice-tools
-  - go get -u github.com/Microkubes/backends/...
-  - go get -u github.com/Microkubes/microservice-security/...
-  - go get github.com/keitaroinc/goa/...
-  - go get gopkg.in/mgo.v2
 
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
