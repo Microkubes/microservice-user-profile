@@ -19,12 +19,18 @@ import (
 //
 // Identifier: application/microkubes.user-profile+json; view=default
 type UserProfile struct {
+	// Company name
+	Company *string `form:"company,omitempty" json:"company,omitempty" yaml:"company,omitempty" xml:"company,omitempty"`
+	// Company registration number
+	CompanyRegistrationNumber *string `form:"companyRegistrationNumber,omitempty" json:"companyRegistrationNumber,omitempty" yaml:"companyRegistrationNumber,omitempty" xml:"companyRegistrationNumber,omitempty"`
 	// User profile created timestamp
 	CreatedOn int `form:"createdOn" json:"createdOn" yaml:"createdOn" xml:"createdOn"`
 	// Email of user
 	Email *string `form:"email,omitempty" json:"email,omitempty" yaml:"email,omitempty" xml:"email,omitempty"`
 	// Full name of the user
 	FullName *string `form:"fullName,omitempty" json:"fullName,omitempty" yaml:"fullName,omitempty" xml:"fullName,omitempty"`
+	// Tax number
+	TaxNumber *string `form:"taxNumber,omitempty" json:"taxNumber,omitempty" yaml:"taxNumber,omitempty" xml:"taxNumber,omitempty"`
 	// Unique user ID
 	UserID string `form:"userId" json:"userId" yaml:"userId" xml:"userId"`
 }

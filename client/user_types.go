@@ -16,10 +16,16 @@ import (
 
 // UserProfile data
 type userProfilePayload struct {
+	// Company name
+	Company *string `form:"company,omitempty" json:"company,omitempty" yaml:"company,omitempty" xml:"company,omitempty"`
+	// Company registration number
+	CompanyRegistrationNumber *string `form:"companyRegistrationNumber,omitempty" json:"companyRegistrationNumber,omitempty" yaml:"companyRegistrationNumber,omitempty" xml:"companyRegistrationNumber,omitempty"`
 	// Email of user
 	Email *string `form:"email,omitempty" json:"email,omitempty" yaml:"email,omitempty" xml:"email,omitempty"`
 	// Full name of the user
 	FullName *string `form:"fullName,omitempty" json:"fullName,omitempty" yaml:"fullName,omitempty" xml:"fullName,omitempty"`
+	// Tax number
+	TaxNumber *string `form:"taxNumber,omitempty" json:"taxNumber,omitempty" yaml:"taxNumber,omitempty" xml:"taxNumber,omitempty"`
 }
 
 // Validate validates the userProfilePayload type instance.
@@ -41,21 +47,36 @@ func (ut *userProfilePayload) Validate() (err error) {
 // Publicize creates UserProfilePayload from userProfilePayload
 func (ut *userProfilePayload) Publicize() *UserProfilePayload {
 	var pub UserProfilePayload
+	if ut.Company != nil {
+		pub.Company = ut.Company
+	}
+	if ut.CompanyRegistrationNumber != nil {
+		pub.CompanyRegistrationNumber = ut.CompanyRegistrationNumber
+	}
 	if ut.Email != nil {
 		pub.Email = *ut.Email
 	}
 	if ut.FullName != nil {
 		pub.FullName = *ut.FullName
 	}
+	if ut.TaxNumber != nil {
+		pub.TaxNumber = ut.TaxNumber
+	}
 	return &pub
 }
 
 // UserProfile data
 type UserProfilePayload struct {
+	// Company name
+	Company *string `form:"company,omitempty" json:"company,omitempty" yaml:"company,omitempty" xml:"company,omitempty"`
+	// Company registration number
+	CompanyRegistrationNumber *string `form:"companyRegistrationNumber,omitempty" json:"companyRegistrationNumber,omitempty" yaml:"companyRegistrationNumber,omitempty" xml:"companyRegistrationNumber,omitempty"`
 	// Email of user
 	Email string `form:"email" json:"email" yaml:"email" xml:"email"`
 	// Full name of the user
 	FullName string `form:"fullName" json:"fullName" yaml:"fullName" xml:"fullName"`
+	// Tax number
+	TaxNumber *string `form:"taxNumber,omitempty" json:"taxNumber,omitempty" yaml:"taxNumber,omitempty" xml:"taxNumber,omitempty"`
 }
 
 // Validate validates the UserProfilePayload type instance.
