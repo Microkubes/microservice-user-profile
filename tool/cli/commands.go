@@ -108,8 +108,11 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 Payload example:
 
 {
-   "email": "seamus@wuckerttorp.com",
-   "fullName": "Accusamus est exercitationem officia."
+   "company": "Enim et saepe voluptate.",
+   "companyRegistrationNumber": "Nulla iste aliquam.",
+   "email": "hermann@waelchi.biz",
+   "fullName": "Molestias sint.",
+   "taxNumber": "Dolore sit."
 }`,
 		RunE: func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
 	}
@@ -130,8 +133,11 @@ Payload example:
 Payload example:
 
 {
-   "email": "seamus@wuckerttorp.com",
-   "fullName": "Accusamus est exercitationem officia."
+   "company": "Enim et saepe voluptate.",
+   "companyRegistrationNumber": "Nulla iste aliquam.",
+   "email": "hermann@waelchi.biz",
+   "fullName": "Molestias sint.",
+   "taxNumber": "Dolore sit."
 }`,
 		RunE: func(cmd *cobra.Command, args []string) error { return tmp4.Run(c, args) },
 	}

@@ -13,10 +13,13 @@ import (
 
 // User is an object which holds the UserID, FullName, Email and the date of creation
 type User struct {
-	UserID    string `json:"userId" bson:"userId"`
-	FullName  string `json:"fullname,omitempty" bson:"fullName,omitempty"`
-	Email     string `json:"email,omitempty" bson:"email,omitempty"`
-	CreatedOn int    `json:"createdOn,omitempty" bson:"createdOn"`
+	UserID                    string `json:"userId" bson:"userId"`
+	FullName                  string `json:"fullname,omitempty" bson:"fullName,omitempty"`
+	Email                     string `json:"email,omitempty" bson:"email,omitempty"`
+	Company                   string `json:"company,omitempty" bson:"company,omitempty"`
+	CompanyRegistrationNumber string `json:"companyRegistrationNumber,omitempty" bson:"companyRegistrationNumber,omitempty"`
+	TaxNumber                 string `json:"taxNumber,omitempty" bson:"taxNumber,omitempty"`
+	CreatedOn                 int    `json:"createdOn,omitempty" bson:"createdOn"`
 }
 
 // UserProfileRepository defines the interface for accessing the user profile data
@@ -61,7 +64,7 @@ func (r *BackendUserService) UpdateUserProfile(profile *app.UserProfilePayload, 
 		fmt.Printf("Error: %s\n", err.Error())
 		if !backends.IsErrNotFound(err) {
 			return nil, err
-		} 
+		}
 	}
 
 	var existing *app.UserProfile
@@ -70,17 +73,23 @@ func (r *BackendUserService) UpdateUserProfile(profile *app.UserProfilePayload, 
 
 	if exitingIntf == nil {
 		existing = &app.UserProfile{
-			FullName: &profile.FullName,
-			Email:    &profile.Email,
-			UserID:   userID,
+			FullName:                  &profile.FullName,
+			Email:                     &profile.Email,
+			UserID:                    userID,
+			Company:                   profile.Company,
+			CompanyRegistrationNumber: profile.CompanyRegistrationNumber,
+			TaxNumber:                 profile.TaxNumber,
 		}
 	} else {
 		existing = exitingIntf.(*app.UserProfile)
 		existing.FullName = &profile.FullName
 		existing.Email = &profile.Email
+		existing.Company = profile.Company
+		existing.CompanyRegistrationNumber = profile.CompanyRegistrationNumber
+		existing.TaxNumber = profile.TaxNumber
 		filter = backends.NewFilter().Match("userId", userID)
 	}
-	
+
 	_, err = r.userRepository.Save(existing, filter)
 
 	if err != nil {

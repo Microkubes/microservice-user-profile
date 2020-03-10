@@ -7,17 +7,32 @@ definitions:
   UserProfilePayload:
     description: UserProfile data
     example:
-      email: seamus@wuckerttorp.com
-      fullName: Accusamus est exercitationem officia.
+      company: Enim et saepe voluptate.
+      companyRegistrationNumber: Nulla iste aliquam.
+      email: hermann@waelchi.biz
+      fullName: Molestias sint.
+      taxNumber: Dolore sit.
     properties:
+      company:
+        description: Company name
+        example: Enim et saepe voluptate.
+        type: string
+      companyRegistrationNumber:
+        description: Company registration number
+        example: Nulla iste aliquam.
+        type: string
       email:
         description: Email of user
-        example: seamus@wuckerttorp.com
+        example: hermann@waelchi.biz
         format: email
         type: string
       fullName:
         description: Full name of the user
-        example: Accusamus est exercitationem officia.
+        example: Molestias sint.
+        type: string
+      taxNumber:
+        description: Tax number
+        example: Dolore sit.
         type: string
     required:
     - fullName
@@ -31,7 +46,7 @@ definitions:
       detail: Value of ID must be an integer
       id: 3F1FKVRR
       meta:
-        timestamp: 1.458609066e+09
+        timestamp: 1458609066
       status: "400"
     properties:
       code:
@@ -52,7 +67,7 @@ definitions:
         description: a meta object containing non-standard meta-information about
           the error.
         example:
-          timestamp: 1.458609066e+09
+          timestamp: 1458609066
         type: object
       status:
         description: the HTTP status code applicable to this problem, expressed as
@@ -64,28 +79,43 @@ definitions:
   userProfile:
     description: userProfile media type (default view)
     example:
-      createdOn: 4.694125368506792e+18
-      email: savion.pacocha@lueilwitzmante.org
-      fullName: Dolor at architecto autem alias eos dolorem.
-      userId: Veritatis velit assumenda minus rerum in ipsam.
+      company: Reprehenderit enim doloribus molestiae.
+      companyRegistrationNumber: Dolorem illum aut.
+      createdOn: 7249765961036167632
+      email: fatima@stracke.name
+      fullName: Velit assumenda.
+      taxNumber: Rerum in ipsam odio beatae possimus harum.
+      userId: Vel repudiandae omnis iste possimus possimus.
     properties:
+      company:
+        description: Company name
+        example: Reprehenderit enim doloribus molestiae.
+        type: string
+      companyRegistrationNumber:
+        description: Company registration number
+        example: Dolorem illum aut.
+        type: string
       createdOn:
         description: User profile created timestamp
-        example: 4.694125368506792e+18
+        example: 7249765961036167632
         format: int64
         type: integer
       email:
         description: Email of user
-        example: savion.pacocha@lueilwitzmante.org
+        example: fatima@stracke.name
         format: email
         type: string
       fullName:
         description: Full name of the user
-        example: Dolor at architecto autem alias eos dolorem.
+        example: Velit assumenda.
+        type: string
+      taxNumber:
+        description: Tax number
+        example: Rerum in ipsam odio beatae possimus harum.
         type: string
       userId:
         description: Unique user ID
-        example: Veritatis velit assumenda minus rerum in ipsam.
+        example: Vel repudiandae omnis iste possimus possimus.
         type: string
     required:
     - userId
