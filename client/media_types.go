@@ -11,8 +11,9 @@
 package client
 
 import (
-	"github.com/keitaroinc/goa"
 	"net/http"
+
+	"github.com/keitaroinc/goa"
 )
 
 // userProfile media type (default view)
@@ -52,6 +53,37 @@ func (mt *UserProfile) Validate() (err error) {
 // DecodeUserProfile decodes the UserProfile instance encoded in resp body.
 func (c *Client) DecodeUserProfile(resp *http.Response) (*UserProfile, error) {
 	var decoded UserProfile
+	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
+	return &decoded, err
+}
+
+// UserProfilePage media type (default view)
+//
+// Identifier: application/microkubes.user-profile-page+json; view=default
+type UserProfilePage struct {
+	// User profile list
+	Items []*UserProfile `form:"items,omitempty" json:"items,omitempty" yaml:"items,omitempty" xml:"items,omitempty"`
+	// Page number (1-based).
+	Page *int `form:"page,omitempty" json:"page,omitempty" yaml:"page,omitempty" xml:"page,omitempty"`
+	// Items per page.
+	PageSize *int `form:"pageSize,omitempty" json:"pageSize,omitempty" yaml:"pageSize,omitempty" xml:"pageSize,omitempty"`
+}
+
+// Validate validates the UserProfilePage media type instance.
+func (mt *UserProfilePage) Validate() (err error) {
+	for _, e := range mt.Items {
+		if e != nil {
+			if err2 := e.Validate(); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	return
+}
+
+// DecodeUserProfilePage decodes the UserProfilePage instance encoded in resp body.
+func (c *Client) DecodeUserProfilePage(resp *http.Response) (*UserProfilePage, error) {
+	var decoded UserProfilePage
 	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
 	return &decoded, err
 }

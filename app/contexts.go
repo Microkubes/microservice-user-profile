@@ -12,9 +12,54 @@ package app
 
 import (
 	"context"
-	"github.com/keitaroinc/goa"
 	"net/http"
+
+	"github.com/keitaroinc/goa"
 )
+
+// FindUserProfileUserProfileContext provides the userProfile FindUserProfile action context.
+type FindUserProfileUserProfileContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	Payload *FilterPayload
+}
+
+// NewFindUserProfileUserProfileContext parses the incoming request URL and body, performs validations and creates the
+// context used by the userProfile controller FindUserProfile action.
+func NewFindUserProfileUserProfileContext(ctx context.Context, r *http.Request, service *goa.Service) (*FindUserProfileUserProfileContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := FindUserProfileUserProfileContext{Context: ctx, ResponseData: resp, RequestData: req}
+	return &rctx, err
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *FindUserProfileUserProfileContext) OK(r *UserProfilePage) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/microkubes.user-profile-page+json")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// BadRequest sends a HTTP response with status code 400.
+func (ctx *FindUserProfileUserProfileContext) BadRequest(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
+}
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *FindUserProfileUserProfileContext) InternalServerError(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}
 
 // GetMyProfileUserProfileContext provides the userProfile GetMyProfile action context.
 type GetMyProfileUserProfileContext struct {

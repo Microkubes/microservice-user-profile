@@ -14,11 +14,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/Microkubes/microservice-user-profile/client"
-	"github.com/keitaroinc/goa"
-	goaclient "github.com/keitaroinc/goa/client"
-	uuid "github.com/keitaroinc/goa/uuid"
-	"github.com/spf13/cobra"
 	"log"
 	"net/url"
 	"os"
@@ -26,9 +21,22 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Microkubes/microservice-user-profile/client"
+	"github.com/keitaroinc/goa"
+	goaclient "github.com/keitaroinc/goa/client"
+	uuid "github.com/keitaroinc/goa/uuid"
+	"github.com/spf13/cobra"
 )
 
 type (
+	// FindUserProfileUserProfileCommand is the command line data structure for the FindUserProfile action of userProfile
+	FindUserProfileUserProfileCommand struct {
+		Payload     string
+		ContentType string
+		PrettyPrint bool
+	}
+
 	// GetMyProfileUserProfileCommand is the command line data structure for the GetMyProfile action of userProfile
 	GetMyProfileUserProfileCommand struct {
 		PrettyPrint bool
@@ -68,26 +76,48 @@ type (
 func RegisterCommands(app *cobra.Command, c *client.Client) {
 	var command, sub *cobra.Command
 	command = &cobra.Command{
-		Use:   "get-my-profile",
-		Short: `Get a UserProfile by UserID`,
+		Use:   "find-user-profile",
+		Short: `Find (filter) organizations by some filter.`,
 	}
-	tmp1 := new(GetMyProfileUserProfileCommand)
+	tmp1 := new(FindUserProfileUserProfileCommand)
 	sub = &cobra.Command{
-		Use:   `user-profile ["/profiles/me"]`,
+		Use:   `user-profile ["/profiles/find"]`,
 		Short: ``,
-		RunE:  func(cmd *cobra.Command, args []string) error { return tmp1.Run(c, args) },
+		Long: `
+
+Payload example:
+
+{
+   "filter": [
+      {
+         "property": "Amet nulla iste aliquam quod placeat debitis.",
+         "value": "Eos omnis."
+      },
+      {
+         "property": "Amet nulla iste aliquam quod placeat debitis.",
+         "value": "Eos omnis."
+      }
+   ],
+   "page": 2995079951151655992,
+   "pageSize": 3366218651594481479,
+   "sort": {
+      "direction": "Et nisi consequatur dolorem ducimus vero.",
+      "property": "Itaque explicabo et cum."
+   }
+}`,
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp1.Run(c, args) },
 	}
 	tmp1.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp1.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "get-user-profile",
+		Use:   "get-my-profile",
 		Short: `Get a UserProfile by UserID`,
 	}
-	tmp2 := new(GetUserProfileUserProfileCommand)
+	tmp2 := new(GetMyProfileUserProfileCommand)
 	sub = &cobra.Command{
-		Use:   `user-profile ["/profiles/USERID"]`,
+		Use:   `user-profile ["/profiles/me"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp2.Run(c, args) },
 	}
@@ -96,10 +126,24 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
+		Use:   "get-user-profile",
+		Short: `Get a UserProfile by UserID`,
+	}
+	tmp3 := new(GetUserProfileUserProfileCommand)
+	sub = &cobra.Command{
+		Use:   `user-profile ["/profiles/USERID"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
+	}
+	tmp3.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp3.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
 		Use:   "update-my-profile",
 		Short: `Update my profile`,
 	}
-	tmp3 := new(UpdateMyProfileUserProfileCommand)
+	tmp4 := new(UpdateMyProfileUserProfileCommand)
 	sub = &cobra.Command{
 		Use:   `user-profile ["/profiles/me"]`,
 		Short: ``,
@@ -108,23 +152,23 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 Payload example:
 
 {
-   "company": "Enim et saepe voluptate.",
-   "companyRegistrationNumber": "Nulla iste aliquam.",
-   "email": "hermann@waelchi.biz",
-   "fullName": "Molestias sint.",
-   "taxNumber": "Dolore sit."
+   "company": "Est necessitatibus possimus autem.",
+   "companyRegistrationNumber": "Est exercitationem.",
+   "email": "haven.shanahan@hilpert.info",
+   "fullName": "Nemo atque sunt impedit occaecati magni.",
+   "taxNumber": "Suscipit perferendis similique qui itaque."
 }`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp4.Run(c, args) },
 	}
-	tmp3.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp3.PrettyPrint, "pp", false, "Pretty print response body")
+	tmp4.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp4.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
 		Use:   "update-user-profile",
 		Short: `Update user profile`,
 	}
-	tmp4 := new(UpdateUserProfileUserProfileCommand)
+	tmp5 := new(UpdateUserProfileUserProfileCommand)
 	sub = &cobra.Command{
 		Use:   `user-profile ["/profiles/USERID"]`,
 		Short: ``,
@@ -133,16 +177,16 @@ Payload example:
 Payload example:
 
 {
-   "company": "Enim et saepe voluptate.",
-   "companyRegistrationNumber": "Nulla iste aliquam.",
-   "email": "hermann@waelchi.biz",
-   "fullName": "Molestias sint.",
-   "taxNumber": "Dolore sit."
+   "company": "Est necessitatibus possimus autem.",
+   "companyRegistrationNumber": "Est exercitationem.",
+   "email": "haven.shanahan@hilpert.info",
+   "fullName": "Nemo atque sunt impedit occaecati magni.",
+   "taxNumber": "Suscipit perferendis similique qui itaque."
 }`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp4.Run(c, args) },
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp5.Run(c, args) },
 	}
-	tmp4.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp4.PrettyPrint, "pp", false, "Pretty print response body")
+	tmp5.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp5.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 
@@ -356,6 +400,39 @@ found:
 	}
 
 	return nil
+}
+
+// Run makes the HTTP request corresponding to the FindUserProfileUserProfileCommand command.
+func (cmd *FindUserProfileUserProfileCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = "/profiles/find"
+	}
+	var payload client.FilterPayload
+	if cmd.Payload != "" {
+		err := json.Unmarshal([]byte(cmd.Payload), &payload)
+		if err != nil {
+			return fmt.Errorf("failed to deserialize payload: %s", err)
+		}
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.FindUserProfileUserProfile(ctx, path, &payload, cmd.ContentType)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *FindUserProfileUserProfileCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
+	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
 }
 
 // Run makes the HTTP request corresponding to the GetMyProfileUserProfileCommand command.

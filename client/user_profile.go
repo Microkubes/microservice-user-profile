@@ -18,6 +18,49 @@ import (
 	"net/url"
 )
 
+// FindUserProfileUserProfilePath computes a request path to the FindUserProfile action of userProfile.
+func FindUserProfileUserProfilePath() string {
+
+	return fmt.Sprintf("/profiles/find")
+}
+
+// Find (filter) organizations by some filter.
+func (c *Client) FindUserProfileUserProfile(ctx context.Context, path string, payload *FilterPayload, contentType string) (*http.Response, error) {
+	req, err := c.NewFindUserProfileUserProfileRequest(ctx, path, payload, contentType)
+	if err != nil {
+		return nil, err
+	}
+	return c.Client.Do(ctx, req)
+}
+
+// NewFindUserProfileUserProfileRequest create the request corresponding to the FindUserProfile action endpoint of the userProfile resource.
+func (c *Client) NewFindUserProfileUserProfileRequest(ctx context.Context, path string, payload *FilterPayload, contentType string) (*http.Request, error) {
+	var body bytes.Buffer
+	if contentType == "" {
+		contentType = "*/*" // Use default encoder
+	}
+	err := c.Encoder.Encode(payload, &body, contentType)
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode body: %s", err)
+	}
+	scheme := c.Scheme
+	if scheme == "" {
+		scheme = "http"
+	}
+	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	req, err := http.NewRequest("POST", u.String(), &body)
+	if err != nil {
+		return nil, err
+	}
+	header := req.Header
+	if contentType == "*/*" {
+		header.Set("Content-Type", "application/json")
+	} else {
+		header.Set("Content-Type", contentType)
+	}
+	return req, nil
+}
+
 // GetMyProfileUserProfilePath computes a request path to the GetMyProfile action of userProfile.
 func GetMyProfileUserProfilePath() string {
 

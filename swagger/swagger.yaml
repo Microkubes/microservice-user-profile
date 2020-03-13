@@ -4,35 +4,164 @@ consumes:
 - application/gob
 - application/x-gob
 definitions:
+  FilterPayload:
+    example:
+      filter:
+      - property: Amet nulla iste aliquam quod placeat debitis.
+        value: Eos omnis.
+      - property: Amet nulla iste aliquam quod placeat debitis.
+        value: Eos omnis.
+      page: 2995079951151655992
+      pageSize: 3366218651594481479
+      sort:
+        direction: Et nisi consequatur dolorem ducimus vero.
+        property: Itaque explicabo et cum.
+    properties:
+      filter:
+        description: Organizations filter.
+        example:
+        - property: Amet nulla iste aliquam quod placeat debitis.
+          value: Eos omnis.
+        - property: Amet nulla iste aliquam quod placeat debitis.
+          value: Eos omnis.
+        items:
+          $ref: '#/definitions/FilterProperty'
+        type: array
+      page:
+        description: Page number (1-based).
+        example: 2995079951151655992
+        format: int64
+        type: integer
+      pageSize:
+        description: Items per page.
+        example: 3366218651594481479
+        format: int64
+        type: integer
+      sort:
+        $ref: '#/definitions/OrderSpec'
+    required:
+    - page
+    - pageSize
+    title: FilterPayload
+    type: object
+  FilterProperty:
+    example:
+      property: Amet nulla iste aliquam quod placeat debitis.
+      value: Eos omnis.
+    properties:
+      property:
+        description: Property name
+        example: Amet nulla iste aliquam quod placeat debitis.
+        type: string
+      value:
+        description: Property value to match
+        example: Eos omnis.
+        type: string
+    required:
+    - property
+    - value
+    title: FilterProperty
+    type: object
+  OrderSpec:
+    example:
+      direction: Et nisi consequatur dolorem ducimus vero.
+      property: Itaque explicabo et cum.
+    properties:
+      direction:
+        description: Sort order. Can be 'asc' or 'desc'.
+        example: Et nisi consequatur dolorem ducimus vero.
+        type: string
+      property:
+        description: Sort by property
+        example: Itaque explicabo et cum.
+        type: string
+    required:
+    - property
+    - direction
+    title: OrderSpec
+    type: object
+  UserProfilePage:
+    description: UserProfilePage media type (default view)
+    example:
+      items:
+      - company: Reprehenderit enim doloribus molestiae.
+        companyRegistrationNumber: Dolorem illum aut.
+        createdOn: 7249765961036167632
+        email: fatima@stracke.name
+        fullName: Velit assumenda.
+        taxNumber: Rerum in ipsam odio beatae possimus harum.
+        userId: Vel repudiandae omnis iste possimus possimus.
+      - company: Reprehenderit enim doloribus molestiae.
+        companyRegistrationNumber: Dolorem illum aut.
+        createdOn: 7249765961036167632
+        email: fatima@stracke.name
+        fullName: Velit assumenda.
+        taxNumber: Rerum in ipsam odio beatae possimus harum.
+        userId: Vel repudiandae omnis iste possimus possimus.
+      page: 7680382655718267873
+      pageSize: 6951309304972377004
+    properties:
+      items:
+        description: User profile list
+        example:
+        - company: Reprehenderit enim doloribus molestiae.
+          companyRegistrationNumber: Dolorem illum aut.
+          createdOn: 7249765961036167632
+          email: fatima@stracke.name
+          fullName: Velit assumenda.
+          taxNumber: Rerum in ipsam odio beatae possimus harum.
+          userId: Vel repudiandae omnis iste possimus possimus.
+        - company: Reprehenderit enim doloribus molestiae.
+          companyRegistrationNumber: Dolorem illum aut.
+          createdOn: 7249765961036167632
+          email: fatima@stracke.name
+          fullName: Velit assumenda.
+          taxNumber: Rerum in ipsam odio beatae possimus harum.
+          userId: Vel repudiandae omnis iste possimus possimus.
+        items:
+          $ref: '#/definitions/userProfile'
+        type: array
+      page:
+        description: Page number (1-based).
+        example: 7680382655718267873
+        format: int64
+        type: integer
+      pageSize:
+        description: Items per page.
+        example: 6951309304972377004
+        format: int64
+        type: integer
+    title: 'Mediatype identifier: application/microkubes.user-profile-page+json; view=default'
+    type: object
   UserProfilePayload:
     description: UserProfile data
     example:
-      company: Enim et saepe voluptate.
-      companyRegistrationNumber: Nulla iste aliquam.
-      email: hermann@waelchi.biz
-      fullName: Molestias sint.
-      taxNumber: Dolore sit.
+      company: Est necessitatibus possimus autem.
+      companyRegistrationNumber: Est exercitationem.
+      email: haven.shanahan@hilpert.info
+      fullName: Nemo atque sunt impedit occaecati magni.
+      taxNumber: Suscipit perferendis similique qui itaque.
     properties:
       company:
         description: Company name
-        example: Enim et saepe voluptate.
+        example: Est necessitatibus possimus autem.
         type: string
       companyRegistrationNumber:
         description: Company registration number
-        example: Nulla iste aliquam.
+        example: Est exercitationem.
         type: string
       email:
         description: Email of user
-        example: hermann@waelchi.biz
+        example: haven.shanahan@hilpert.info
         format: email
         type: string
       fullName:
         description: Full name of the user
-        example: Molestias sint.
+        example: Nemo atque sunt impedit occaecati magni.
         type: string
       taxNumber:
         description: Tax number
-        example: Dolore sit.
+        example: Suscipit perferendis similique qui itaque.
         type: string
     required:
     - fullName
@@ -197,6 +326,37 @@ paths:
       schemes:
       - http
       summary: UpdateUserProfile userProfile
+      tags:
+      - userProfile
+  /profiles/find:
+    post:
+      description: Find (filter) organizations by some filter.
+      operationId: userProfile#FindUserProfile
+      parameters:
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/FilterPayload'
+      produces:
+      - application/microkubes.user-profile-page+json
+      - application/vnd.goa.error
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/UserProfilePage'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      summary: FindUserProfile userProfile
       tags:
       - userProfile
   /profiles/me:

@@ -11,6 +11,37 @@ import (
 	backends "github.com/Microkubes/backends"
 )
 
+// Filter holds the exact Match values and Pattern match values for organizations lookup.
+type Filter struct {
+	// Match exact values.
+	Match map[string]interface{}
+
+	// Pattern match values by regular expression.
+	Pattern map[string]string
+}
+
+// Sort holds the sorting specification for the results. This usually entails specifying
+// the property by which to sort and the sorting direction (either "asc" or "desc").
+type Sort struct {
+	// SortBy is the name of the property by which to sort.
+	SortBy string
+
+	// Direction specifies the sorting direction. Valid values are: "asc" and "desc".
+	Direction string
+}
+
+// UserProfilePage represents a paginated result of user profiles.
+type UserProfilePage struct {
+	// Page number. Starts from 1.
+	Page int `json:"page"`
+
+	// PageSize is the number of results per page.
+	PageSize int `json:"pageSize"`
+
+	// Items is an array of the actually returned user profiles that match the search filter.
+	Items []User `json:"items"`
+}
+
 // User is an object which holds the UserID, FullName, Email and the date of creation
 type User struct {
 	UserID                    string `json:"userId" bson:"userId"`
@@ -31,6 +62,8 @@ type UserProfileRepository interface {
 	// Returns the updated or newly created user profile.
 	UpdateUserProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error)
 	// UpdateMyProfile(profile *app.UserProfilePayload, userID string) (*app.UserProfile, error)
+	// Find Performs a search for user profiles that match the input filter.
+	Find(filter *Filter, sort *Sort, page, pageSize int) (*UserProfilePage, error)
 }
 
 type BackendUserService struct {
@@ -96,4 +129,47 @@ func (r *BackendUserService) UpdateUserProfile(profile *app.UserProfilePayload, 
 		return nil, err
 	}
 	return existing, nil
+}
+
+// Find looks up the user profiles matching the search filter.
+func (r *BackendUserService) Find(filter *Filter, sort *Sort, page, pageSize int) (*UserProfilePage, error) {
+	var bf backends.Filter
+	if filter != nil {
+		bf = backends.NewFilter()
+		if filter.Match != nil {
+			for prop, value := range filter.Match {
+				bf.Match(prop, value)
+			}
+		}
+		if filter.Pattern != nil {
+			for prop, pattern := range filter.Pattern {
+				bf.MatchPattern(prop, pattern)
+			}
+		}
+	}
+
+	sortBy := "createdAt"
+	sortDir := "asc"
+
+	if sort != nil {
+		sortBy = sort.SortBy
+		sortDir = sort.Direction
+	}
+
+	res, err := r.userRepository.GetAll(bf, &User{}, sortBy, sortDir, pageSize, page)
+	if err != nil {
+		return nil, err
+	}
+
+	userPrfls := *(res.(*[]*User))
+	userProfiles := []User{}
+	for _, org := range userPrfls {
+		userProfiles = append(userProfiles, *org)
+	}
+
+	return &UserProfilePage{
+		Page:     page,
+		PageSize: pageSize,
+		Items:    userProfiles,
+	}, nil
 }
