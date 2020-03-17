@@ -2,6 +2,8 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/DataDog/datadog-go v3.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
 github.com/Microkubes/backends v1.1.1 h1:/zOZwSGrPzaw4WuBVGYAY+YR5cYaeJrjfm+EZPR9PaA=
 github.com/Microkubes/backends v1.1.1/go.mod h1:w2FSUGVYqtnD5cxPFYXJu65oYNSZOZNNBC9v2FRJjBA=
+github.com/Microkubes/backends v1.1.2-beta h1:JsezHSd2/6KpYxLuUWAvvN/sVp2SLW1KsBDaspqJiMg=
+github.com/Microkubes/backends v1.1.2-beta/go.mod h1:w2FSUGVYqtnD5cxPFYXJu65oYNSZOZNNBC9v2FRJjBA=
 github.com/Microkubes/microservice-security v1.1.1 h1:qNvcoIdLz1RKOYerV6I/pTAnLmKRQ85FBoe77OC0lWE=
 github.com/Microkubes/microservice-security v1.1.1/go.mod h1:FS0mUGDuKY6tlo+4cZ7xRKxtcm49m2si8/4ZdS8PjNQ=
 github.com/Microkubes/microservice-tools v1.1.0 h1:0kyByC+JqVi/nDDp+eKYhDpgqdA1xvVP68wGIpcJDcQ=
