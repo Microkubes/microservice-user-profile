@@ -3,12 +3,15 @@ package main
 import (
 	"fmt"
 
+	"github.com/Microkubes/backends"
 	errors "github.com/Microkubes/backends"
 	"github.com/Microkubes/microservice-security/auth"
 	"github.com/Microkubes/microservice-user-profile/app"
 	"github.com/Microkubes/microservice-user-profile/db"
 	"github.com/keitaroinc/goa"
 )
+
+const MaxResultsPerPage = 500
 
 // UserProfileController implements the userProfile resource.
 type UserProfileController struct {
@@ -80,7 +83,7 @@ func (c *UserProfileController) UpdateUserProfile(ctx *app.UpdateUserProfileUser
 	}
 
 	return ctx.OK(res)
-	
+
 }
 
 // UpdateMyProfile runs the UpdateMyProfile action.
@@ -155,4 +158,70 @@ func (c *UserProfileController) GetMyProfile(ctx *app.GetMyProfileUserProfileCon
 	res.UserID = userID
 
 	return ctx.OK(res)
+}
+
+// FindUserProfile runs FindUserProfile action
+func (c *UserProfileController) FindUserProfile(ctx *app.FindUserProfileUserProfileContext) error {
+
+	hasAuth := auth.HasAuth(ctx)
+
+	if !hasAuth {
+		return ctx.InternalServerError(goa.ErrUnauthorized("Auth has not been set"))
+	}
+
+	page := ctx.Payload.Page
+	if page < 1 {
+		return ctx.BadRequest(goa.ErrBadRequest("invalid page number"))
+	}
+	page--
+	pageSize := ctx.Payload.PageSize
+	if pageSize > MaxResultsPerPage {
+		pageSize = MaxResultsPerPage
+	}
+
+	var filter *db.Filter
+	filter = &db.Filter{
+		Match: map[string]interface{}{},
+	}
+	if ctx.Payload.Filter != nil && len(ctx.Payload.Filter) > 0 {
+		for _, filterProp := range ctx.Payload.Filter {
+			filter.Match[filterProp.Property] = filterProp.Value
+		}
+	}
+	var sort *db.Sort
+	if ctx.Payload.Sort != nil {
+		sort = &db.Sort{
+			SortBy:    ctx.Payload.Sort.Property,
+			Direction: ctx.Payload.Sort.Direction,
+		}
+	}
+
+	result, err := c.Repository.Find(filter, sort, page, pageSize)
+	if err != nil {
+		if backends.IsErrInvalidInput(err) {
+			return ctx.BadRequest(goa.ErrBadRequest(err))
+		}
+		return ctx.InternalServerError(goa.ErrInternal(err))
+	}
+
+	userProfilesPage := &app.UserProfilePage{
+		Page:     &result.Page,
+		PageSize: &result.PageSize,
+		Items:    []*app.UserProfile{},
+	}
+
+	for _, userProfileItem := range result.Items {
+		userProfile := userProfileItem
+
+		userProfilesPage.Items = append(userProfilesPage.Items, &app.UserProfile{
+			UserID:                    userProfile.UserID,
+			FullName:                  &userProfile.FullName,
+			Email:                     &userProfile.Email,
+			Company:                   &userProfile.Company,
+			TaxNumber:                 &userProfile.TaxNumber,
+			CompanyRegistrationNumber: &userProfile.CompanyRegistrationNumber,
+		})
+	}
+
+	return ctx.OK(userProfilesPage)
 }

@@ -47,3 +47,27 @@ func (mt *UserProfile) Validate() (err error) {
 	}
 	return
 }
+
+// UserProfilePage media type (default view)
+//
+// Identifier: application/microkubes.user-profile-page+json; view=default
+type UserProfilePage struct {
+	// User profile list
+	Items []*UserProfile `form:"items,omitempty" json:"items,omitempty" yaml:"items,omitempty" xml:"items,omitempty"`
+	// Page number (1-based).
+	Page *int `form:"page,omitempty" json:"page,omitempty" yaml:"page,omitempty" xml:"page,omitempty"`
+	// Items per page.
+	PageSize *int `form:"pageSize,omitempty" json:"pageSize,omitempty" yaml:"pageSize,omitempty" xml:"pageSize,omitempty"`
+}
+
+// Validate validates the UserProfilePage media type instance.
+func (mt *UserProfilePage) Validate() (err error) {
+	for _, e := range mt.Items {
+		if e != nil {
+			if err2 := e.Validate(); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	return
+}

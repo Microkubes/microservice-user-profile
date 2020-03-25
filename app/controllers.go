@@ -12,9 +12,10 @@ package app
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/keitaroinc/goa"
 	"github.com/keitaroinc/goa/cors"
-	"net/http"
 )
 
 // initService sets up the service encoders, decoders and mux.
@@ -59,6 +60,7 @@ func MountSwaggerController(service *goa.Service, ctrl SwaggerController) {
 // UserProfileController is the controller interface for the UserProfile actions.
 type UserProfileController interface {
 	goa.Muxer
+	FindUserProfile(*FindUserProfileUserProfileContext) error
 	GetMyProfile(*GetMyProfileUserProfileContext) error
 	GetUserProfile(*GetUserProfileUserProfileContext) error
 	UpdateMyProfile(*UpdateMyProfileUserProfileContext) error
@@ -69,8 +71,31 @@ type UserProfileController interface {
 func MountUserProfileController(service *goa.Service, ctrl UserProfileController) {
 	initService(service)
 	var h goa.Handler
+	service.Mux.Handle("OPTIONS", "/profiles/find", ctrl.MuxHandler("preflight", handleUserProfileOrigin(cors.HandlePreflight()), nil))
 	service.Mux.Handle("OPTIONS", "/profiles/me", ctrl.MuxHandler("preflight", handleUserProfileOrigin(cors.HandlePreflight()), nil))
 	service.Mux.Handle("OPTIONS", "/profiles/:userId", ctrl.MuxHandler("preflight", handleUserProfileOrigin(cors.HandlePreflight()), nil))
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewFindUserProfileUserProfileContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		// Build the payload
+		if rawPayload := goa.ContextRequest(ctx).Payload; rawPayload != nil {
+			rctx.Payload = rawPayload.(*FilterPayload)
+		} else {
+			return goa.MissingPayloadError()
+		}
+		return ctrl.FindUserProfile(rctx)
+	}
+	h = handleUserProfileOrigin(h)
+	service.Mux.Handle("POST", "/profiles/find", ctrl.MuxHandler("FindUserProfile", h, unmarshalFindUserProfileUserProfilePayload))
+	service.LogInfo("mount", "ctrl", "UserProfile", "action", "FindUserProfile", "route", "POST /profiles/find")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -171,6 +196,21 @@ func handleUserProfileOrigin(h goa.Handler) goa.Handler {
 
 		return h(ctx, rw, req)
 	}
+}
+
+// unmarshalFindUserProfileUserProfilePayload unmarshals the request body into the context request data Payload field.
+func unmarshalFindUserProfileUserProfilePayload(ctx context.Context, service *goa.Service, req *http.Request) error {
+	payload := &filterPayload{}
+	if err := service.DecodeRequest(req, payload); err != nil {
+		return err
+	}
+	if err := payload.Validate(); err != nil {
+		// Initialize payload with private data structure so it can be logged
+		goa.ContextRequest(ctx).Payload = payload
+		return err
+	}
+	goa.ContextRequest(ctx).Payload = payload.Publicize()
+	return nil
 }
 
 // unmarshalUpdateMyProfileUserProfilePayload unmarshals the request body into the context request data Payload field.

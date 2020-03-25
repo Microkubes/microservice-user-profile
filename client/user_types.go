@@ -14,6 +14,192 @@ import (
 	"github.com/keitaroinc/goa"
 )
 
+// filterPayload user type.
+type filterPayload struct {
+	// Organizations filter.
+	Filter []*filterProperty `form:"filter,omitempty" json:"filter,omitempty" yaml:"filter,omitempty" xml:"filter,omitempty"`
+	// Page number (1-based).
+	Page *int `form:"page,omitempty" json:"page,omitempty" yaml:"page,omitempty" xml:"page,omitempty"`
+	// Items per page.
+	PageSize *int `form:"pageSize,omitempty" json:"pageSize,omitempty" yaml:"pageSize,omitempty" xml:"pageSize,omitempty"`
+	// Sort specification.
+	Sort *orderSpec `form:"sort,omitempty" json:"sort,omitempty" yaml:"sort,omitempty" xml:"sort,omitempty"`
+}
+
+// Validate validates the filterPayload type instance.
+func (ut *filterPayload) Validate() (err error) {
+	if ut.Page == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "page"))
+	}
+	if ut.PageSize == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "pageSize"))
+	}
+	for _, e := range ut.Filter {
+		if e != nil {
+			if err2 := e.Validate(); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	if ut.Sort != nil {
+		if err2 := ut.Sort.Validate(); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
+// Publicize creates FilterPayload from filterPayload
+func (ut *filterPayload) Publicize() *FilterPayload {
+	var pub FilterPayload
+	if ut.Filter != nil {
+		pub.Filter = make([]*FilterProperty, len(ut.Filter))
+		for i2, elem2 := range ut.Filter {
+			pub.Filter[i2] = elem2.Publicize()
+		}
+	}
+	if ut.Page != nil {
+		pub.Page = *ut.Page
+	}
+	if ut.PageSize != nil {
+		pub.PageSize = *ut.PageSize
+	}
+	if ut.Sort != nil {
+		pub.Sort = ut.Sort.Publicize()
+	}
+	return &pub
+}
+
+// FilterPayload user type.
+type FilterPayload struct {
+	// Organizations filter.
+	Filter []*FilterProperty `form:"filter,omitempty" json:"filter,omitempty" yaml:"filter,omitempty" xml:"filter,omitempty"`
+	// Page number (1-based).
+	Page int `form:"page" json:"page" yaml:"page" xml:"page"`
+	// Items per page.
+	PageSize int `form:"pageSize" json:"pageSize" yaml:"pageSize" xml:"pageSize"`
+	// Sort specification.
+	Sort *OrderSpec `form:"sort,omitempty" json:"sort,omitempty" yaml:"sort,omitempty" xml:"sort,omitempty"`
+}
+
+// Validate validates the FilterPayload type instance.
+func (ut *FilterPayload) Validate() (err error) {
+
+	for _, e := range ut.Filter {
+		if e != nil {
+			if err2 := e.Validate(); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	if ut.Sort != nil {
+		if err2 := ut.Sort.Validate(); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
+// filterProperty user type.
+type filterProperty struct {
+	// Property name
+	Property *string `form:"property,omitempty" json:"property,omitempty" yaml:"property,omitempty" xml:"property,omitempty"`
+	// Property value to match
+	Value *string `form:"value,omitempty" json:"value,omitempty" yaml:"value,omitempty" xml:"value,omitempty"`
+}
+
+// Validate validates the filterProperty type instance.
+func (ut *filterProperty) Validate() (err error) {
+	if ut.Property == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "property"))
+	}
+	if ut.Value == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "value"))
+	}
+	return
+}
+
+// Publicize creates FilterProperty from filterProperty
+func (ut *filterProperty) Publicize() *FilterProperty {
+	var pub FilterProperty
+	if ut.Property != nil {
+		pub.Property = *ut.Property
+	}
+	if ut.Value != nil {
+		pub.Value = *ut.Value
+	}
+	return &pub
+}
+
+// FilterProperty user type.
+type FilterProperty struct {
+	// Property name
+	Property string `form:"property" json:"property" yaml:"property" xml:"property"`
+	// Property value to match
+	Value string `form:"value" json:"value" yaml:"value" xml:"value"`
+}
+
+// Validate validates the FilterProperty type instance.
+func (ut *FilterProperty) Validate() (err error) {
+	if ut.Property == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "property"))
+	}
+	if ut.Value == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "value"))
+	}
+	return
+}
+
+// orderSpec user type.
+type orderSpec struct {
+	// Sort order. Can be 'asc' or 'desc'.
+	Direction *string `form:"direction,omitempty" json:"direction,omitempty" yaml:"direction,omitempty" xml:"direction,omitempty"`
+	// Sort by property
+	Property *string `form:"property,omitempty" json:"property,omitempty" yaml:"property,omitempty" xml:"property,omitempty"`
+}
+
+// Validate validates the orderSpec type instance.
+func (ut *orderSpec) Validate() (err error) {
+	if ut.Property == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "property"))
+	}
+	if ut.Direction == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "direction"))
+	}
+	return
+}
+
+// Publicize creates OrderSpec from orderSpec
+func (ut *orderSpec) Publicize() *OrderSpec {
+	var pub OrderSpec
+	if ut.Direction != nil {
+		pub.Direction = *ut.Direction
+	}
+	if ut.Property != nil {
+		pub.Property = *ut.Property
+	}
+	return &pub
+}
+
+// OrderSpec user type.
+type OrderSpec struct {
+	// Sort order. Can be 'asc' or 'desc'.
+	Direction string `form:"direction" json:"direction" yaml:"direction" xml:"direction"`
+	// Sort by property
+	Property string `form:"property" json:"property" yaml:"property" xml:"property"`
+}
+
+// Validate validates the OrderSpec type instance.
+func (ut *OrderSpec) Validate() (err error) {
+	if ut.Property == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "property"))
+	}
+	if ut.Direction == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "direction"))
+	}
+	return
+}
+
 // UserProfile data
 type userProfilePayload struct {
 	// Company name

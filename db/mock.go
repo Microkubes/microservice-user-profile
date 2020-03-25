@@ -118,3 +118,8 @@ func (db *DB) UpdateMyProfile(profile *app.UserProfilePayload, userID string) (*
 
 	return res, nil
 }
+
+// Find mock implementation
+func (db *DB) Find(filter *Filter, sort *Sort, page, pageSize int) (*UserProfilePage, error) {
+	return nil, nil
+}

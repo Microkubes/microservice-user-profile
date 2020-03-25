@@ -64,6 +64,15 @@ var _ = Resource("userProfile", func() {
 		Response(InternalServerError, ErrorMedia)
 		Response(OK, UserProfileMedia)
 	})
+
+	Action("FindUserProfile", func() {
+		Description("Find (filter) organizations by some filter.")
+		Routing(POST("/find"))
+		Payload(FilterPayload)
+		Response(OK, UserProfilePageMedia)
+		Response(BadRequest, ErrorMedia)
+		Response(InternalServerError, ErrorMedia)
+	})
 })
 
 // UserProfileMedia is the default media type for user-profile service
@@ -93,6 +102,21 @@ var UserProfileMedia = MediaType("application/microkubes.user-profile+json", fun
 	})
 })
 
+// UserProfilePageMedia result of filter-by. One result page along with items (array of UserProfiles).
+var UserProfilePageMedia = MediaType("application/microkubes.user-profile-page+json", func() {
+	TypeName("UserProfilePage")
+	Attributes(func() {
+		Attribute("page", Integer, "Page number (1-based).")
+		Attribute("pageSize", Integer, "Items per page.")
+		Attribute("items", ArrayOf(UserProfileMedia), "User profile list")
+	})
+	View("default", func() {
+		Attribute("page")
+		Attribute("pageSize")
+		Attribute("items")
+	})
+})
+
 // UserProfilePayload is the payload specification
 var UserProfilePayload = Type("UserProfilePayload", func() {
 	Description("UserProfile data")
@@ -106,6 +130,30 @@ var UserProfilePayload = Type("UserProfilePayload", func() {
 	Attribute("taxNumber", String, "Tax number")
 
 	Required("fullName", "email")
+})
+
+// FilterPayload Organizations filter request payload.
+var FilterPayload = Type("FilterPayload", func() {
+	Attribute("page", Integer, "Page number (1-based).")
+	Attribute("pageSize", Integer, "Items per page.")
+	Attribute("filter", ArrayOf(FilterProperty), "Organizations filter.")
+	Attribute("sort", OrderSpec, "Sort specification.")
+	Required("page", "pageSize")
+})
+
+// FilterProperty Single property filter. Holds the property name and the value to be matched for that property.
+var FilterProperty = Type("FilterProperty", func() {
+	Attribute("property", String, "Property name")
+	Attribute("value", String, "Property value to match")
+	Required("property", "value")
+})
+
+// OrderSpec specifies the sorting - by which property and the direction, either 'asc' (ascending)
+// or 'desc' (descending).
+var OrderSpec = Type("OrderSpec", func() {
+	Attribute("property", String, "Sort by property")
+	Attribute("direction", String, "Sort order. Can be 'asc' or 'desc'.")
+	Required("property", "direction")
 })
 
 // Swagger UI
