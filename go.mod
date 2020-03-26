@@ -3,7 +3,7 @@ module github.com/Microkubes/microservice-user-profile
 go 1.13
 
 require (
-	github.com/Microkubes/backends v1.1.2-beta
+	github.com/Microkubes/backends v1.1.2
 	github.com/Microkubes/microservice-security v1.1.1
 	github.com/Microkubes/microservice-tools v1.1.0
 	github.com/keitaroinc/goa v1.5.0
