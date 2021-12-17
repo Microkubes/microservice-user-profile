@@ -1,11 +1,10 @@
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/DataDog/datadog-go v3.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
-github.com/Microkubes/backends v1.1.1 h1:/zOZwSGrPzaw4WuBVGYAY+YR5cYaeJrjfm+EZPR9PaA=
 github.com/Microkubes/backends v1.1.1/go.mod h1:w2FSUGVYqtnD5cxPFYXJu65oYNSZOZNNBC9v2FRJjBA=
 github.com/Microkubes/backends v1.1.2 h1:UZpq3f+5rQ97Fmi+PQixDBArpIUo6KVTXhUpZ+DheUM=
 github.com/Microkubes/backends v1.1.2/go.mod h1:w2FSUGVYqtnD5cxPFYXJu65oYNSZOZNNBC9v2FRJjBA=
-github.com/Microkubes/microservice-security v1.1.1 h1:qNvcoIdLz1RKOYerV6I/pTAnLmKRQ85FBoe77OC0lWE=
-github.com/Microkubes/microservice-security v1.1.1/go.mod h1:FS0mUGDuKY6tlo+4cZ7xRKxtcm49m2si8/4ZdS8PjNQ=
+github.com/Microkubes/microservice-security v1.2.1 h1:LRyPahlB3ZSACoL+VBiG+BnY0Rymlq60YGtGVSwNGVM=
+github.com/Microkubes/microservice-security v1.2.1/go.mod h1:FS0mUGDuKY6tlo+4cZ7xRKxtcm49m2si8/4ZdS8PjNQ=
 github.com/Microkubes/microservice-tools v1.1.0 h1:0kyByC+JqVi/nDDp+eKYhDpgqdA1xvVP68wGIpcJDcQ=
 github.com/Microkubes/microservice-tools v1.1.0/go.mod h1:9YPuF99237LdC2025udqFF82dzLl0jPvZEnXIAGJXBQ=
 github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5 h1:rFw4nCn9iMW+Vajsk51NtYIcwSTkXr+JGrMd36kTDJw=
@@ -167,7 +166,6 @@ golang.org/x/sys v0.0.0-20190922100055-0a153f010e69 h1:rOhMmluY6kLMhdnrivzec6lLg
 golang.org/x/sys v0.0.0-20190922100055-0a153f010e69/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.3.0 h1:g61tztE5qeGQ89tm6NTjjM9VPIm088od1l6aSorWRWg=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
-golang.org/x/tools v0.0.0-20190328211700-ab21143f2384 h1:TFlARGu6Czu1z7q93HTxcP1P+/ZFC/IKythI5RzrnRg=
 golang.org/x/tools v0.0.0-20190328211700-ab21143f2384/go.mod h1:LCzVGOaR6xXOjkQ3onu1FJEFr0SW1gC7cKk1uF8kGRs=
 golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7 h1:9zdDQZ7Thm29KFXgAX/+yaf3eVbP7djjWp/dXAppNCc=
 golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=

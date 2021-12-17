@@ -4,15 +4,14 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"os"
 
 	"github.com/Microkubes/microservice-security/chain"
 	"github.com/Microkubes/microservice-security/flow"
+
 	// "github.com/Microkubes/microservice-tools/config"
 	"github.com/Microkubes/backends"
 	toolscfg "github.com/Microkubes/microservice-tools/config"
-	"github.com/Microkubes/microservice-tools/gateway"
 	"github.com/Microkubes/microservice-tools/utils/healthcheck"
 	"github.com/Microkubes/microservice-tools/utils/version"
 	"github.com/Microkubes/microservice-user-profile/app"
@@ -25,17 +24,13 @@ func main() {
 	// Create service
 	service := goa.New("user-profile")
 
-	gatewayAdminURL, configFile := loadGatewaySettings()
+	configFile := loadConfigSettings()
 
 	cfg, err := toolscfg.LoadConfig(configFile)
 	if err != nil {
 		service.LogError("config", "err", err)
 		return
 	}
-
-	// Gateway self-registration
-	unregisterService := registerMicroservice(gatewayAdminURL, cfg)
-	defer unregisterService() // defer the unregister for after main exits
 
 	// Setup user-profile service
 	userService, err := setupUserService(cfg)
@@ -117,28 +112,12 @@ func setupUserService(serviceConfig *toolscfg.ServiceConfig) (db.UserProfileRepo
 	return db.NewUserService(userRepo), err
 }
 
-func loadGatewaySettings() (string, string) {
-	gatewayURL := os.Getenv("API_GATEWAY_URL")
+func loadConfigSettings() string {
 	serviceConfigFile := os.Getenv("SERVICE_CONFIG_FILE")
 
-	if gatewayURL == "" {
-		gatewayURL = "http://localhost:8001"
-	}
 	if serviceConfigFile == "" {
 		serviceConfigFile = "/run/secrets/microservice_user_profile_config.json"
 	}
 
-	return gatewayURL, serviceConfigFile
-}
-
-func registerMicroservice(gatewayAdminURL string, cfg *toolscfg.ServiceConfig) func() {
-	registration := gateway.NewKongGateway(gatewayAdminURL, &http.Client{}, cfg.Service)
-	err := registration.SelfRegister()
-	if err != nil {
-		panic(err)
-	}
-
-	return func() {
-		registration.Unregister()
-	}
+	return serviceConfigFile
 }

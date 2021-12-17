@@ -12,8 +12,6 @@ RUN cd /go/src/github.com/Microkubes/microservice-user-profile && \
 ### Main
 FROM alpine:3.10
 
-ENV API_GATEWAY_URL="http://localhost:8001"
-
 COPY --from=build /go/src/github.com/Microkubes/microservice-user-profile/config.json /config.json
 COPY --from=build /go/bin/microservice-user-profile /usr/local/bin/microservice-user-profile
 
