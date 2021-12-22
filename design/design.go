@@ -14,7 +14,7 @@ var _ = API("user-profile", func() {
 })
 
 var _ = Resource("userProfile", func() {
-	BasePath("profiles")
+	BasePath("/")
 	DefaultMedia(UserProfileMedia)
 
 	// Allow preflight HTTP requests

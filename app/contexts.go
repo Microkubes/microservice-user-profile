@@ -12,9 +12,8 @@ package app
 
 import (
 	"context"
-	"net/http"
-
 	"github.com/keitaroinc/goa"
+	"net/http"
 )
 
 // FindUserProfileUserProfileContext provides the userProfile FindUserProfile action context.

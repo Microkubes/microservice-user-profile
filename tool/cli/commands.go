@@ -14,6 +14,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/Microkubes/microservice-user-profile/client"
+	"github.com/keitaroinc/goa"
+	goaclient "github.com/keitaroinc/goa/client"
+	uuid "github.com/keitaroinc/goa/uuid"
+	"github.com/spf13/cobra"
 	"log"
 	"net/url"
 	"os"
@@ -21,12 +26,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/Microkubes/microservice-user-profile/client"
-	"github.com/keitaroinc/goa"
-	goaclient "github.com/keitaroinc/goa/client"
-	uuid "github.com/keitaroinc/goa/uuid"
-	"github.com/spf13/cobra"
 )
 
 type (
@@ -81,7 +80,7 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	}
 	tmp1 := new(FindUserProfileUserProfileCommand)
 	sub = &cobra.Command{
-		Use:   `user-profile ["/profiles/find"]`,
+		Use:   `user-profile ["/find"]`,
 		Short: ``,
 		Long: `
 
@@ -117,7 +116,7 @@ Payload example:
 	}
 	tmp2 := new(GetMyProfileUserProfileCommand)
 	sub = &cobra.Command{
-		Use:   `user-profile ["/profiles/me"]`,
+		Use:   `user-profile ["/me"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp2.Run(c, args) },
 	}
@@ -131,7 +130,7 @@ Payload example:
 	}
 	tmp3 := new(GetUserProfileUserProfileCommand)
 	sub = &cobra.Command{
-		Use:   `user-profile ["/profiles/USERID"]`,
+		Use:   `user-profile ["/USERID"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
 	}
@@ -145,7 +144,7 @@ Payload example:
 	}
 	tmp4 := new(UpdateMyProfileUserProfileCommand)
 	sub = &cobra.Command{
-		Use:   `user-profile ["/profiles/me"]`,
+		Use:   `user-profile ["/me"]`,
 		Short: ``,
 		Long: `
 
@@ -170,7 +169,7 @@ Payload example:
 	}
 	tmp5 := new(UpdateUserProfileUserProfileCommand)
 	sub = &cobra.Command{
-		Use:   `user-profile ["/profiles/USERID"]`,
+		Use:   `user-profile ["/USERID"]`,
 		Short: ``,
 		Long: `
 
@@ -408,7 +407,7 @@ func (cmd *FindUserProfileUserProfileCommand) Run(c *client.Client, args []strin
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = "/profiles/find"
+		path = "/find"
 	}
 	var payload client.FilterPayload
 	if cmd.Payload != "" {
@@ -441,7 +440,7 @@ func (cmd *GetMyProfileUserProfileCommand) Run(c *client.Client, args []string) 
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = "/profiles/me"
+		path = "/me"
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
@@ -465,7 +464,7 @@ func (cmd *GetUserProfileUserProfileCommand) Run(c *client.Client, args []string
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = fmt.Sprintf("/profiles/%v", url.QueryEscape(cmd.UserID))
+		path = fmt.Sprintf("/%v", url.QueryEscape(cmd.UserID))
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
@@ -491,7 +490,7 @@ func (cmd *UpdateMyProfileUserProfileCommand) Run(c *client.Client, args []strin
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = "/profiles/me"
+		path = "/me"
 	}
 	var payload client.UserProfilePayload
 	if cmd.Payload != "" {
@@ -524,7 +523,7 @@ func (cmd *UpdateUserProfileUserProfileCommand) Run(c *client.Client, args []str
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = fmt.Sprintf("/profiles/%v", url.QueryEscape(cmd.UserID))
+		path = fmt.Sprintf("/%v", url.QueryEscape(cmd.UserID))
 	}
 	var payload client.UserProfilePayload
 	if cmd.Payload != "" {

@@ -11,9 +11,8 @@
 package client
 
 import (
-	"net/http"
-
 	"github.com/keitaroinc/goa"
+	"net/http"
 )
 
 // userProfile media type (default view)

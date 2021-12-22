@@ -257,7 +257,7 @@ info:
   title: User Profile Microservice
   version: "1.0"
 paths:
-  /profiles/{userId}:
+  /{userId}:
     get:
       description: Get a UserProfile by UserID
       operationId: userProfile#GetUserProfile
@@ -328,7 +328,7 @@ paths:
       summary: UpdateUserProfile userProfile
       tags:
       - userProfile
-  /profiles/find:
+  /find:
     post:
       description: Find (filter) organizations by some filter.
       operationId: userProfile#FindUserProfile
@@ -359,7 +359,7 @@ paths:
       summary: FindUserProfile userProfile
       tags:
       - userProfile
-  /profiles/me:
+  /me:
     get:
       description: Get a UserProfile by UserID
       operationId: userProfile#GetMyProfile

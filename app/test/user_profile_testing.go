@@ -14,15 +14,14 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/Microkubes/microservice-user-profile/app"
+	"github.com/keitaroinc/goa"
+	"github.com/keitaroinc/goa/goatest"
 	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-
-	"github.com/Microkubes/microservice-user-profile/app"
-	"github.com/keitaroinc/goa"
-	"github.com/keitaroinc/goa/goatest"
 )
 
 // FindUserProfileUserProfileBadRequest runs the method FindUserProfile of the given controller with the given parameters and payload.
@@ -60,7 +59,7 @@ func FindUserProfileUserProfileBadRequest(t goatest.TInterface, ctx context.Cont
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/profiles/find"),
+		Path: fmt.Sprintf("/find"),
 	}
 	req, _err := http.NewRequest("POST", u.String(), nil)
 	if _err != nil {
@@ -139,7 +138,7 @@ func FindUserProfileUserProfileInternalServerError(t goatest.TInterface, ctx con
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/profiles/find"),
+		Path: fmt.Sprintf("/find"),
 	}
 	req, _err := http.NewRequest("POST", u.String(), nil)
 	if _err != nil {
@@ -219,7 +218,7 @@ func FindUserProfileUserProfileOK(t goatest.TInterface, ctx context.Context, ser
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/profiles/find"),
+		Path: fmt.Sprintf("/find"),
 	}
 	req, _err := http.NewRequest("POST", u.String(), nil)
 	if _err != nil {
@@ -293,7 +292,7 @@ func GetMyProfileUserProfileBadRequest(t goatest.TInterface, ctx context.Context
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/profiles/me"),
+		Path: fmt.Sprintf("/me"),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
@@ -361,7 +360,7 @@ func GetMyProfileUserProfileInternalServerError(t goatest.TInterface, ctx contex
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/profiles/me"),
+		Path: fmt.Sprintf("/me"),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
@@ -429,7 +428,7 @@ func GetMyProfileUserProfileNotFound(t goatest.TInterface, ctx context.Context, 
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/profiles/me"),
+		Path: fmt.Sprintf("/me"),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
@@ -497,7 +496,7 @@ func GetMyProfileUserProfileOK(t goatest.TInterface, ctx context.Context, servic
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/profiles/me"),
+		Path: fmt.Sprintf("/me"),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
@@ -570,7 +569,7 @@ func GetUserProfileUserProfileBadRequest(t goatest.TInterface, ctx context.Conte
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/profiles/%v", userID),
+		Path: fmt.Sprintf("/%v", userID),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
@@ -639,7 +638,7 @@ func GetUserProfileUserProfileInternalServerError(t goatest.TInterface, ctx cont
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/profiles/%v", userID),
+		Path: fmt.Sprintf("/%v", userID),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
@@ -708,7 +707,7 @@ func GetUserProfileUserProfileNotFound(t goatest.TInterface, ctx context.Context
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/profiles/%v", userID),
+		Path: fmt.Sprintf("/%v", userID),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
@@ -777,7 +776,7 @@ func GetUserProfileUserProfileOK(t goatest.TInterface, ctx context.Context, serv
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/profiles/%v", userID),
+		Path: fmt.Sprintf("/%v", userID),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
@@ -861,7 +860,7 @@ func UpdateMyProfileUserProfileBadRequest(t goatest.TInterface, ctx context.Cont
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/profiles/me"),
+		Path: fmt.Sprintf("/me"),
 	}
 	req, _err := http.NewRequest("PUT", u.String(), nil)
 	if _err != nil {
@@ -940,7 +939,7 @@ func UpdateMyProfileUserProfileInternalServerError(t goatest.TInterface, ctx con
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/profiles/me"),
+		Path: fmt.Sprintf("/me"),
 	}
 	req, _err := http.NewRequest("PUT", u.String(), nil)
 	if _err != nil {
@@ -1019,7 +1018,7 @@ func UpdateMyProfileUserProfileNotFound(t goatest.TInterface, ctx context.Contex
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/profiles/me"),
+		Path: fmt.Sprintf("/me"),
 	}
 	req, _err := http.NewRequest("PUT", u.String(), nil)
 	if _err != nil {
@@ -1099,7 +1098,7 @@ func UpdateMyProfileUserProfileOK(t goatest.TInterface, ctx context.Context, ser
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/profiles/me"),
+		Path: fmt.Sprintf("/me"),
 	}
 	req, _err := http.NewRequest("PUT", u.String(), nil)
 	if _err != nil {
@@ -1183,7 +1182,7 @@ func UpdateUserProfileUserProfileBadRequest(t goatest.TInterface, ctx context.Co
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/profiles/%v", userID),
+		Path: fmt.Sprintf("/%v", userID),
 	}
 	req, _err := http.NewRequest("PUT", u.String(), nil)
 	if _err != nil {
@@ -1263,7 +1262,7 @@ func UpdateUserProfileUserProfileInternalServerError(t goatest.TInterface, ctx c
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/profiles/%v", userID),
+		Path: fmt.Sprintf("/%v", userID),
 	}
 	req, _err := http.NewRequest("PUT", u.String(), nil)
 	if _err != nil {
@@ -1344,7 +1343,7 @@ func UpdateUserProfileUserProfileOK(t goatest.TInterface, ctx context.Context, s
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/profiles/%v", userID),
+		Path: fmt.Sprintf("/%v", userID),
 	}
 	req, _err := http.NewRequest("PUT", u.String(), nil)
 	if _err != nil {
